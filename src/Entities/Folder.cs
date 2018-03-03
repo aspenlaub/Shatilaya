@@ -1,4 +1,5 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+﻿using System;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
     public class Folder : IFolder {
@@ -10,6 +11,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
             }
 
             FullName = fullName;
+        }
+
+        public override string ToString() {
+            throw new NotSupportedException();
         }
     }
 }

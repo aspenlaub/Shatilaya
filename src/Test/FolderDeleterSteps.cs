@@ -29,7 +29,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 Directory.Delete(Folder.FullName, true);
             }
             Directory.CreateDirectory(Folder.FullName);
-            SubFolder = new Folder(Folder.FullName + @"\SubFolder");
+            SubFolder = Folder.SubFolder(@"\SubFolder");
             Directory.CreateDirectory(SubFolder.FullName);
         }
 
@@ -48,7 +48,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"there is a \.git subfolder")]
         public void GivenThereIsA_GitSubfolder() {
-            Directory.CreateDirectory(Folder.FullName + @"\.git");
+            Directory.CreateDirectory(Folder.FullName + GitUtilities.GitSubFolder);
         }
 
         [Given(@"the folder ends with \\obj")]
@@ -59,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
             Directory.Move(Folder.FullName, newFolder.FullName);
             Folder = newFolder;
-            SubFolder = new Folder(Folder.FullName + @"\SubFolder");
+            SubFolder = Folder.SubFolder(@"\SubFolder");
         }
 
         [Given(@"the folder is located beneath c:\\temp")]
@@ -70,7 +70,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
             Directory.Move(Folder.FullName, newFolder.FullName);
             Folder = newFolder;
-            SubFolder = new Folder(Folder.FullName + @"\SubFolder");
+            SubFolder = Folder.SubFolder(@"\SubFolder");
         }
 
         [When(@"I ask the folder deleter if I am allowed to delete the folder")]
