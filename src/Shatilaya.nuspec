@@ -12,7 +12,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <copyright>Copyright 2018</copyright>
     <version>$version$</version>
-    <dependencies />
+    <dependencies>
+      <dependency id="LibGit2Sharp" version="0.24.0" />
+      <dependency id="LibGit2Sharp.NativeBinaries" version="1.0.185" />
+    </dependencies>
   </metadata>
   <files>
     <file src="..\..\ShatilayaBin\Release\Aspenlaub.*.dll" exclude="..\..\ShatilayaBin\Release\*.Test*.*" target="lib\net46" />

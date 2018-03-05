@@ -3,12 +3,11 @@
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface ICakeRunner {
         /// <summary>
-        /// Call cake and run a specified script, return errors
+        /// Call cake and run build.cake in a specified folder, return errors
         /// </summary>
         /// <param name="cakeExeFullName"></param>
         /// <param name="scriptFileFullName"></param>
         /// <param name="errors"></param>
-        /// <returns></returns>
-        bool CallCake(string cakeExeFullName, string scriptFileFullName, out List<string> errors);
+        void CallCake(string cakeExeFullName, string scriptFileFullName, out IList<string> errors);
     }
 }
