@@ -63,9 +63,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="build.cake" />
+    <EmbeddedResource Include="..\build.cake" />
     <None Include="packages.config" />
-    <None Include="solution.cake" />
+    <None Include="..\solution.cake" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Entities\Shatilaya.Entities.csproj">
