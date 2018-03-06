@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
@@ -40,7 +42,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Repository.Clone(url, ChabFolder().FullName, new CloneOptions { BranchName = "master" });
         }
 
-        [Given(@"I have the latest build\.cake script")]
+        [Given(@"I copy the latest build\.cake script from my Shatilaya solution")]
         public void GivenIHaveTheLatestBuild_CakeScript() {
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var latestScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
@@ -50,6 +52,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var currentScript = File.ReadAllText(currentScriptFileName);
             if (latestScript == currentScript) { return; }
 
+            Assert.IsTrue(latestScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
+            latestScript = latestScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
             File.WriteAllText(currentScriptFileName, latestScript);
         }
 
@@ -65,6 +69,25 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
             var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
             runner.CallCake(cakeExeFileFullName, scriptFileFullName, out CakeErrors);
+        }
+
+        [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
+        public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
+            const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake";
+            var request = WebRequest.Create(url) as HttpWebRequest;
+            Assert.IsNotNull(request);
+            using (var response = (HttpWebResponse)request.GetResponse()) {
+                Assert.IsNotNull(response);
+                var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
+                var stream = response.GetResponseStream();
+                Assert.IsNotNull(stream);
+                string expectedContents;
+                using (var reader = new StreamReader(stream, Encoding.Default)) {
+                    expectedContents = reader.ReadToEnd();
+                }
+                var actualContents = File.ReadAllText(scriptFileFullName);
+                Assert.AreEqual(expectedContents, actualContents);
+            }
         }
 
         [Then(@"no artifact exists")]
