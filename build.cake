@@ -28,8 +28,8 @@ Task("UpdateBuildCake")
       using (var webClient = new System.Net.WebClient()) {
         webClient.DownloadFile(latestBuildCakeUrl, buildCakeFileName);
       }
-      if (oldContents != System.IO.File.ReadAllText(buildCakeFileName)) {
-	    Error("Your build.cake file has been updated. Please retry running it.");
+      if (oldContents.Replace("\r\n", "\n") != System.IO.File.ReadAllText(buildCakeFileName).Replace("\r\n", "\n")) {
+	    throw new Exception("Your build.cake file has been updated. Please retry running it.");
       }
 	}
   });
