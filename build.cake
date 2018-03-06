@@ -26,6 +26,7 @@ Task("UpdateBuildCake")
     if (checkIfBuildCakeIsOutdated) {
       var oldContents = System.IO.File.ReadAllText(buildCakeFileName);
       var request = System.Net.WebRequest.Create(latestBuildCakeUrl) as System.Net.HttpWebRequest;
+      request.CachePolicy = new System.Net.Cache.HttpRequestCachePolicy(System.Net.Cache.HttpRequestCacheLevel.NoCacheNoStore);
 	  string newContents;
       using (var response = (System.Net.HttpWebResponse)request.GetResponse()) {
         var stream = response.GetResponseStream();
