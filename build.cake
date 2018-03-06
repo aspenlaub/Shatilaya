@@ -7,7 +7,7 @@ var buildFolder = MakeAbsolute(Directory("./artifacts")).FullPath;
 var objFolder = MakeAbsolute(Directory("./temp/obj")).FullPath;
 var currentGitBranch = GitBranchCurrent(DirectoryPath.FromString("."));
 var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
-var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake&g=" + System.Guid.NewGuid();
+var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake?g=" + System.Guid.NewGuid();
 var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
 var checkIfBuildCakeIsOutdated = true;
 
