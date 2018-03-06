@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
@@ -18,18 +17,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void Initialize() {
             DeleteFolder(CakeFolder());
             DeleteFolder(ShatilFolder());
-            var cakeFolder = CakeFolder();
-            var url = "https://github.com/cake-build/example";
-            Repository.Clone(url, cakeFolder.FullName, new CloneOptions { BranchName = "master" });
-            var powershellExecuter = new PowershellExecuter();
-            IList<string> errors;
-            powershellExecuter.ExecutePowershellScriptFile(cakeFolder.FullName + @"\build.ps1", out errors);
-            Assert.IsFalse(errors.Any());
-            CakeExeFileFullName = cakeFolder.FullName + @"\tools\Cake\cake.exe";
-            Assert.IsTrue(File.Exists(CakeExeFileFullName));
+            var cakeInstaller = new CakeInstaller();
+            cakeInstaller.InstallCake(CakeFolder());
+            CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 
             ShatilFolderFullName = ShatilFolder();
-            url = "https://github.com/aspenlaub/Shatilaya.git";
+            const string url = "https://github.com/aspenlaub/Shatilaya.git";
             Repository.Clone(url, ShatilFolderFullName.FullName, new CloneOptions { BranchName = "master" });
 
             Sut = new CakeRunner();

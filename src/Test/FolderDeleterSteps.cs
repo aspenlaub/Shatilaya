@@ -15,7 +15,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Sut = new FolderDeleter();
         }
 
-        [AfterScenario]
+        [AfterScenario("FolderDeleter")]
         public void CleanUp() {
             if (!Directory.Exists(Folder.FullName)) { return; }
 

@@ -45,7 +45,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner(null, 0);
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "FolderDeleter", "\tIn order not to delete large folders by mistake\r\n\tI want to use a special folder" +
-                    " deleter component", ProgrammingLanguage.CSharp, ((string[])(null)));
+                    " deleter component", ProgrammingLanguage.CSharp, new string[] {
+                        "FolderDeleter"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -83,29 +84,38 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
             testRunner.CollectScenarioErrors();
         }
         
+        public virtual void FeatureBackground()
+        {
+#line 6
+#line 7
+ testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+        }
+        
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Simple small folder can be deleted")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FolderDeleter")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("FolderDeleter")]
         public virtual void SimpleSmallFolderCanBeDeleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple small folder can be deleted", ((string[])(null)));
-#line 5
+#line 9
 this.ScenarioSetup(scenarioInfo);
 #line 6
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 7
- testRunner.And("the folder contains 10 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 8
- testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 9
- testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+this.FeatureBackground();
 #line 10
- testRunner.Then("the result is yes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Given("the folder contains 10 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 11
- testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 12
- testRunner.When("I ask the folder deleter to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 13
+ testRunner.Then("the result is yes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 14
+ testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 15
+ testRunner.When("I ask the folder deleter to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 16
  testRunner.Then("the folder is gone", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -114,26 +124,27 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Simple large folder cannot be deleted")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FolderDeleter")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("FolderDeleter")]
         public virtual void SimpleLargeFolderCannotBeDeleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple large folder cannot be deleted", ((string[])(null)));
-#line 15
-this.ScenarioSetup(scenarioInfo);
-#line 16
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 17
- testRunner.And("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 18
- testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
 #line 19
- testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 20
- testRunner.Then("the result is no", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 21
- testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 22
- testRunner.When("I ask the folder deleter to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Then("the result is no", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 23
+ testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+ testRunner.When("I ask the folder deleter to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 25
  testRunner.Then("the folder is still there", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -142,24 +153,25 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Simple large folder under git control can be deleted")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FolderDeleter")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("FolderDeleter")]
         public virtual void SimpleLargeFolderUnderGitControlCanBeDeleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple large folder under git control can be deleted", ((string[])(null)));
-#line 25
-this.ScenarioSetup(scenarioInfo);
-#line 26
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 27
- testRunner.And("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
 #line 28
- testRunner.And("there is a .git subfolder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 29
- testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("there is a .git subfolder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 30
- testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 31
- testRunner.Then("the result is yes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 32
+ testRunner.Then("the result is yes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 33
  testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -168,15 +180,16 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Simple large folder ending with \\obj can be deleted")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FolderDeleter")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("FolderDeleter")]
         public virtual void SimpleLargeFolderEndingWithObjCanBeDeleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple large folder ending with \\obj can be deleted", ((string[])(null)));
-#line 34
-this.ScenarioSetup(scenarioInfo);
 #line 35
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
 #line 36
- testRunner.And("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.Given("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 37
  testRunner.And("the folder ends with \\obj", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 38
@@ -194,24 +207,25 @@ this.ScenarioSetup(scenarioInfo);
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
         [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Simple large folder beneath c:\\temp can be deleted")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "FolderDeleter")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("FolderDeleter")]
         public virtual void SimpleLargeFolderBeneathCTempCanBeDeleted()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Simple large folder beneath c:\\temp can be deleted", ((string[])(null)));
 #line 43
 this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
 #line 44
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 45
- testRunner.And("the folder contains 20 files", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 46
  testRunner.And("the folder is located beneath c:\\temp", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 47
+#line 46
  testRunner.When("I ask the folder deleter if I am allowed to delete the folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 48
+#line 47
  testRunner.And("I ask the folder deleter to double-check this", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 49
+#line 48
  testRunner.Then("the result is yes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 50
+#line 49
  testRunner.And("the double-check agrees", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

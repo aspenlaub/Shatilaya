@@ -17,6 +17,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return (T)DefaultComponents[typeof(T)];
         }
 
+        // ReSharper disable once UnusedMember.Local
         private T DefaultComponent<T, T2>(Func<T2> constructor) where T : class where T2 : T {
             if (!DefaultComponents.ContainsKey(typeof(T))) {
                 DefaultComponents[typeof(T)] = constructor();
@@ -27,5 +28,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(); } }
         public IFolderDeleter FolderDeleter { get { return DefaultComponent<IFolderDeleter, FolderDeleter>(); } }
         public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
+        public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
     }
 }

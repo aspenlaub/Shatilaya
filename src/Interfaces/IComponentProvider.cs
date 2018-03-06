@@ -3,5 +3,6 @@
         ICakeRunner CakeRunner { get; }
         IFolderDeleter FolderDeleter { get; }
         IGitUtilities GitUtilities { get; }
+        ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
     }
 }

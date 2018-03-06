@@ -108,6 +108,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CakeBuild.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CakeBuild.feature</DependentUpon>
+    </Compile>
+    <Compile Include="CakeBuildSteps.cs" />
+    <Compile Include="CakeInstaller.cs" />
     <Compile Include="CakeRunnerTest.cs" />
     <Compile Include="ComponentProviderTest.cs" />
     <Compile Include="FolderDeleter.feature.cs">
@@ -137,6 +144,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="CakeBuild.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>CakeBuild.feature.cs</LastGenOutput>
+    </None>
     <None Include="failure.cake" />
     <None Include="FolderDeleter.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>

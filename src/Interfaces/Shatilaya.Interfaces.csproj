@@ -43,6 +43,7 @@
     <Compile Include="IComponentProvider.cs" />
     <Compile Include="IFolderDeleter.cs" />
     <Compile Include="IGitUtilities.cs" />
+    <Compile Include="ILatestBuildCakeScriptProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
