@@ -25,10 +25,16 @@ Task("UpdateBuildCake")
   .Does(() => {
     if (checkIfBuildCakeIsOutdated) {
       var oldContents = System.IO.File.ReadAllText(buildCakeFileName);
-      using (var webClient = new System.Net.WebClient()) {
-        webClient.DownloadFile(latestBuildCakeUrl, buildCakeFileName);
+      var request = System.Net.WebRequest.Create(latestBuildCakeUrl) as System.Net.HttpWebRequest;
+	  string newContents;
+      using (var response = (System.Net.HttpWebResponse)request.GetResponse()) {
+        var stream = response.GetResponseStream();
+        using (var reader = new StreamReader(stream, Encoding.Default)) {
+          newContents = reader.ReadToEnd();
+		}
       }
-      if (oldContents.Replace("\r\n", "\n") != System.IO.File.ReadAllText(buildCakeFileName).Replace("\r\n", "\n")) {
+      if (oldContents.Replace("\r\n", "\n") != newContents.Replace("\r\n", "\n")) {
+	    System.IO.File.WriteAllText(buildCakeFileName, newContents);
 	    throw new Exception("Your build.cake file has been updated. Please retry running it.");
       }
 	}
