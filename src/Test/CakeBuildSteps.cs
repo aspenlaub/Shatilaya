@@ -12,7 +12,7 @@ using TechTalk.SpecFlow;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class CakeBuildSteps {
-        protected IList<string> CakeErrors;
+        protected IList<string> CakeMessages, CakeErrors;
 
         [AfterFeature("CakeBuild")]
         public static void CleanUpFeature() {
@@ -57,9 +57,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(currentScriptFileName, latestScript);
         }
 
+        [Given(@"I change the cake script so that debug build is suppressed")]
+        public void GivenIChangeTheCakeScriptSoThatDebugBuildIsSuppressed() {
+            var scriptFileName = ChabFolder().FullName + @"\build.cake";
+            var script = File.ReadAllText(scriptFileName);
+            Assert.IsTrue(script.Contains(@"doDebugCompilation = true;"));
+            script = script.Replace(@"doDebugCompilation = true;", @"doDebugCompilation = false;");
+            File.WriteAllText(scriptFileName, script);
+        }
+
         [Given(@"Nuget packages are not restored yet")]
         public void GivenNugetPackagesAreNotRestoredYet() {
             Assert.IsFalse(OctoPackFolder().Exists());
+        }
+
+        [Given(@"I change a source file so that it cannot be compiled")]
+        public void GivenIChangeASourceFileSoThatItCannotBeCompiled() {
+            var folder = ChabFolder().SubFolder("src");
+            var fileName = folder.FullName + @"\Oven.cs";
+            Assert.IsTrue(File.Exists(fileName));
+            var contents = File.ReadAllText(fileName);
+            Assert.IsTrue(contents.Contains(@"new Cake()"));
+            contents = contents.Replace(@"new Cake()", @"old Cake()");
+            File.WriteAllText(fileName, contents);
         }
 
         [When(@"I run the build\.cake script")]
@@ -68,7 +88,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
             var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
-            runner.CallCake(cakeExeFileFullName, scriptFileFullName, out CakeErrors);
+            runner.CallCake(cakeExeFileFullName, scriptFileFullName, out CakeMessages, out CakeErrors);
         }
 
         [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
@@ -110,6 +130,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"no cake errors were reported")]
         public void ThenNoCakeErrorsWereReported() {
             Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
+        }
+
+        [Then(@"Debug artifacts were produced")]
+        public void ThenDebugArtifactsWereProduced() {
+            var folder = ChabFolder().SubFolder("artifacts");
+            Assert.AreEqual(2, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.TopDirectoryOnly).Length);
+        }
+
+        [Then(@"no nupkg files were produced")]
+        public void ThenNoNupkgFilesWereProduced() {
+            var folder = ChabFolder().SubFolder("artifacts");
+            Assert.IsFalse(Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Any());
+        }
+
+        [Then(@"a compilation error was reported for the changed source file")]
+        public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
+            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
+            Assert.IsTrue(CakeMessages.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
+        }
+
+        [Then(@"build step ""(.*)"" was skipped")]
+        public void ThenBuildStepWasSkipped(string p0) {
+            Assert.IsTrue(CakeMessages.Any(m => m.Contains(p0) && m.Contains(@"Skipped")));
         }
 
         protected static IFolder CakeFolder() {

@@ -13,6 +13,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected static string CakeExeFileFullName;
         protected static IFolder ShatilFolderFullName;
 
+        protected const string ThisIsNotCake = @"This is not a cake!";
+
         [TestInitialize]
         public void Initialize() {
             DeleteFolder(CakeFolder());
@@ -53,19 +55,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanCallScriptWithoutErrors() {
-            IList<string> errors;
+            IList<string> messages, errors;
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\success.cake", out errors);
+            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\success.cake", out messages, out errors);
             Assert.IsFalse(errors.Any());
+            Assert.IsTrue(messages.Any(m => m.Contains(@"Task")));
+            Assert.IsTrue(messages.Any(m => m.Contains(@"Duration")));
+            Assert.IsTrue(messages.Any(m => m.Contains(@"00:00:00")));
         }
 
         [TestMethod]
         public void CanCallScriptWithErrors() {
-            IList<string> errors;
+            IList<string> messages, errors;
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\failure.cake", out errors);
+            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\failure.cake", out messages, out errors);
             Assert.AreEqual(1, errors.Count);
             Assert.AreEqual("This is not a cake!", errors[0]);
+            Assert.IsTrue(messages.Any(m => m.Contains(@"Task")));
+            Assert.IsTrue(messages.Any(m => m.Contains(@"Duration")));
+            Assert.IsTrue(messages.Any(m => m.Contains(@"00:00:00")));
+            Assert.IsFalse(messages.Any(m => m.Contains(ThisIsNotCake)));
         }
     }
 }

@@ -6,7 +6,8 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class CakeRunner : ICakeRunner {
-        public void CallCake(string cakeExeFullName, string scriptFileFullName, out IList<string> errors) {
+        public void CallCake(string cakeExeFullName, string scriptFileFullName, out IList<string> messages, out IList<string> errors) {
+            messages = new List<string>();
             errors = new List<string>();
 
             if (!File.Exists(cakeExeFullName)) {
@@ -33,6 +34,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             cmd.Start();
             while (!cmd.StandardError.EndOfStream) {
                 errors.Add(cmd.StandardError.ReadLine());
+            }
+            while (!cmd.StandardOutput.EndOfStream) {
+                messages.Add(cmd.StandardOutput.ReadLine());
             }
         }
     }

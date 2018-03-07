@@ -7,7 +7,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// </summary>
         /// <param name="cakeExeFullName"></param>
         /// <param name="scriptFileFullName"></param>
+        /// <param name="messages"></param>
         /// <param name="errors"></param>
-        void CallCake(string cakeExeFullName, string scriptFileFullName, out IList<string> errors);
+        void CallCake(string cakeExeFullName, string scriptFileFullName, out IList<string> messages, out IList<string> errors);
     }
 }
