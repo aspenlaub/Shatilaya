@@ -9,8 +9,8 @@ Background:
 
 Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 	When I run the build.cake script
-	Then no cake errors were reported
-	And the build.cake file is identical to the latest found on the GitHub Shatilaya master branch
+	Then the build.cake file is identical to the latest found on the GitHub Shatilaya master branch
+	And I get an error message saying that I need to rerun my cake script
 
 Scenario: Output folders are cleaned up
 	Given I copy the latest build.cake script from my Shatilaya solution

@@ -155,6 +155,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(CakeMessages.Any(m => m.Contains(p0) && m.Contains(@"Skipped")));
         }
 
+        [Then(@"I get an error message saying that I need to rerun my cake script")]
+        public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
+            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"build.cake file has been updated")));
+        }
+
         protected static IFolder CakeFolder() {
             return new Folder(Path.GetTempPath() + nameof(CakeBuildSteps) + @"\Cake");
         }
