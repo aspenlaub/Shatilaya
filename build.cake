@@ -1,8 +1,16 @@
 #load "solution.cake"
 #addin nuget:?package=Cake.Git
+#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
+
+using Folder = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities.Folder;
+using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderUpdater;
+using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.FolderUpdateMethod;
+
+masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
+masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
 
 var target = Argument("target", "Default");
-var buildFolder = MakeAbsolute(Directory("./artifacts")).FullPath;
+var artifactsFolder = MakeAbsolute(Directory("./artifacts")).FullPath;
 var objFolder = MakeAbsolute(Directory("./temp/obj")).FullPath;
 var currentGitBranch = GitBranchCurrent(DirectoryPath.FromString("."));
 var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
@@ -14,7 +22,7 @@ var doDebugCompilation = true;
 Setup(ctx => { 
   Information("Solution is: " + solution);
   Information("Target is: " + target);
-  Information("BuildFolder is: " + buildFolder);
+  Information("Artifacts folder is: " + artifactsFolder);
   Information("Current GIT branch is: " + currentGitBranch.FriendlyName);
   Information("Build cake is: " + buildCakeFileName);
   Information("Latest build cake URL is: " + latestBuildCakeUrl);
@@ -35,15 +43,13 @@ Task("UpdateBuildCake")
 
 Task("Clean")
   .Description("Clean up artifacts and intermediate output folder")
-  .IsDependentOn("UpdateBuildCake")
   .Does(() => {
-    CleanDirectory(buildFolder); 
+    CleanDirectory(artifactsFolder); 
     CleanDirectory(objFolder); 
   });
 
 Task("Restore")
   .Description("Restore nuget packages")
-  .IsDependentOn("Clean")
   .Does(() => {
     NuGetRestore(solution, new NuGetRestoreSettings { ConfigFile = "./src/.nuget/nuget.config" });
   });
@@ -51,7 +57,6 @@ Task("Restore")
 Task("DebugBuild")
   .WithCriteria(() => doDebugCompilation)
   .Description("Debug build solution and clean up intermediate output folder")
-  .IsDependentOn("Restore")
   .Does(() => {
     MSBuild(solution, settings 
       => settings
@@ -59,14 +64,31 @@ Task("DebugBuild")
         .SetVerbosity(Verbosity.Minimal)
 		.UseToolVersion(MSBuildToolVersion.NET46)
         .WithProperty("Platform", "Any CPU")
-        .WithProperty("OutDir", buildFolder));
+        .WithProperty("OutDir", artifactsFolder));
     CleanDirectory(objFolder); 
+  })
+  .OnError(() => {
+    throw new Exception("Debug build failed");
+  });
+
+Task("CopyDebugArtifacts")
+  .WithCriteria(() => doDebugCompilation && currentGitBranch.FriendlyName == "master")
+  .Description("Debug build solution and clean up intermediate output folder")
+  .Does(() => {
+    var updater = new FolderUpdater();
+	updater.UpdateFolder(new Folder(artifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), FolderUpdateMethod.Assemblies);
+  })
+  .OnError(() => {
+    throw new Exception("Copying of debug artifacts failed");
   });
 
 Task("Default")
+  .IsDependentOn("UpdateBuildCake")
+  .IsDependentOn("Clean")
+  .IsDependentOn("Restore")
   .IsDependentOn("DebugBuild")
-  .Does(() =>
-{
-});
+  .IsDependentOn("CopyDebugArtifacts")
+  .Does(() => {
+  });
 
 RunTarget(target);

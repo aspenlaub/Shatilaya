@@ -53,6 +53,7 @@
     <Compile Include="ComponentProvider.cs" />
     <Compile Include="FolderDeleter.cs" />
     <Compile Include="FolderExtensions.cs" />
+    <Compile Include="FolderUpdater.cs" />
     <Compile Include="GitUtilities.cs" />
     <Compile Include="LatestBuildCakeScriptProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

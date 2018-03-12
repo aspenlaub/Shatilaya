@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
@@ -13,6 +15,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class CakeBuildSteps {
         protected IList<string> CakeMessages, CakeErrors;
+        protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot;
 
         [AfterFeature("CakeBuild")]
         public static void CleanUpFeature() {
@@ -24,10 +27,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [AfterScenario("CakeBuild")]
         public void CleanUpScenario() {
-            if (!ChabFolder().Exists()) { return; }
-
             var deleter = new FolderDeleter();
-            deleter.DeleteFolder(ChabFolder());
+
+            if (ChabFolder().Exists()) {
+                deleter.DeleteFolder(ChabFolder());
+            }
+
+            if (!MasterDebugBinFolder().Exists()) { return; }
+
+            deleter.DeleteFolder(MasterDebugBinFolder());
         }
 
         [Given(@"I have a green solution with unit tests in a temp folder")]
@@ -82,8 +90,46 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(fileName, contents);
         }
 
+        [Given(@"I clean up the master debug folder")]
+        public void GivenICleanUpTheMasterDebugFolder() {
+            var folder = MasterDebugBinFolder();
+            if (!folder.Exists()) { return; }
+
+            var deleter = new FolderDeleter();
+            deleter.DeleteFolder(folder);
+        }
+
+        [Given(@"I run the build\.cake script")]
+        public void GivenIRunTheBuild_CakeScript() {
+            RunTheBuild_CakeScript();
+        }
+
+        [Given(@"I save the master debug folder file names and timestamps")]
+        public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
+            MasterDebugBinFolderSnapshot = new Dictionary<string, DateTime>();
+            var folder = MasterDebugBinFolder();
+            Assert.IsTrue(folder.Exists());
+            foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+                MasterDebugBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
+            }
+        }
+
+        [Given(@"I wait two seconds")]
+        public void GivenIWaitTwoSeconds() {
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+        }
+
+        [Given(@"no cake errors were reported")]
+        public void GivenNoCakeErrorsWereReported() {
+            Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
+        }
+
         [When(@"I run the build\.cake script")]
         public void WhenIRunTheBuild_CakeScript() {
+            RunTheBuild_CakeScript();
+        }
+
+        protected void RunTheBuild_CakeScript() {
             var runner = new CakeRunner();
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
@@ -160,6 +206,28 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"build.cake file has been updated")));
         }
 
+        [Then(@"I find the artifacts in the master debug folder")]
+        public void ThenIFindTheArtifactsInTheMasterDebugFolder() {
+            var folder = MasterDebugBinFolder();
+            Assert.IsTrue(folder.Exists());
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
+        }
+
+        [Then(@"the contents of the master debug folder has not changed")]
+        public void ThenTheContentsOfTheMasterDebugFolderHasNotChanged() {
+            foreach (var snapShotFile in MasterDebugBinFolderSnapshot) {
+                Assert.AreEqual(snapShotFile.Value, File.GetLastWriteTime(snapShotFile.Key));
+            }
+        }
+
+        [Then(@"I do not find any artifacts in the master debug folder")]
+        public void ThenIDoNotFindAnyArtifactsInTheMasterDebugFolder() {
+            var folder = MasterDebugBinFolder();
+            Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
+        }
+
         protected static IFolder CakeFolder() {
             return new Folder(Path.GetTempPath() + nameof(CakeBuildSteps) + @"\Cake");
         }
@@ -183,6 +251,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         protected static IFolder IntermediateOutputFolder() {
             return ChabFolder().SubFolder(@"temp/obj");
+        }
+
+        protected static IFolder MasterDebugBinFolder() {
+            return ChabFolder().ParentFolder().SubFolder(@"ChabBin/Debug");
         }
     }
 }

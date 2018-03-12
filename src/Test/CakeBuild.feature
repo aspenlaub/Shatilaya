@@ -40,3 +40,30 @@ Scenario: Debug build failure
 	And I change a source file so that it cannot be compiled
 	When I run the build.cake script
 	Then a compilation error was reported for the changed source file
+
+Scenario: Debug artifacts are copied to the master debug folder
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master debug folder
+	When I run the build.cake script
+	Then no cake errors were reported
+	And I find the artifacts in the master debug folder
+
+Scenario: Only changed artifacts are copied to the master debug folder
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master debug folder
+	And I run the build.cake script
+	And no cake errors were reported
+	And I save the master debug folder file names and timestamps
+    And I wait two seconds
+	When I run the build.cake script
+	Then no cake errors were reported
+	And the contents of the master debug folder has not changed
+
+Scenario: Debug artifacts are not copied to the master debug folder when build fails
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master debug folder
+	And I change a source file so that it cannot be compiled
+	When I run the build.cake script
+	Then a compilation error was reported for the changed source file
+	And I do not find any artifacts in the master debug folder
+

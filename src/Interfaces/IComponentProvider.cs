@@ -2,6 +2,7 @@
     public interface IComponentProvider {
         ICakeRunner CakeRunner { get; }
         IFolderDeleter FolderDeleter { get; }
+        IFolderUpdater FolderUpdater { get; }
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
     }

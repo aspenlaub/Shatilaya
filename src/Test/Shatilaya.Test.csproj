@@ -125,6 +125,12 @@
     <Compile Include="FolderDeleterSteps.cs" />
     <Compile Include="FolderExtensionsTest.cs" />
     <Compile Include="FolderTest.cs" />
+    <Compile Include="FolderUpdater.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FolderUpdater.feature</DependentUpon>
+    </Compile>
+    <Compile Include="FolderUpdaterSteps.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -152,6 +158,10 @@
     <None Include="FolderDeleter.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>FolderDeleter.feature.cs</LastGenOutput>
+    </None>
+    <None Include="FolderUpdater.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>FolderUpdater.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="success.cake" />

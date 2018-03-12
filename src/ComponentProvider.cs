@@ -27,6 +27,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(); } }
         public IFolderDeleter FolderDeleter { get { return DefaultComponent<IFolderDeleter, FolderDeleter>(); } }
+        public IFolderUpdater FolderUpdater { get { return DefaultComponent<IFolderUpdater, FolderUpdater>(); } }
         public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
         public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
     }

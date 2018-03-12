@@ -42,6 +42,7 @@
     <Compile Include="IFolderDeleteGates.cs" />
     <Compile Include="IComponentProvider.cs" />
     <Compile Include="IFolderDeleter.cs" />
+    <Compile Include="IFolderUpdater.cs" />
     <Compile Include="IGitUtilities.cs" />
     <Compile Include="ILatestBuildCakeScriptProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
