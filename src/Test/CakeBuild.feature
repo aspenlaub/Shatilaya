@@ -67,3 +67,10 @@ Scenario: Debug artifacts are not copied to the master debug folder when build f
 	Then a compilation error was reported for the changed source file
 	And I do not find any artifacts in the master debug folder
 
+Scenario: Debug artifacts are not copied to the master debug folder when a test case fails
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master debug folder
+	And I change a test case so that it will fail
+	When I run the build.cake script
+	Then a failed test case was reported
+	And I do not find any artifacts in the master debug folder

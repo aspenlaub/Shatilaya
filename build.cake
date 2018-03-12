@@ -16,6 +16,7 @@ var currentGitBranch = GitBranchCurrent(DirectoryPath.FromString("."));
 var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
 var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake?g=" + System.Guid.NewGuid();
 var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
+var tempFolder = MakeAbsolute(Directory("./temp")).FullPath;
 var checkIfBuildCakeIsOutdated = true;
 var doDebugCompilation = true;
 
@@ -64,11 +65,17 @@ Task("DebugBuild")
         .SetVerbosity(Verbosity.Minimal)
 		.UseToolVersion(MSBuildToolVersion.NET46)
         .WithProperty("Platform", "Any CPU")
-        .WithProperty("OutDir", artifactsFolder));
+        .WithProperty("OutDir", artifactsFolder)
+    );
     CleanDirectory(objFolder); 
-  })
-  .OnError(() => {
-    throw new Exception("Debug build failed");
+  });
+
+Task("RunTestsOnArtifacts")
+  .Description("Run unit tests on artifacts")
+  .Does(() => {
+    MSTest(artifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
+    CleanDirectory(testResultsFolder); 
+    DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
   });
 
 Task("CopyDebugArtifacts")
@@ -76,10 +83,8 @@ Task("CopyDebugArtifacts")
   .Description("Debug build solution and clean up intermediate output folder")
   .Does(() => {
     var updater = new FolderUpdater();
-	updater.UpdateFolder(new Folder(artifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), FolderUpdateMethod.Assemblies);
-  })
-  .OnError(() => {
-    throw new Exception("Copying of debug artifacts failed");
+    updater.UpdateFolder(new Folder(artifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
+      FolderUpdateMethod.Assemblies);
   });
 
 Task("Default")
@@ -87,6 +92,7 @@ Task("Default")
   .IsDependentOn("Clean")
   .IsDependentOn("Restore")
   .IsDependentOn("DebugBuild")
+  .IsDependentOn("RunTestsOnArtifacts")
   .IsDependentOn("CopyDebugArtifacts")
   .Does(() => {
   });

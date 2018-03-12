@@ -38,6 +38,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             deleter.DeleteFolder(MasterDebugBinFolder());
         }
 
+        #region Given
         [Given(@"I have a green solution with unit tests in a temp folder")]
         public void GivenIHaveAGreenSolutionWithUnitTestsInATempFolder() {
             if (ChabFolder().Exists()) {
@@ -124,6 +125,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
         }
 
+        [Given(@"I change a test case so that it will fail")]
+        public void GivenIChangeATestCaseSoThatItWillFail() {
+            var folder = ChabFolder().SubFolder(@"src\Test");
+            var fileName = folder.FullName + @"\OvenTest.cs";
+            Assert.IsTrue(File.Exists(fileName));
+            var contents = File.ReadAllText(fileName);
+            Assert.IsTrue(contents.Contains(@"Assert.IsNotNull"));
+            contents = contents.Replace(@"Assert.IsNotNull", @"Assert.IsNull");
+            File.WriteAllText(fileName, contents);
+        }
+
+        #endregion
+
+        #region When
         [When(@"I run the build\.cake script")]
         public void WhenIRunTheBuild_CakeScript() {
             RunTheBuild_CakeScript();
@@ -136,7 +151,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
             runner.CallCake(cakeExeFileFullName, scriptFileFullName, out CakeMessages, out CakeErrors);
         }
+        #endregion
 
+        #region Then
         [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
         public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
             const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake";
@@ -227,6 +244,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var folder = MasterDebugBinFolder();
             Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
         }
+
+        [Then(@"a failed test case was reported")]
+        public void ThenAFailedTestCaseWasReported() {
+            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"MSTest: Process returned an error")));
+            Assert.IsTrue(CakeMessages.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
+        }
+
+        #endregion
 
         protected static IFolder CakeFolder() {
             return new Folder(Path.GetTempPath() + nameof(CakeBuildSteps) + @"\Cake");
