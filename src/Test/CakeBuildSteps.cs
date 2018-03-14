@@ -33,9 +33,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 deleter.DeleteFolder(ChabFolder());
             }
 
-            if (!MasterDebugBinFolder().Exists()) { return; }
+            if (MasterDebugBinFolder().Exists()) {
+                deleter.DeleteFolder(MasterDebugBinFolder());
+            }
 
-            deleter.DeleteFolder(MasterDebugBinFolder());
+            if (MasterReleaseBinFolder().Exists()) {
+                deleter.DeleteFolder(MasterReleaseBinFolder());
+            }
         }
 
         #region Given
@@ -136,6 +140,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(fileName, contents);
         }
 
+        [Given(@"I disable OctoPack in the project file")]
+        public void GivenIDisableOctoPackInTheProjectFile() {
+            var projectFile = ChabFolder().SubFolder("src").FullName + @"\Chab.csproj";
+            var contents = File.ReadAllText(projectFile);
+            Assert.IsTrue(contents.Contains("<RunOctoPack>true</RunOctoPack>"));
+            contents = contents.Replace("<RunOctoPack>true</RunOctoPack>", "<RunOctoPack>false</RunOctoPack>");
+            File.WriteAllText(projectFile, contents);
+        }
+
         #endregion
 
         #region When
@@ -195,18 +208,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
         }
 
-        [Then(@"Debug artifacts were produced")]
-        public void ThenDebugArtifactsWereProduced() {
-            var folder = ChabFolder().SubFolder("artifacts");
-            Assert.AreEqual(2, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.TopDirectoryOnly).Length);
-        }
-
-        [Then(@"no nupkg files were produced")]
-        public void ThenNoNupkgFilesWereProduced() {
-            var folder = ChabFolder().SubFolder("artifacts");
-            Assert.IsFalse(Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Any());
-        }
-
         [Then(@"a compilation error was reported for the changed source file")]
         public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
             Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
@@ -251,6 +252,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(CakeMessages.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
         }
 
+        [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
+        public void ThenArtifactsWasWereProduced(int p0, string p1) {
+            var folder = ChabFolder().SubFolder(@"artifacts\" + p1);
+            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.TopDirectoryOnly).Length);
+        }
+
+        [Then(@"(.*) ""(.*)"" nupkg file/-s was/were produced")]
+        public void ThenNupkgFileWasWereProduced(int p0, string p1) {
+            var folder = ChabFolder().SubFolder(@"artifacts\" + p1);
+            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
+        }
+
         #endregion
 
         protected static IFolder CakeFolder() {
@@ -280,6 +293,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         protected static IFolder MasterDebugBinFolder() {
             return ChabFolder().ParentFolder().SubFolder(@"ChabBin/Debug");
+        }
+
+        protected static IFolder MasterReleaseBinFolder() {
+            return ChabFolder().ParentFolder().SubFolder(@"ChabBin/Release");
         }
     }
 }

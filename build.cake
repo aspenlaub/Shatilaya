@@ -11,6 +11,8 @@ masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPat
 
 var target = Argument("target", "Default");
 var artifactsFolder = MakeAbsolute(Directory("./artifacts")).FullPath;
+var debugArtifactsFolder = MakeAbsolute(Directory("./artifacts/Debug")).FullPath;
+var releaseArtifactsFolder = MakeAbsolute(Directory("./artifacts/Release")).FullPath;
 var objFolder = MakeAbsolute(Directory("./temp/obj")).FullPath;
 var currentGitBranch = GitBranchCurrent(DirectoryPath.FromString("."));
 var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
@@ -19,6 +21,7 @@ var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
 var tempFolder = MakeAbsolute(Directory("./temp")).FullPath;
 var checkIfBuildCakeIsOutdated = true;
 var doDebugCompilation = true;
+var doReleaseCompilation = true;
 
 Setup(ctx => { 
   Information("Solution is: " + solution);
@@ -57,7 +60,7 @@ Task("Restore")
 
 Task("DebugBuild")
   .WithCriteria(() => doDebugCompilation)
-  .Description("Debug build solution and clean up intermediate output folder")
+  .Description("Build solution in Debug and clean up intermediate output folder")
   .Does(() => {
     MSBuild(solution, settings 
       => settings
@@ -65,26 +68,41 @@ Task("DebugBuild")
         .SetVerbosity(Verbosity.Minimal)
 		.UseToolVersion(MSBuildToolVersion.NET46)
         .WithProperty("Platform", "Any CPU")
-        .WithProperty("OutDir", artifactsFolder)
+        .WithProperty("OutDir", debugArtifactsFolder)
     );
     CleanDirectory(objFolder); 
   });
 
-Task("RunTestsOnArtifacts")
-  .Description("Run unit tests on artifacts")
+Task("RunTestsOnDebugArtifacts")
+  .Description("Run unit tests on Debug artifacts")
   .Does(() => {
-    MSTest(artifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
+    MSTest(debugArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
     CleanDirectory(testResultsFolder); 
     DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
   });
 
 Task("CopyDebugArtifacts")
   .WithCriteria(() => doDebugCompilation && currentGitBranch.FriendlyName == "master")
-  .Description("Debug build solution and clean up intermediate output folder")
+  .Description("Copy Debug artifacts to master Debug binaries folder")
   .Does(() => {
     var updater = new FolderUpdater();
-    updater.UpdateFolder(new Folder(artifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
+    updater.UpdateFolder(new Folder(debugArtifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
       FolderUpdateMethod.Assemblies);
+  });
+
+Task("ReleaseBuild")
+  .WithCriteria(() => doDebugCompilation && doReleaseCompilation)
+  .Description("Build solution in Release and clean up intermediate output folder")
+  .Does(() => {
+    MSBuild(solution, settings 
+      => settings
+        .SetConfiguration("Release")
+        .SetVerbosity(Verbosity.Minimal)
+		.UseToolVersion(MSBuildToolVersion.NET46)
+        .WithProperty("Platform", "Any CPU")
+        .WithProperty("OutDir", releaseArtifactsFolder)
+    );
+    CleanDirectory(objFolder); 
   });
 
 Task("Default")
@@ -92,8 +110,9 @@ Task("Default")
   .IsDependentOn("Clean")
   .IsDependentOn("Restore")
   .IsDependentOn("DebugBuild")
-  .IsDependentOn("RunTestsOnArtifacts")
+  .IsDependentOn("RunTestsOnDebugArtifacts")
   .IsDependentOn("CopyDebugArtifacts")
+  .IsDependentOn("ReleaseBuild")
   .Does(() => {
   });
 

@@ -6,6 +6,7 @@ Feature: CakeBuild
 Background: 
     Given I have a green solution with unit tests in a temp folder
 	And Nuget packages are not restored yet
+	And I disable OctoPack in the project file
 
 Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 	When I run the build.cake script
@@ -32,8 +33,8 @@ Scenario: Debug artifacts are built
 	Given I copy the latest build.cake script from my Shatilaya solution
 	When I run the build.cake script
 	Then no cake errors were reported
-    And Debug artifacts were produced
-	And no nupkg files were produced
+    And 2 "Debug" artifact/-s was/were produced
+	And 0 "Debug" nupkg file/-s was/were produced
 
 Scenario: Debug build failure
 	Given I copy the latest build.cake script from my Shatilaya solution
@@ -74,3 +75,10 @@ Scenario: Debug artifacts are not copied to the master debug folder when a test 
 	When I run the build.cake script
 	Then a failed test case was reported
 	And I do not find any artifacts in the master debug folder
+
+Scenario: Release artifacts are built
+	Given I copy the latest build.cake script from my Shatilaya solution
+	When I run the build.cake script
+	Then no cake errors were reported
+    And 2 "Release" artifact/-s was/were produced
+	And 0 "Release" nupkg file/-s was/were produced
