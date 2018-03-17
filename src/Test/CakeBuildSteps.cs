@@ -168,6 +168,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
         }
 
+        [Given(@"I change a test case so that it will fail in release")]
+        public void GivenIChangeATestCaseSoThatItWillFailInRelease() {
+            var folder = ChabFolder().SubFolder(@"src\Test");
+            var fileName = folder.FullName + @"\OvenTest.cs";
+            Assert.IsTrue(File.Exists(fileName));
+            var contents = File.ReadAllText(fileName);
+            Assert.IsTrue(contents.Contains(@"Assert.IsNotNull(cake);"));
+            contents = contents.Replace("Assert.IsNotNull(cake);", "#if DEBUG\r\nAssert.IsNotNull(cake);\r\n#else\r\nAssert.IsNull(cake);\r\n#endif");
+            File.WriteAllText(fileName, contents);
+        }
+
         #endregion
 
         #region When

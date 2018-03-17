@@ -105,6 +105,14 @@ Task("ReleaseBuild")
     CleanDirectory(objFolder); 
   });
 
+Task("RunTestsOnReleaseArtifacts")
+  .Description("Run unit tests on Release artifacts")
+  .Does(() => {
+    MSTest(releaseArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
+    CleanDirectory(testResultsFolder); 
+    DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
+  });
+
 Task("CopyReleaseArtifacts")
   .WithCriteria(() => doDebugCompilation && doReleaseCompilation && currentGitBranch.FriendlyName == "master")
   .Description("Copy Release artifacts to master Release binaries folder")
@@ -122,6 +130,7 @@ Task("Default")
   .IsDependentOn("RunTestsOnDebugArtifacts")
   .IsDependentOn("CopyDebugArtifacts")
   .IsDependentOn("ReleaseBuild")
+  .IsDependentOn("RunTestsOnReleaseArtifacts")
   .IsDependentOn("CopyReleaseArtifacts")
   .Does(() => {
   });
