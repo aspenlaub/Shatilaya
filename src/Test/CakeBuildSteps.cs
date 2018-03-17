@@ -15,7 +15,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class CakeBuildSteps {
         protected IList<string> CakeMessages, CakeErrors;
-        protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot;
+        protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot, MasterReleaseBinFolderSnapshot;
 
         [AfterFeature("CakeBuild")]
         public static void CleanUpFeature() {
@@ -149,6 +149,25 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(projectFile, contents);
         }
 
+        [Given(@"I clean up the master release folder")]
+        public void GivenICleanUpTheMasterReleaseFolder() {
+            var folder = MasterReleaseBinFolder();
+            if (!folder.Exists()) { return; }
+
+            var deleter = new FolderDeleter();
+            deleter.DeleteFolder(folder);
+        }
+
+        [Given(@"I save the master release folder file names and timestamps")]
+        public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
+            MasterReleaseBinFolderSnapshot = new Dictionary<string, DateTime>();
+            var folder = MasterReleaseBinFolder();
+            Assert.IsTrue(folder.Exists());
+            foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+                MasterReleaseBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
+            }
+        }
+
         #endregion
 
         #region When
@@ -262,6 +281,28 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void ThenNupkgFileWasWereProduced(int p0, string p1) {
             var folder = ChabFolder().SubFolder(@"artifacts\" + p1);
             Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
+        }
+
+        [Then(@"I find the artifacts in the master release folder")]
+        public void ThenIFindTheArtifactsInTheMasterReleaseFolder() {
+            var folder = MasterReleaseBinFolder();
+            Assert.IsTrue(folder.Exists());
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
+        }
+
+        [Then(@"the contents of the master release folder has not changed")]
+        public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
+            foreach (var snapShotFile in MasterReleaseBinFolderSnapshot) {
+                Assert.AreEqual(snapShotFile.Value, File.GetLastWriteTime(snapShotFile.Key));
+            }
+        }
+
+        [Then(@"I do not find any artifacts in the master release folder")]
+        public void ThenIDoNotFindAnyArtifactsInTheMasterReleaseFolder() {
+            var folder = MasterReleaseBinFolder();
+            Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
         }
 
         #endregion

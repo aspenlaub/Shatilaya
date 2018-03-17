@@ -105,6 +105,15 @@ Task("ReleaseBuild")
     CleanDirectory(objFolder); 
   });
 
+Task("CopyReleaseArtifacts")
+  .WithCriteria(() => doDebugCompilation && doReleaseCompilation && currentGitBranch.FriendlyName == "master")
+  .Description("Copy Release artifacts to master Release binaries folder")
+  .Does(() => {
+    var updater = new FolderUpdater();
+    updater.UpdateFolder(new Folder(releaseArtifactsFolder.Replace('/', '\\')), new Folder(masterReleaseBinFolder.Replace('/', '\\')), 
+      FolderUpdateMethod.Assemblies);
+  });
+
 Task("Default")
   .IsDependentOn("UpdateBuildCake")
   .IsDependentOn("Clean")
@@ -113,6 +122,7 @@ Task("Default")
   .IsDependentOn("RunTestsOnDebugArtifacts")
   .IsDependentOn("CopyDebugArtifacts")
   .IsDependentOn("ReleaseBuild")
+  .IsDependentOn("CopyReleaseArtifacts")
   .Does(() => {
   });
 

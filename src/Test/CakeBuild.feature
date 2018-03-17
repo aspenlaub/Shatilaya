@@ -82,3 +82,29 @@ Scenario: Release artifacts are built
 	Then no cake errors were reported
     And 2 "Release" artifact/-s was/were produced
 	And 0 "Release" nupkg file/-s was/were produced
+
+Scenario: Release artifacts are copied to the master release folder
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master release folder
+	When I run the build.cake script
+	Then no cake errors were reported
+	And I find the artifacts in the master release folder
+
+Scenario: Only changed artifacts are copied to the master release folder
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master release folder
+	And I run the build.cake script
+	And no cake errors were reported
+	And I save the master release folder file names and timestamps
+    And I wait two seconds
+	When I run the build.cake script
+	Then no cake errors were reported
+	And the contents of the master release folder has not changed
+
+Scenario: Release artifacts are not copied to the master release folder when build fails
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master release folder
+	And I change a source file so that it cannot be compiled
+	When I run the build.cake script
+	Then a compilation error was reported for the changed source file
+	And I do not find any artifacts in the master release folder
