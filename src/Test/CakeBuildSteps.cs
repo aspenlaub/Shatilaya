@@ -140,15 +140,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(fileName, contents);
         }
 
-        [Given(@"I disable OctoPack in the project file")]
-        public void GivenIDisableOctoPackInTheProjectFile() {
-            var projectFile = ChabFolder().SubFolder("src").FullName + @"\Chab.csproj";
-            var contents = File.ReadAllText(projectFile);
-            Assert.IsTrue(contents.Contains("<RunOctoPack>true</RunOctoPack>"));
-            contents = contents.Replace("<RunOctoPack>true</RunOctoPack>", "<RunOctoPack>false</RunOctoPack>");
-            File.WriteAllText(projectFile, contents);
-        }
-
         [Given(@"I clean up the master release folder")]
         public void GivenICleanUpTheMasterReleaseFolder() {
             var folder = MasterReleaseBinFolder();
@@ -177,6 +168,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(contents.Contains(@"Assert.IsNotNull(cake);"));
             contents = contents.Replace("Assert.IsNotNull(cake);", "#if DEBUG\r\nAssert.IsNotNull(cake);\r\n#else\r\nAssert.IsNull(cake);\r\n#endif");
             File.WriteAllText(fileName, contents);
+        }
+
+        [Given(@"I modify the build\.cake script")]
+        public void GivenIModifyTheBuild_CakeScript() {
+            var scriptFileName = ChabFolder().FullName + @"\build.cake";
+            var contents = File.ReadAllText(scriptFileName);
+            contents = contents.Replace("Please retry", "Retry");
+            File.WriteAllText(scriptFileName, contents);
         }
 
         #endregion

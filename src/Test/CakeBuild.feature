@@ -6,9 +6,9 @@ Feature: CakeBuild
 Background: 
     Given I have a green solution with unit tests in a temp folder
 	And Nuget packages are not restored yet
-	And I disable OctoPack in the project file
 
 Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
+    Given I modify the build.cake script
 	When I run the build.cake script
 	Then the build.cake file is identical to the latest found on the GitHub Shatilaya master branch
 	And I get an error message saying that I need to rerun my cake script
