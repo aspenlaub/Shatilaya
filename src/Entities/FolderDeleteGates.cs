@@ -7,5 +7,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         public bool NotTooManyFilesInFolder { get; set; }
         public bool CTemp { get; set; }
         public bool IsGitCheckOutFolder { get; set; }
+        public bool UserTemp { get; set; }
     }
 }

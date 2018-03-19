@@ -24,5 +24,10 @@
         /// Does the folder originate from a git checkout?
         /// </summary>
         bool IsGitCheckOutFolder { get; set; }
+
+        /// <summary>
+        /// Is the folder located beneath the users temp folder (%TEMP%)?
+        /// </summary>
+        bool UserTemp { get; set; }
     }
 }

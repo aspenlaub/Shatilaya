@@ -15,12 +15,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 EndsWithObj = folder.FullName.EndsWith(Obj),
                 CTemp = folder.FullName.StartsWith(CTemp, StringComparison.OrdinalIgnoreCase),
                 NotTooManyFilesInFolder = true,
-                IsGitCheckOutFolder = Directory.Exists(folder.FullName + GitUtilities.GitSubFolder)
+                IsGitCheckOutFolder = Directory.Exists(folder.FullName + GitUtilities.GitSubFolder),
+                UserTemp = folder.FullName.StartsWith(Path.GetTempPath())
             };
             if (folderDeleteGates.IsGitCheckOutFolder) { return true; }
             if (!folderDeleteGates.FolderNameIsLongEnough) { return false; }
             if (folderDeleteGates.EndsWithObj) { return true; }
             if (folderDeleteGates.CTemp) { return true; }
+            if (folderDeleteGates.UserTemp) { return true; }
 
             var directoryInfo = new DirectoryInfo(folder.FullName);
             var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList();
@@ -39,6 +41,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (folder.FullName.Length <= MinimumFolderNameLength) { return false; }
             if (folder.FullName.EndsWith(Obj)) { return true; }
             if (folder.FullName.StartsWith(CTemp, StringComparison.OrdinalIgnoreCase)) { return true; }
+            if (folder.FullName.StartsWith(Path.GetTempPath())) { return true; }
 
             var directoryInfo = new DirectoryInfo(folder.FullName);
             var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList();

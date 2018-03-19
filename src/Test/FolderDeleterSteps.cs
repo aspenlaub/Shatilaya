@@ -22,9 +22,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Directory.Delete(Folder.FullName, true);
         }
 
-        [Given(@"I have a folder beneath the user's temp folder")]
+        [Given(@"I have a folder beneath the user's temp folder but not immediately recognizable as such")]
         public void GivenIHaveAFolderBeneathTheUserSTempFolder() {
-            Folder = new Folder(Path.GetTempPath() + nameof(FolderDeleterSteps));
+            Folder = new Folder(Path.GetTempPath().Replace(@"\", @"\.\") + nameof(FolderDeleterSteps));
             if (Directory.Exists(Folder.FullName)) {
                 Directory.Delete(Folder.FullName, true);
             }

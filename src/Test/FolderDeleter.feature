@@ -4,7 +4,7 @@ Feature: FolderDeleter
 	I want to use a special folder deleter component
 
 Background:
-	Given I have a folder beneath the user's temp folder
+	Given I have a folder beneath the user's temp folder but not immediately recognizable as such
 
 Scenario: Simple small folder can be deleted
 	Given the folder contains 10 files

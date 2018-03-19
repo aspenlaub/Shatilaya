@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,43 +15,32 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeBuildSteps {
         protected IList<string> CakeMessages, CakeErrors;
         protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot, MasterReleaseBinFolderSnapshot;
+        protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(CakeBuildSteps), "Chab");
+
+        [BeforeFeature("CakeBuild")]
+        public static void RecreateCakeFolder() {
+            ChabTarget.DeleteCakeFolder();
+            ChabTarget.CreateCakeFolder();
+        }
 
         [AfterFeature("CakeBuild")]
-        public static void CleanUpFeature() {
-            if (!CakeFolder().Exists()) { return; }
-
-            var deleter = new FolderDeleter();
-            deleter.DeleteFolder(CakeFolder());
+        public static void DeleteCakeFolder() {
+            ChabTarget.DeleteCakeFolder();
         }
 
         [AfterScenario("CakeBuild")]
         public void CleanUpScenario() {
-            var deleter = new FolderDeleter();
-
-            if (ChabFolder().Exists()) {
-                deleter.DeleteFolder(ChabFolder());
-            }
-
-            if (MasterDebugBinFolder().Exists()) {
-                deleter.DeleteFolder(MasterDebugBinFolder());
-            }
-
-            if (MasterReleaseBinFolder().Exists()) {
-                deleter.DeleteFolder(MasterReleaseBinFolder());
-            }
+            ChabTarget.Delete();
         }
 
         #region Given
         [Given(@"I have a green solution with unit tests in a temp folder")]
         public void GivenIHaveAGreenSolutionWithUnitTestsInATempFolder() {
-            if (ChabFolder().Exists()) {
+            if (ChabTarget.Exists()) {
                 CleanUpScenario();
             }
-            if (!CakeFolder().Exists()) {
-                CreateCakeFolder();
-            }
             const string url = "https://github.com/aspenlaub/Chab.git";
-            Repository.Clone(url, ChabFolder().FullName, new CloneOptions { BranchName = "master" });
+            Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
         }
 
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution")]
@@ -61,7 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             Assert.IsTrue(latestScript.Length > 120);
             Assert.IsTrue(latestScript.Contains("#load \"solution.cake\""));
-            var currentScriptFileName = ChabFolder().FullName + @"\build.cake";
+            var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);
             if (latestScript == currentScript) { return; }
 
@@ -72,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I change the cake script so that debug build is suppressed")]
         public void GivenIChangeTheCakeScriptSoThatDebugBuildIsSuppressed() {
-            var scriptFileName = ChabFolder().FullName + @"\build.cake";
+            var scriptFileName = ChabTarget.FullName() + @"\build.cake";
             var script = File.ReadAllText(scriptFileName);
             Assert.IsTrue(script.Contains(@"doDebugCompilation = true;"));
             script = script.Replace(@"doDebugCompilation = true;", @"doDebugCompilation = false;");
@@ -86,7 +74,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I change a source file so that it cannot be compiled")]
         public void GivenIChangeASourceFileSoThatItCannotBeCompiled() {
-            var folder = ChabFolder().SubFolder("src");
+            var folder = ChabTarget.Folder().SubFolder("src");
             var fileName = folder.FullName + @"\Oven.cs";
             Assert.IsTrue(File.Exists(fileName));
             var contents = File.ReadAllText(fileName);
@@ -97,7 +85,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I clean up the master debug folder")]
         public void GivenICleanUpTheMasterDebugFolder() {
-            var folder = MasterDebugBinFolder();
+            var folder = ChabTarget.MasterDebugBinFolder();
             if (!folder.Exists()) { return; }
 
             var deleter = new FolderDeleter();
@@ -106,13 +94,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I run the build\.cake script")]
         public void GivenIRunTheBuild_CakeScript() {
-            RunTheBuild_CakeScript();
+            ChabTarget.RunBuildCakeScript(out CakeMessages, out CakeErrors);
         }
 
         [Given(@"I save the master debug folder file names and timestamps")]
         public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
             MasterDebugBinFolderSnapshot = new Dictionary<string, DateTime>();
-            var folder = MasterDebugBinFolder();
+            var folder = ChabTarget.MasterDebugBinFolder();
             Assert.IsTrue(folder.Exists());
             foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
                 MasterDebugBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
@@ -131,7 +119,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I change a test case so that it will fail")]
         public void GivenIChangeATestCaseSoThatItWillFail() {
-            var folder = ChabFolder().SubFolder(@"src\Test");
+            var folder = ChabTarget.Folder().SubFolder(@"src\Test");
             var fileName = folder.FullName + @"\OvenTest.cs";
             Assert.IsTrue(File.Exists(fileName));
             var contents = File.ReadAllText(fileName);
@@ -142,7 +130,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I clean up the master release folder")]
         public void GivenICleanUpTheMasterReleaseFolder() {
-            var folder = MasterReleaseBinFolder();
+            var folder = ChabTarget.MasterReleaseBinFolder();
             if (!folder.Exists()) { return; }
 
             var deleter = new FolderDeleter();
@@ -152,7 +140,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Given(@"I save the master release folder file names and timestamps")]
         public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
             MasterReleaseBinFolderSnapshot = new Dictionary<string, DateTime>();
-            var folder = MasterReleaseBinFolder();
+            var folder = ChabTarget.MasterReleaseBinFolder();
             Assert.IsTrue(folder.Exists());
             foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
                 MasterReleaseBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
@@ -161,7 +149,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I change a test case so that it will fail in release")]
         public void GivenIChangeATestCaseSoThatItWillFailInRelease() {
-            var folder = ChabFolder().SubFolder(@"src\Test");
+            var folder = ChabTarget.Folder().SubFolder(@"src\Test");
             var fileName = folder.FullName + @"\OvenTest.cs";
             Assert.IsTrue(File.Exists(fileName));
             var contents = File.ReadAllText(fileName);
@@ -172,7 +160,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I modify the build\.cake script")]
         public void GivenIModifyTheBuild_CakeScript() {
-            var scriptFileName = ChabFolder().FullName + @"\build.cake";
+            var scriptFileName = ChabTarget.Folder().FullName + @"\build.cake";
             var contents = File.ReadAllText(scriptFileName);
             contents = contents.Replace("Please retry", "Retry");
             File.WriteAllText(scriptFileName, contents);
@@ -183,15 +171,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region When
         [When(@"I run the build\.cake script")]
         public void WhenIRunTheBuild_CakeScript() {
-            RunTheBuild_CakeScript();
-        }
-
-        protected void RunTheBuild_CakeScript() {
-            var runner = new CakeRunner();
-            var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
-            Assert.IsTrue(File.Exists(cakeExeFileFullName));
-            var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
-            runner.CallCake(cakeExeFileFullName, scriptFileFullName, out CakeMessages, out CakeErrors);
+            ChabTarget.RunBuildCakeScript(out CakeMessages, out CakeErrors);
         }
         #endregion
 
@@ -203,7 +183,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(request);
             using (var response = (HttpWebResponse)request.GetResponse()) {
                 Assert.IsNotNull(response);
-                var scriptFileFullName = ChabFolder().FullName + @"\build.cake";
+                var scriptFileFullName = ChabTarget.FullName() + @"\build.cake";
                 var stream = response.GetResponseStream();
                 Assert.IsNotNull(stream);
                 string expectedContents;
@@ -255,7 +235,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I find the artifacts in the master debug folder")]
         public void ThenIFindTheArtifactsInTheMasterDebugFolder() {
-            var folder = MasterDebugBinFolder();
+            var folder = ChabTarget.MasterDebugBinFolder();
             Assert.IsTrue(folder.Exists());
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
@@ -271,7 +251,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I do not find any artifacts in the master debug folder")]
         public void ThenIDoNotFindAnyArtifactsInTheMasterDebugFolder() {
-            var folder = MasterDebugBinFolder();
+            var folder = ChabTarget.MasterDebugBinFolder();
             Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
         }
 
@@ -283,19 +263,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
         public void ThenArtifactsWasWereProduced(int p0, string p1) {
-            var folder = ChabFolder().SubFolder(@"artifacts\" + p1);
+            var folder = ChabTarget.Folder().SubFolder(@"artifacts\" + p1);
             Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.TopDirectoryOnly).Length);
         }
 
         [Then(@"(.*) ""(.*)"" nupkg file/-s was/were produced")]
         public void ThenNupkgFileWasWereProduced(int p0, string p1) {
-            var folder = ChabFolder().SubFolder(@"artifacts\" + p1);
+            var folder = ChabTarget.Folder().SubFolder(@"artifacts\" + p1);
             Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
         }
 
         [Then(@"I find the artifacts in the master release folder")]
         public void ThenIFindTheArtifactsInTheMasterReleaseFolder() {
-            var folder = MasterReleaseBinFolder();
+            var folder = ChabTarget.MasterReleaseBinFolder();
             Assert.IsTrue(folder.Exists());
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
@@ -311,43 +291,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I do not find any artifacts in the master release folder")]
         public void ThenIDoNotFindAnyArtifactsInTheMasterReleaseFolder() {
-            var folder = MasterReleaseBinFolder();
+            var folder = ChabTarget.MasterReleaseBinFolder();
             Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
         }
 
         #endregion
 
-        protected static IFolder CakeFolder() {
-            return new Folder(Path.GetTempPath() + nameof(CakeBuildSteps) + @"\Cake");
-        }
-
-        protected static IFolder ChabFolder() {
-            return new Folder(Path.GetTempPath() + nameof(CakeBuildSteps) + @"\Chab");
-        }
-
-        protected void CreateCakeFolder() {
-            var cakeInstaller = new CakeInstaller();
-            cakeInstaller.InstallCake(CakeFolder());
-        }
-
         protected static IFolder OctoPackFolder() {
-            return ChabFolder().SubFolder(@"src\packages\OctoPack.3.6.3");
+            return ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
         }
 
         protected static IFolder ArtifactsFolder() {
-            return ChabFolder().SubFolder(@"artifacts");
+            return ChabTarget.Folder().SubFolder(@"artifacts");
         }
 
         protected static IFolder IntermediateOutputFolder() {
-            return ChabFolder().SubFolder(@"temp/obj");
-        }
-
-        protected static IFolder MasterDebugBinFolder() {
-            return ChabFolder().ParentFolder().SubFolder(@"ChabBin/Debug");
-        }
-
-        protected static IFolder MasterReleaseBinFolder() {
-            return ChabFolder().ParentFolder().SubFolder(@"ChabBin/Release");
+            return ChabTarget.Folder().SubFolder(@"temp/obj");
         }
     }
 }

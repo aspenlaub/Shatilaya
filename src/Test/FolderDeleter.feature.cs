@@ -88,7 +88,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
         {
 #line 6
 #line 7
- testRunner.Given("I have a folder beneath the user\'s temp folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I have a folder beneath the user\'s temp folder but not immediately recognizable a" +
+                    "s such", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
         }
         
