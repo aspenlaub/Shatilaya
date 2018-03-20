@@ -68,5 +68,68 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
                 return ResourceManager.GetString("FileNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no valid XML in &apos;{0}&apos;.
+        /// </summary>
+        internal static string InvalidPackagesConfigFile {
+            get {
+                return ResourceManager.GetString("InvalidPackagesConfigFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no valid XML in &apos;{0}&apos;.
+        /// </summary>
+        internal static string InvalidProjectFile {
+            get {
+                return ResourceManager.GetString("InvalidProjectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one element was not found in &apos;{0}&apos;.
+        /// </summary>
+        internal static string MissingElementInProjectFile {
+            get {
+                return ResourceManager.GetString("MissingElementInProjectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; has been updated.
+        /// </summary>
+        internal static string NuSpecFileUpdated {
+            get {
+                return ResourceManager.GetString("NuSpecFileUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File &apos;{0}&apos; requests package &apos;{1}&apos; with version {2}, but another one version {3}.
+        /// </summary>
+        internal static string PackageVersionClashDueToFile {
+            get {
+                return ResourceManager.GetString("PackageVersionClashDueToFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no project file &apos;{0}&apos;.
+        /// </summary>
+        internal static string ProjectFileNotFound {
+            get {
+                return ResourceManager.GetString("ProjectFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top level namespace &apos;{0}&apos; does not contain any dot (&apos;.&apos;).
+        /// </summary>
+        internal static string TopLevelNamespaceLacksADot {
+            get {
+                return ResourceManager.GetString("TopLevelNamespaceLacksADot", resourceCulture);
+            }
+        }
     }
 }

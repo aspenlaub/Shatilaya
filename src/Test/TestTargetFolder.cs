@@ -7,7 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class TestTargetFolder {
-        protected string TestClassId, SolutionId;
+        public string TestClassId { get; }
+        public string SolutionId { get; }
 
         public TestTargetFolder(string testClassId, string solutionId) {
             TestClassId = testClassId;

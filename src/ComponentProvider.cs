@@ -17,7 +17,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return (T)DefaultComponents[typeof(T)];
         }
 
-        // ReSharper disable once UnusedMember.Local
         private T DefaultComponent<T, T2>(Func<T2> constructor) where T : class where T2 : T {
             if (!DefaultComponents.ContainsKey(typeof(T))) {
                 DefaultComponents[typeof(T)] = constructor();
@@ -30,5 +29,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public IFolderUpdater FolderUpdater { get { return DefaultComponent<IFolderUpdater, FolderUpdater>(); } }
         public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
         public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
+        public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
+        public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }
     }
 }

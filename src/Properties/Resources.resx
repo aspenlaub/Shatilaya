@@ -120,4 +120,25 @@
   <data name="FileNotFound" xml:space="preserve">
     <value>File "{0}" not found</value>
   </data>
+  <data name="InvalidPackagesConfigFile" xml:space="preserve">
+    <value>There is no valid XML in '{0}'</value>
+  </data>
+  <data name="InvalidProjectFile" xml:space="preserve">
+    <value>There is no valid XML in '{0}'</value>
+  </data>
+  <data name="MissingElementInProjectFile" xml:space="preserve">
+    <value>At least one element was not found in '{0}'</value>
+  </data>
+  <data name="NuSpecFileUpdated" xml:space="preserve">
+    <value>'{0}' has been updated</value>
+  </data>
+  <data name="PackageVersionClashDueToFile" xml:space="preserve">
+    <value>File '{0}' requests package '{1}' with version {2}, but another one version {3}</value>
+  </data>
+  <data name="ProjectFileNotFound" xml:space="preserve">
+    <value>There is no project file '{0}'</value>
+  </data>
+  <data name="TopLevelNamespaceLacksADot" xml:space="preserve">
+    <value>Top level namespace '{0}' does not contain any dot ('.')</value>
+  </data>
 </root>
