@@ -6,7 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class FolderDeleter : IFolderDeleter {
-        protected readonly string Obj = @"\obj", CTemp = @"C:\Temp\", TestResults = @"\TestResults\";
+        protected readonly string Obj = @"\obj", CTemp = @"C:\Temp\", TestResults = @"\TestResults";
         protected readonly int MinimumFolderNameLength = 20;
 
         public bool CanDeleteFolder(IFolder folder, out IFolderDeleteGates folderDeleteGates) {
