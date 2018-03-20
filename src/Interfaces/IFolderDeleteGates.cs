@@ -29,5 +29,10 @@
         /// Is the folder located beneath the users temp folder (%TEMP%)?
         /// </summary>
         bool UserTemp { get; set; }
+
+        /// <summary>
+        /// Does the folder contain test results?
+        /// </summary>
+        bool TestResults { get; set; }
     }
 }

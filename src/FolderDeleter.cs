@@ -6,7 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class FolderDeleter : IFolderDeleter {
-        protected readonly string Obj = @"\obj", CTemp = @"C:\Temp\";
+        protected readonly string Obj = @"\obj", CTemp = @"C:\Temp\", TestResults = @"\TestResults\";
         protected readonly int MinimumFolderNameLength = 20;
 
         public bool CanDeleteFolder(IFolder folder, out IFolderDeleteGates folderDeleteGates) {
@@ -16,13 +16,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 CTemp = folder.FullName.StartsWith(CTemp, StringComparison.OrdinalIgnoreCase),
                 NotTooManyFilesInFolder = true,
                 IsGitCheckOutFolder = Directory.Exists(folder.FullName + GitUtilities.GitSubFolder),
-                UserTemp = folder.FullName.StartsWith(Path.GetTempPath())
+                UserTemp = folder.FullName.StartsWith(Path.GetTempPath()),
+                TestResults = folder.FullName.Contains(TestResults)
             };
             if (folderDeleteGates.IsGitCheckOutFolder) { return true; }
             if (!folderDeleteGates.FolderNameIsLongEnough) { return false; }
             if (folderDeleteGates.EndsWithObj) { return true; }
             if (folderDeleteGates.CTemp) { return true; }
             if (folderDeleteGates.UserTemp) { return true; }
+            if (folderDeleteGates.TestResults) { return true; }
 
             var directoryInfo = new DirectoryInfo(folder.FullName);
             var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList();
@@ -42,6 +44,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (folder.FullName.EndsWith(Obj)) { return true; }
             if (folder.FullName.StartsWith(CTemp, StringComparison.OrdinalIgnoreCase)) { return true; }
             if (folder.FullName.StartsWith(Path.GetTempPath())) { return true; }
+            if (folder.FullName.Contains(TestResults)) { return true; }
 
             var directoryInfo = new DirectoryInfo(folder.FullName);
             var files = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories).ToList();
