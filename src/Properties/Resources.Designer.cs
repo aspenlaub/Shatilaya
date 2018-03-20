@@ -70,6 +70,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Folder &apos;{0}&apos; is obsolete.
+        /// </summary>
+        internal static string FolderIsObsolete {
+            get {
+                return ResourceManager.GetString("FolderIsObsolete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no valid XML in &apos;{0}&apos;.
         /// </summary>
         internal static string InvalidPackagesConfigFile {
@@ -102,6 +111,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         internal static string NuSpecFileUpdated {
             get {
                 return ResourceManager.GetString("NuSpecFileUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder &apos;{0}&apos; is obsolete and has been deleted.
+        /// </summary>
+        internal static string ObsoleteFolderDeleted {
+            get {
+                return ResourceManager.GetString("ObsoleteFolderDeleted", resourceCulture);
             }
         }
         

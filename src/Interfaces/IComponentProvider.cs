@@ -6,6 +6,7 @@
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
         INuSpecCreator NuSpecCreator { get; }
+        IObsoletePackageFinder ObsoletePackageFinder { get; }
         IPackageConfigsScanner PackageConfigsScanner { get; }
     }
 }

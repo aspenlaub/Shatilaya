@@ -50,6 +50,7 @@
     <Compile Include="IGitUtilities.cs" />
     <Compile Include="ILatestBuildCakeScriptProvider.cs" />
     <Compile Include="INuSpecCreator.cs" />
+    <Compile Include="IObsoletePackageFinder.cs" />
     <Compile Include="IPackageConfigsScanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
