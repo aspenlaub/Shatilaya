@@ -1,0 +1,11 @@
+using System;
+using System.Collections.Generic;
+
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
+    public interface IDependencyNode {
+        string Id { get; set; }
+        string Version { get; set; }
+        List<IDependencyNode> FindNodes(Func<IDependencyNode, bool> criteriaFunc);
+        string ToString();
+    }
+}

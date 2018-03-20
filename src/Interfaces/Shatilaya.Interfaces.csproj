@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="ErrorsAndInfos.cs" />
     <Compile Include="ICakeRunner.cs" />
+    <Compile Include="IDependencyNode.cs" />
+    <Compile Include="IDependencyTreeBuilder.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IFolderDeleteGates.cs" />
     <Compile Include="IComponentProvider.cs" />
@@ -49,6 +51,7 @@
     <Compile Include="IFolderUpdater.cs" />
     <Compile Include="IGitUtilities.cs" />
     <Compile Include="ILatestBuildCakeScriptProvider.cs" />
+    <Compile Include="INugetPackageRestorer.cs" />
     <Compile Include="INuSpecCreator.cs" />
     <Compile Include="IObsoletePackageFinder.cs" />
     <Compile Include="IPackageConfigsScanner.cs" />
