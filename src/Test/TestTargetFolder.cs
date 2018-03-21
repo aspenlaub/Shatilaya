@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
@@ -54,12 +53,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             deleter.DeleteFolder(CakeFolder());
         }
 
-        public void RunBuildCakeScript(out IList<string> cakeMessages, out IList<string> cakeErrors) {
-            var runner = new CakeRunner();
+        public void RunBuildCakeScript(IComponentProvider componentProvider, ErrorsAndInfos errorsAndInfos) {
+            var runner = componentProvider.CakeRunner;
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
             var scriptFileFullName = FullName() + @"\build.cake";
-            runner.CallCake(cakeExeFileFullName, scriptFileFullName, out cakeMessages, out cakeErrors);
+            runner.CallCake(cakeExeFileFullName, scriptFileFullName, errorsAndInfos);
         }
 
         public void CreateCakeFolder() {

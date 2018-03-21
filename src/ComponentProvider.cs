@@ -24,15 +24,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return (T)DefaultComponents[typeof(T)];
         }
 
-        public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(); } }
+        public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(() => new CakeRunner(this)); } }
         public IDependencyTreeBuilder DependencyTreeBuilder { get { return DefaultComponent<IDependencyTreeBuilder, DependencyTreeBuilder>(); } }
         public IFolderDeleter FolderDeleter { get { return DefaultComponent<IFolderDeleter, FolderDeleter>(); } }
         public IFolderUpdater FolderUpdater { get { return DefaultComponent<IFolderUpdater, FolderUpdater>(); } }
         public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
         public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
-        public INugetPackageRestorer NugetPackageRestorer { get { return DefaultComponent<INugetPackageRestorer, NugetPackageRestorer>(); } }
+        public INugetPackageInstaller NugetPackageInstaller { get { return DefaultComponent<INugetPackageInstaller, NugetPackageInstaller>(() => new NugetPackageInstaller(this)); } }
+        public INugetPackageRestorer NugetPackageRestorer { get { return DefaultComponent<INugetPackageRestorer, NugetPackageRestorer>(() => new NugetPackageRestorer(this)); } }
         public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
         public IObsoletePackageFinder ObsoletePackageFinder { get { return DefaultComponent<IObsoletePackageFinder, ObsoletePackageFinder>(() => new ObsoletePackageFinder(this)); } }
         public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }
+        public IProcessRunner ProcessRunner { get { return DefaultComponent<IProcessRunner, ProcessRunner>(); } }
     }
 }

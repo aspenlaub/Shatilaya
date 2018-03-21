@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Moq;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -27,7 +27,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
             Repository.Clone(url, ShatilFolderFullName.FullName, new CloneOptions { BranchName = "master" });
 
-            Sut = new CakeRunner();
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
+            Sut = new CakeRunner(componentProviderMock.Object);
         }
 
         [TestCleanup]
@@ -55,26 +57,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanCallScriptWithoutErrors() {
-            IList<string> messages, errors;
+            var errorsAndInfos = new ErrorsAndInfos();
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\success.cake", out messages, out errors);
-            Assert.IsFalse(errors.Any());
-            Assert.IsTrue(messages.Any(m => m.Contains(@"Task")));
-            Assert.IsTrue(messages.Any(m => m.Contains(@"Duration")));
-            Assert.IsTrue(messages.Any(m => m.Contains(@"00:00:00")));
+            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\success.cake", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Task")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Duration")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"00:00:00")));
         }
 
         [TestMethod]
         public void CanCallScriptWithErrors() {
-            IList<string> messages, errors;
+            var errorsAndInfos = new ErrorsAndInfos();
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\failure.cake", out messages, out errors);
-            Assert.AreEqual(1, errors.Count);
-            Assert.AreEqual("This is not a cake!", errors[0]);
-            Assert.IsTrue(messages.Any(m => m.Contains(@"Task")));
-            Assert.IsTrue(messages.Any(m => m.Contains(@"Duration")));
-            Assert.IsTrue(messages.Any(m => m.Contains(@"00:00:00")));
-            Assert.IsFalse(messages.Any(m => m.Contains(ThisIsNotCake)));
+            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\failure.cake", errorsAndInfos);
+            Assert.AreEqual(1, errorsAndInfos.Errors.Count);
+            Assert.AreEqual("This is not a cake!", errorsAndInfos.Errors[0]);
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Task")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Duration")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"00:00:00")));
+            Assert.IsFalse(errorsAndInfos.Infos.Any(m => m.Contains(ThisIsNotCake)));
         }
     }
 }

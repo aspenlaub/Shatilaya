@@ -1,20 +1,19 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.IO;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
-    public class ObsoletePackageFinderTest {
-        protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "Chab");
+    public class NugetPackageInstallerTest {
+        protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(NugetPackageInstallerTest), "Chab");
         protected IComponentProvider ComponentProvider;
 
-        public ObsoletePackageFinderTest() {
+        public NugetPackageInstallerTest() {
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
-            componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             ComponentProvider = componentProviderMock.Object;
         }
 
@@ -40,25 +39,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanFindObsoletePackages() {
+        public void CanInstallNugetPackage() {
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
             Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
+            Assert.IsFalse(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
+            var sut = new NugetPackageInstaller(ComponentProvider);
+
             var errorsAndInfos = new ErrorsAndInfos();
-            ChabTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("src"), "OctoPack", "3.6.0", false, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Adding package") && i.Contains("to folder")));
+            Assert.IsTrue(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
+
             errorsAndInfos = new ErrorsAndInfos();
-            var componentProviderMock = new Mock<IComponentProvider>();
-            componentProviderMock.Setup(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
-            var sut = new ObsoletePackageFinder(componentProviderMock.Object);
-            var solutionFolder = ChabTarget.Folder().SubFolder("src");
-            sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
+            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("tools"), "Cake", "0.24.0", true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
-            Assert.IsFalse(errorsAndInfos.Infos.Any());
-            var obsoleteFolder = solutionFolder.SubFolder(@"packages\ObsoPack");
-            Directory.CreateDirectory(obsoleteFolder.FullName);
-            sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
+            Assert.IsTrue(ChabTarget.Folder().SubFolder(@"tools\Cake").Exists());
+            Assert.IsTrue(File.Exists(ChabTarget.Folder().SubFolder(@"tools\Cake").FullName + @"\Cake.exe"));
+
+            errorsAndInfos = new ErrorsAndInfos();
+            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("tools"), "Cake", "", true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
-            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains(obsoleteFolder.FullName) && i.Contains("has been deleted")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Successfully uninstalled") && i.Contains("Cake.0.24.0")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Successfully installed")));
         }
     }
 }

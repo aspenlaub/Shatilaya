@@ -6,9 +6,11 @@
         IFolderUpdater FolderUpdater { get; }
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
+        INugetPackageInstaller NugetPackageInstaller { get; }
         INugetPackageRestorer NugetPackageRestorer { get; }
         INuSpecCreator NuSpecCreator { get; }
         IObsoletePackageFinder ObsoletePackageFinder { get; }
         IPackageConfigsScanner PackageConfigsScanner { get; }
+        IProcessRunner ProcessRunner { get; }
     }
 }

@@ -3,11 +3,19 @@ using System.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Moq;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class DependencyTreeBuilderTest {
         protected static TestTargetFolder ShatilayaTarget = new TestTargetFolder(nameof(DependencyTreeBuilderTest), "Shatilaya");
+        protected IComponentProvider ComponentProvider;
+
+        public DependencyTreeBuilderTest() {
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
+            ComponentProvider = componentProviderMock.Object;
+        }
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
@@ -34,10 +42,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void ThereArentAnyUnwantedDependencies() {
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
             Repository.Clone(url, ShatilayaTarget.FullName(), new CloneOptions { BranchName = "master" });
-            var restorer = new NugetPackageRestorer();
+            var restorer = new NugetPackageRestorer(ComponentProvider);
             var sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
             Directory.CreateDirectory(sourceFolder + @"\packages\");
-            restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".sln");
+            var errorsAndInfos = new ErrorsAndInfos();
+            restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".sln", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
             var builder = new DependencyTreeBuilder();
             var dependencyTree = builder.BuildDependencyTree(sourceFolder + @"\packages\");
             var nodes = dependencyTree.FindNodes(ContainsThreadingTasks);

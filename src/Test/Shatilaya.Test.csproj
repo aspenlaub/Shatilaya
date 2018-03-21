@@ -152,6 +152,7 @@
     <Compile Include="FolderUpdaterSteps.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
+    <Compile Include="NugetPackageInstallerTest.cs" />
     <Compile Include="NuSpecCreatorTest.cs" />
     <Compile Include="ObsoletePackageFinderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

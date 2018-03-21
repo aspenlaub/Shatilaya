@@ -8,14 +8,23 @@ using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using TechTalk.SpecFlow;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class CakeBuildSteps {
-        protected IList<string> CakeMessages, CakeErrors;
+        protected ErrorsAndInfos CakeErrorsAndInfos = new ErrorsAndInfos();
         protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot, MasterReleaseBinFolderSnapshot;
         protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(CakeBuildSteps), "Chab");
+        protected IComponentProvider ComponentProvider;
+
+        public CakeBuildSteps() {
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
+            componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
+            ComponentProvider = componentProviderMock.Object;
+        }
 
         [BeforeFeature("CakeBuild")]
         public static void RecreateCakeFolder() {
@@ -94,7 +103,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I run the build\.cake script")]
         public void GivenIRunTheBuild_CakeScript() {
-            ChabTarget.RunBuildCakeScript(out CakeMessages, out CakeErrors);
+            ChabTarget.RunBuildCakeScript(ComponentProvider, CakeErrorsAndInfos);
         }
 
         [Given(@"I save the master debug folder file names and timestamps")]
@@ -114,7 +123,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"no cake errors were reported")]
         public void GivenNoCakeErrorsWereReported() {
-            Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
+            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Given(@"I change a test case so that it will fail")]
@@ -171,7 +180,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region When
         [When(@"I run the build\.cake script")]
         public void WhenIRunTheBuild_CakeScript() {
-            ChabTarget.RunBuildCakeScript(out CakeMessages, out CakeErrors);
+            ChabTarget.RunBuildCakeScript(ComponentProvider, CakeErrorsAndInfos);
         }
         #endregion
 
@@ -214,23 +223,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"no cake errors were reported")]
         public void ThenNoCakeErrorsWereReported() {
-            Assert.IsFalse(CakeErrors.Any(), string.Join("\r\n", CakeErrors));
+            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Then(@"a compilation error was reported for the changed source file")]
         public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
-            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
-            Assert.IsTrue(CakeMessages.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
         }
 
         [Then(@"build step ""(.*)"" was skipped")]
         public void ThenBuildStepWasSkipped(string p0) {
-            Assert.IsTrue(CakeMessages.Any(m => m.Contains(p0) && m.Contains(@"Skipped")));
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(p0) && m.Contains(@"Skipped")));
         }
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]
         public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"build.cake file has been updated")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")));
         }
 
         [Then(@"I find the artifacts in the master debug folder")]
@@ -257,8 +266,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"a failed test case was reported")]
         public void ThenAFailedTestCaseWasReported() {
-            Assert.IsTrue(CakeErrors.Any(e => e.Contains(@"MSTest: Process returned an error")));
-            Assert.IsTrue(CakeMessages.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSTest: Process returned an error")));
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
         }
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
