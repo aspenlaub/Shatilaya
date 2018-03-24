@@ -5,6 +5,7 @@
 using Folder = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities.Folder;
 using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderUpdater;
 using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.FolderUpdateMethod;
+using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ErrorsAndInfos;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
 masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
