@@ -24,6 +24,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 
             ShatilFolderFullName = ShatilFolder();
+            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
             Repository.Clone(url, ShatilFolderFullName.FullName, new CloneOptions { BranchName = "master" });
 

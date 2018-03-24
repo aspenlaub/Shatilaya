@@ -40,6 +40,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void ThereArentAnyUnwantedDependencies() {
+            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
             Repository.Clone(url, ShatilayaTarget.FullName(), new CloneOptions { BranchName = "master" });
             var restorer = new NugetPackageRestorer(ComponentProvider);

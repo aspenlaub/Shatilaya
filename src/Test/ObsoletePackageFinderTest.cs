@@ -41,6 +41,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanFindObsoletePackages() {
+            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
             Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
             var errorsAndInfos = new ErrorsAndInfos();

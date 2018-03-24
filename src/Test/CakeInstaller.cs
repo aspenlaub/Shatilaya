@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeInstaller {
         public void InstallCake(IFolder cakeFolder) {
+            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
             const string url = "https://github.com/cake-build/example";
             Repository.Clone(url, cakeFolder.FullName, new CloneOptions { BranchName = "master" });
             var powershellExecuter = new PowershellExecuter();

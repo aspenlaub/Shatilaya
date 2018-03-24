@@ -40,6 +40,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanInstallNugetPackage() {
+            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
             Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
             Assert.IsFalse(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());

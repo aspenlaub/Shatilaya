@@ -200,6 +200,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     expectedContents = reader.ReadToEnd();
                 }
                 var actualContents = File.ReadAllText(scriptFileFullName);
+
+                /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
                 Assert.AreEqual(expectedContents, actualContents);
             }
         }
