@@ -11,24 +11,32 @@ using TechTalk.SpecFlow;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class FolderUpdaterSteps {
-        protected IFolder SourceFolder, DestinationFolder;
+        protected IFolder SourceFolder, SourceSubFolder, DestinationFolder;
         protected string EmptySourceFileFullName, EmptyDestinationFileFullName;
+        protected string EmptySourceFileInSubFolderFullName, EmptyDestinationFileInSubFolderFullName;
         protected IDictionary<int, string> SourceFiles, DestinationFiles;
         protected IDictionary<string, DateTime> LastWriteTimeBeforeUpdate;
         protected IFolderUpdater Sut;
+        protected FileStream LockFileStream;
+        protected ErrorsAndInfos UpdateFolderErrorsAndInfos;
 
         public FolderUpdaterSteps() {
             SourceFolder = new Folder(Path.GetTempPath() + nameof(FolderUpdaterSteps) + @"\Source");
             DestinationFolder = new Folder(Path.GetTempPath() + nameof(FolderUpdaterSteps) + @"\Destination");
             EmptySourceFileFullName = SourceFolder.FullName + @"\empty.txt";
             EmptyDestinationFileFullName = DestinationFolder.FullName + @"\empty.txt";
+            SourceSubFolder = SourceFolder.SubFolder("Subb");
+            EmptySourceFileInSubFolderFullName = SourceSubFolder.FullName + @"\empty.txt";
+            EmptyDestinationFileInSubFolderFullName = DestinationFolder.SubFolder("Subb").FullName + @"\empty.txt";
             SourceFiles = new Dictionary<int, string>();
             DestinationFiles = new Dictionary<int, string>();
+            UpdateFolderErrorsAndInfos = new ErrorsAndInfos();
             Sut = new FolderUpdater();
         }
 
         [AfterScenario("FolderUpdater")]
         public void CleanUp() {
+            LockFileStream?.Dispose();
             if (SourceFolder.Exists()) {
                 Directory.Delete(SourceFolder.FullName, true);
             }
@@ -56,6 +64,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(EmptySourceFileFullName, "");
         }
 
+        [Given(@"I place an empty file into a sub folder of the source folder")]
+        public void GivenIPlaceAnEmptyFileIntoASubFolderOfTheSourceFolder() {
+            Directory.CreateDirectory(SourceSubFolder.FullName);
+            File.WriteAllText(EmptySourceFileInSubFolderFullName, "");
+        }
+
         [Given(@"I place a (.*) kilobyte file into the source folder")]
         public void GivenIPlaceAKilobyteFileIntoTheSourceFolder(int p0) {
             var bytes = new List<byte>();
@@ -71,7 +85,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllBytes(SourceFiles[p0], bytes.ToArray());
         }
 
-        [Given(@"I place a (.*) kilobyte file with (.*) differences into the destintion folder")]
+        [Given(@"I place a (.*) kilobyte file with (.*) differences into the destination folder")]
         public void GivenIPlaceAKilobyteFileWithDifferencesIntoTheDestintionFolder(int p0, int p1) {
             var bytes = new List<byte>();
             byte b = 0;
@@ -91,6 +105,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllBytes(DestinationFiles[p0], bytes.ToArray());
         }
 
+        [Given(@"I lock the (.*) kilobyte file")]
+        public void GivenILockTheKilobyteFile(int p0) {
+            LockFileStream = new FileStream(DestinationFiles[p0], FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+
         [When(@"I update the destination folder")]
         public void WhenIUpdateTheDestinationFolder() {
             LastWriteTimeBeforeUpdate = new Dictionary<string, DateTime>();
@@ -100,7 +119,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 }
             }
 
-            Sut.UpdateFolder(SourceFolder, DestinationFolder, FolderUpdateMethod.Assemblies);
+            Sut.UpdateFolder(SourceFolder, DestinationFolder, FolderUpdateMethod.Assemblies, UpdateFolderErrorsAndInfos);
         }
 
         [When(@"I overwrite the empty file in the source folder")]
@@ -128,6 +147,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.AreEqual(File.GetLastWriteTime(EmptySourceFileFullName), File.GetLastWriteTime(EmptyDestinationFileFullName));
         }
 
+        [Then(@"the empty file is present in a sub folder of the destination folder")]
+        public void ThenTheEmptyFileIsPresentInASubFolderOfTheDestinationFolder() {
+            File.Exists(EmptyDestinationFileInSubFolderFullName);
+        }
+
+        [Then(@"the last write times of the empty source and the empty destination files in the sub folders are identical")]
+        public void ThenTheLastWriteTimesOfTheEmptySourceAndTheEmptyDestinationFilesInTheSubFoldersAreIdentical() {
+            Assert.AreEqual(File.GetLastWriteTime(EmptySourceFileInSubFolderFullName), File.GetLastWriteTime(EmptyDestinationFileInSubFolderFullName));
+        }
+
         [Then(@"the last write time of the empty destination file is unchanged")]
         public void ThenTheLastWriteTimeOfTheEmptyDestinationFileIsUnchanged() {
             Assert.AreEqual(LastWriteTimeBeforeUpdate[EmptyDestinationFileFullName], File.GetLastWriteTime(EmptyDestinationFileFullName));
@@ -150,6 +179,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"the last write time of the (.*) kilobyte destination file is unchanged")]
         public void ThenTheLastWriteTimeOfTheKilobyteDestinationFileIsUnchanged(int p0) {
             Assert.AreEqual(LastWriteTimeBeforeUpdate[DestinationFiles[p0]], File.GetLastWriteTime(DestinationFiles[p0]));
+        }
+
+        [Then(@"no errors occurred during the folder update")]
+        public void ThenNoErrorsOccurredDuringTheFolderUpdate() {
+            Assert.IsFalse(UpdateFolderErrorsAndInfos.Errors.Any(), string.Join("\r\n", UpdateFolderErrorsAndInfos.Errors));
+        }
+
+        [Then(@"folder update failed because the (.*) kilobyte destination file could not be renamed")]
+        public void ThenFolderUpdateFailedBecauseTheKilobyteDestinationFileCouldNotBeRenamed(int p0) {
+            var expectedError = "Failed to rename '" + p0 + "kilobytes.dll' into '~1~" + p0 + "kilobytes.dll'";
+            Assert.IsTrue(UpdateFolderErrorsAndInfos.Errors.Contains(expectedError));
         }
     }
 }

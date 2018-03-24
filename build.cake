@@ -86,8 +86,12 @@ Task("CopyDebugArtifacts")
   .Description("Copy Debug artifacts to master Debug binaries folder")
   .Does(() => {
     var updater = new FolderUpdater();
+	var updaterErrorsAndInfos = new ErrorsAndInfos();
     updater.UpdateFolder(new Folder(debugArtifactsFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
-      FolderUpdateMethod.Assemblies);
+      FolderUpdateMethod.Assemblies, updaterErrorsAndInfos);
+    if (updaterErrorsAndInfos.Errors.Any()) {
+	  throw new Exception(string.Join("\r\n", updaterErrorsAndInfos.Errors));
+	}
   });
 
 Task("ReleaseBuild")
@@ -118,8 +122,12 @@ Task("CopyReleaseArtifacts")
   .Description("Copy Release artifacts to master Release binaries folder")
   .Does(() => {
     var updater = new FolderUpdater();
+	var updaterErrorsAndInfos = new ErrorsAndInfos();
     updater.UpdateFolder(new Folder(releaseArtifactsFolder.Replace('/', '\\')), new Folder(masterReleaseBinFolder.Replace('/', '\\')), 
-      FolderUpdateMethod.Assemblies);
+      FolderUpdateMethod.Assemblies, updaterErrorsAndInfos);
+    if (updaterErrorsAndInfos.Errors.Any()) {
+	  throw new Exception(string.Join("\r\n", updaterErrorsAndInfos.Errors));
+	}
   });
 
 Task("Default")

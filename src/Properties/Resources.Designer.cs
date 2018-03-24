@@ -61,6 +61,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to copy &apos;{0}&apos; to &apos;{1}&apos;.
+        /// </summary>
+        internal static string FailedToCopy {
+            get {
+                return ResourceManager.GetString("FailedToCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to rename &apos;{0}&apos; into &apos;{1}&apos;.
+        /// </summary>
+        internal static string FailedToRename {
+            get {
+                return ResourceManager.GetString("FailedToRename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File &quot;{0}&quot; not found.
         /// </summary>
         internal static string FileNotFound {
