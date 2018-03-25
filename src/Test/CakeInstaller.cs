@@ -9,13 +9,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeInstaller {
         public void InstallCake(IFolder cakeFolder) {
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/cake-build/example";
-            Repository.Clone(url, cakeFolder.FullName, new CloneOptions { BranchName = "master" });
+            gitUtilities.Clone(url, cakeFolder, new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             var powershellExecuter = new PowershellExecuter();
             IList<string> errors;
             powershellExecuter.ExecutePowershellScriptFile(cakeFolder.FullName + @"\build.ps1", out errors);
-            Assert.IsFalse(errors.Any());
+            Assert.IsFalse(errors.Any(), string.Join("\r\n", errors));
             Assert.IsTrue(File.Exists(CakeExeFileFullName(cakeFolder)));
         }
 

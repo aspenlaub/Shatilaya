@@ -36,8 +36,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanCreateNuSpecForShatilaya() {
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Pakled.git";
-            Repository.Clone(url, PakledTarget.FullName(), new CloneOptions { BranchName = "master" });
+            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
             var sut = new NuSpecCreator(componentProviderMock.Object);
@@ -51,10 +54,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(rootNamespaceElement);
             var outputPathElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
             Assert.IsNotNull(outputPathElement);
-            var errorsAndInfos = new ErrorsAndInfos();
             Document = sut.CreateNuSpec(solutionFileFullName, errorsAndInfos);
             Assert.IsNotNull(Document);
-            Assert.AreEqual(0, errorsAndInfos.Errors.Count);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(0, errorsAndInfos.Infos.Count);
             VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);

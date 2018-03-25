@@ -40,15 +40,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void ThereArentAnyUnwantedDependencies() {
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
-            Repository.Clone(url, ShatilayaTarget.FullName(), new CloneOptions { BranchName = "master" });
+            gitUtilities.Clone(url, ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             var restorer = new NugetPackageRestorer(ComponentProvider);
             var sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
             Directory.CreateDirectory(sourceFolder + @"\packages\");
-            var errorsAndInfos = new ErrorsAndInfos();
             restorer.RestoreNugetPackages(sourceFolder + @"\" + ShatilayaTarget.SolutionId + ".sln", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("package(s) to packages.config")));
             var builder = new DependencyTreeBuilder();
             var dependencyTree = builder.BuildDependencyTree(sourceFolder + @"\packages\");

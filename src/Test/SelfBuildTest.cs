@@ -40,10 +40,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod, Ignore]
         public void CanBuildMyself() {
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
-            const string url = "https://github.com/aspenlaub/Shatilaya.git";
-            Repository.Clone(url, ShatilayaTarget.FullName(), new CloneOptions { BranchName = "master" });
+            var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
+            const string url = "https://github.com/aspenlaub/Shatilaya.git";
+            gitUtilities.Clone(url, ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             ShatilayaTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }

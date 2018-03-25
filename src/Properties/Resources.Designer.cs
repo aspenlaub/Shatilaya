@@ -61,7 +61,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to copy &apos;{0}&apos; to &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Failed to copy &quot;{0}&quot; to &quot;{1}&quot;.
         /// </summary>
         internal static string FailedToCopy {
             get {
@@ -70,7 +70,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to rename &apos;{0}&apos; into &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Failed to rename &quot;{0}&quot; into &quot;{1}&quot;.
         /// </summary>
         internal static string FailedToRename {
             get {
@@ -88,7 +88,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Folder &apos;{0}&apos; is obsolete.
+        ///   Looks up a localized string similar to Folder &quot;{0}&quot; could not be created.
+        /// </summary>
+        internal static string FolderCouldNotBeCreated {
+            get {
+                return ResourceManager.GetString("FolderCouldNotBeCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder &quot;{0}&quot; is obsolete.
         /// </summary>
         internal static string FolderIsObsolete {
             get {
@@ -124,7 +133,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; has been updated.
+        ///   Looks up a localized string similar to &quot;{0}&quot; has been updated.
         /// </summary>
         internal static string NuSpecFileUpdated {
             get {
@@ -133,7 +142,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Folder &apos;{0}&apos; is obsolete and has been deleted.
+        ///   Looks up a localized string similar to Folder &quot;{0}&quot; is obsolete and has been deleted.
         /// </summary>
         internal static string ObsoleteFolderDeleted {
             get {
@@ -142,7 +151,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File &apos;{0}&apos; requests package &apos;{1}&apos; with version {2}, but another one version {3}.
+        ///   Looks up a localized string similar to File &quot;{0}&quot; requests package &apos;{1}&apos; with version {2}, but another one version {3}.
         /// </summary>
         internal static string PackageVersionClashDueToFile {
             get {
@@ -151,7 +160,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no project file &apos;{0}&apos;.
+        ///   Looks up a localized string similar to There is no project file &quot;{0}&quot;.
         /// </summary>
         internal static string ProjectFileNotFound {
             get {

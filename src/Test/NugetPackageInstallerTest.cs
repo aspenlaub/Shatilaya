@@ -40,15 +40,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanInstallNugetPackage() {
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
+            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsFalse(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
             var sut = new NugetPackageInstaller(ComponentProvider);
 
-            var errorsAndInfos = new ErrorsAndInfos();
             sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("src"), "OctoPack", "3.6.0", false, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Adding package") && i.Contains("to folder")));
             Assert.IsTrue(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
 

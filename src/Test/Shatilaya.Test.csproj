@@ -154,7 +154,6 @@
       <DependentUpon>FolderUpdater.feature</DependentUpon>
     </Compile>
     <Compile Include="FolderUpdaterSteps.cs" />
-    <Compile Include="GitTestUtilities.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
     <Compile Include="NugetPackageInstallerTest.cs" />
@@ -193,9 +192,6 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>FolderUpdater.feature.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="lib.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

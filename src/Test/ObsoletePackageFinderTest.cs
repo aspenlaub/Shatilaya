@@ -41,12 +41,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanFindObsoletePackages() {
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
-            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
+            var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
+            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             ChabTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             errorsAndInfos = new ErrorsAndInfos();
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.Setup(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());

@@ -11,7 +11,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeRunnerTest {
         protected ICakeRunner Sut;
         protected static string CakeExeFileFullName;
-        protected static IFolder ShatilFolderFullName;
+        protected static IFolder ShatilayaFolder;
 
         protected const string ThisIsNotCake = @"This is not a cake!";
 
@@ -23,10 +23,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             cakeInstaller.InstallCake(CakeFolder());
             CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 
-            ShatilFolderFullName = ShatilFolder();
-            GitTestUtilities.MakeSureGit2AssembliesAreInPlace();
+            ShatilayaFolder = ShatilFolder();
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
-            Repository.Clone(url, ShatilFolderFullName.FullName, new CloneOptions { BranchName = "master" });
+            gitUtilities.Clone(url, ShatilayaFolder, new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
@@ -60,7 +62,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCallScriptWithoutErrors() {
             var errorsAndInfos = new ErrorsAndInfos();
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\success.cake", errorsAndInfos);
+            Sut.CallCake(CakeExeFileFullName, ShatilayaFolder.FullName + @"\src\Test\success.cake", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Task")));
             Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Duration")));
@@ -71,7 +73,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCallScriptWithErrors() {
             var errorsAndInfos = new ErrorsAndInfos();
 
-            Sut.CallCake(CakeExeFileFullName, ShatilFolderFullName.FullName + @"\src\Test\failure.cake", errorsAndInfos);
+            Sut.CallCake(CakeExeFileFullName, ShatilayaFolder.FullName + @"\src\Test\failure.cake", errorsAndInfos);
             Assert.AreEqual(1, errorsAndInfos.Errors.Count);
             Assert.AreEqual("This is not a cake!", errorsAndInfos.Errors[0]);
             Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Task")));

@@ -188,7 +188,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"folder update failed because the (.*) kilobyte destination file could not be renamed")]
         public void ThenFolderUpdateFailedBecauseTheKilobyteDestinationFileCouldNotBeRenamed(int p0) {
-            var expectedError = "Failed to rename '" + p0 + "kilobytes.dll' into '~1~" + p0 + "kilobytes.dll'";
+            var expectedError = "Failed to rename \"" + p0 + "kilobytes.dll\" into \"~1~" + p0 + "kilobytes.dll\"";
             Assert.IsTrue(UpdateFolderErrorsAndInfos.Errors.Contains(expectedError));
         }
     }

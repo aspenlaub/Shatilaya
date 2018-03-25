@@ -118,16 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FailedToCopy" xml:space="preserve">
-    <value>Failed to copy '{0}' to '{1}'</value>
+    <value>Failed to copy "{0}" to "{1}"</value>
   </data>
   <data name="FailedToRename" xml:space="preserve">
-    <value>Failed to rename '{0}' into '{1}'</value>
+    <value>Failed to rename "{0}" into "{1}"</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
     <value>File "{0}" not found</value>
   </data>
+  <data name="FolderCouldNotBeCreated" xml:space="preserve">
+    <value>Folder "{0}" could not be created</value>
+  </data>
   <data name="FolderIsObsolete" xml:space="preserve">
-    <value>Folder '{0}' is obsolete</value>
+    <value>Folder "{0}" is obsolete</value>
   </data>
   <data name="InvalidPackagesConfigFile" xml:space="preserve">
     <value>There is no valid XML in '{0}'</value>
@@ -139,16 +142,16 @@
     <value>At least one element was not found in '{0}'</value>
   </data>
   <data name="NuSpecFileUpdated" xml:space="preserve">
-    <value>'{0}' has been updated</value>
+    <value>"{0}" has been updated</value>
   </data>
   <data name="ObsoleteFolderDeleted" xml:space="preserve">
-    <value>Folder '{0}' is obsolete and has been deleted</value>
+    <value>Folder "{0}" is obsolete and has been deleted</value>
   </data>
   <data name="PackageVersionClashDueToFile" xml:space="preserve">
-    <value>File '{0}' requests package '{1}' with version {2}, but another one version {3}</value>
+    <value>File "{0}" requests package '{1}' with version {2}, but another one version {3}</value>
   </data>
   <data name="ProjectFileNotFound" xml:space="preserve">
-    <value>There is no project file '{0}'</value>
+    <value>There is no project file "{0}"</value>
   </data>
   <data name="TopLevelNamespaceLacksADot" xml:space="preserve">
     <value>Top level namespace '{0}' does not contain any dot ('.')</value>

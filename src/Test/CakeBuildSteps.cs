@@ -23,6 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
+            componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
             ComponentProvider = componentProviderMock.Object;
         }
 
@@ -49,7 +50,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 CleanUpScenario();
             }
             const string url = "https://github.com/aspenlaub/Chab.git";
-            Repository.Clone(url, ChabTarget.FullName(), new CloneOptions { BranchName = "master" });
+            var errorsAndInfos = new ErrorsAndInfos();
+            ComponentProvider.GitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution")]
