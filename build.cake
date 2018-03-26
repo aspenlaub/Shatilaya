@@ -44,10 +44,14 @@ Task("UpdateBuildCake")
     if (!System.IO.Directory.Exists(tempFolder)) {
       System.IO.Directory.CreateDirectory(tempFolder);
     }
+    if (System.IO.File.Exists(tempCakeBuildFileName)) {
+      System.IO.File.Delete(tempCakeBuildFileName);
+    }
     using (var webClient = new System.Net.WebClient()) {
       webClient.DownloadFile(latestBuildCakeUrl, tempCakeBuildFileName);
     }
     if (Regex.Replace(oldContents, @"\s", "") != Regex.Replace(System.IO.File.ReadAllText(tempCakeBuildFileName), @"\s", "")) {
+      System.IO.File.Delete(buildCakeFileName);
       System.IO.File.Move(tempCakeBuildFileName, buildCakeFileName); 
       throw new Exception("Your build.cake file has been updated. Please retry running it.");
     } else {
