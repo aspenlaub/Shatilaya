@@ -132,14 +132,14 @@
   <data name="FolderIsObsolete" xml:space="preserve">
     <value>Folder "{0}" is obsolete</value>
   </data>
-  <data name="InvalidPackagesConfigFile" xml:space="preserve">
-    <value>There is no valid XML in '{0}'</value>
-  </data>
-  <data name="InvalidProjectFile" xml:space="preserve">
-    <value>There is no valid XML in '{0}'</value>
+  <data name="InvalidXmlFile" xml:space="preserve">
+    <value>There is no valid XML in "{0}"</value>
   </data>
   <data name="MissingElementInProjectFile" xml:space="preserve">
     <value>At least one element was not found in '{0}'</value>
+  </data>
+  <data name="NoApiKeyFound" xml:space="preserve">
+    <value>No apikey was found for this source</value>
   </data>
   <data name="NuSpecFileUpdated" xml:space="preserve">
     <value>"{0}" has been updated</value>

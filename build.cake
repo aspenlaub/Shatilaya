@@ -131,6 +131,24 @@ Task("CopyReleaseArtifacts")
 	}
   });
 
+Task("CreateNuGetPackage")
+  .WithCriteria(() => doDebugCompilation && doReleaseCompilation && currentGitBranch.FriendlyName == "master")
+  .Description("Create nuget package in the master Release binaries folder")
+  .Does(() => {
+	var folder = new Folder(masterReleaseBinFolder);
+	if (!folder.LastWrittenFileFullName().EndsWith("nupkg")) {
+      var nuGetPackSettings = new NuGetPackSettings {
+        BasePath = masterReleaseBinFolder, 
+        OutputDirectory = masterReleaseBinFolder, 
+        IncludeReferencedProjects = true,
+        Properties = new Dictionary<string, string> { { "Configuration", "Release" } }
+      };
+
+	  var solutionId = solution.Substring(solution.LastIndexOf('/') + 1).Replace(".sln", "");
+      NuGetPack("./src/" + solutionId + ".csproj", nuGetPackSettings);
+	}
+  });
+
 Task("Default")
   .IsDependentOn("UpdateBuildCake")
   .IsDependentOn("Clean")
@@ -141,6 +159,7 @@ Task("Default")
   .IsDependentOn("ReleaseBuild")
   .IsDependentOn("RunTestsOnReleaseArtifacts")
   .IsDependentOn("CopyReleaseArtifacts")
+  .IsDependentOn("CreateNuGetPackage")
   .Does(() => {
   });
 

@@ -16,7 +16,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                         var id = element.Attribute("id")?.Value;
                         var version = element.Attribute("version")?.Value;
                         if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
-                            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidPackagesConfigFile, fileName));
+                            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, fileName));
                             continue;
                         }
 
@@ -33,7 +33,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                     }
                 } catch {
                     if (!errorsAndInfos.Errors.Any()) {
-                        errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidPackagesConfigFile, fileName));
+                        errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, fileName));
                     }
                 }
             }

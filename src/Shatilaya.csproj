@@ -69,6 +69,7 @@
     <Compile Include="FolderUpdater.cs" />
     <Compile Include="GitUtilities.cs" />
     <Compile Include="LatestBuildCakeScriptProvider.cs" />
+    <Compile Include="NugetConfigReader.cs" />
     <Compile Include="NugetPackageRestorer.cs" />
     <Compile Include="NugetPackageInstaller.cs" />
     <Compile Include="NuSpecCreator.cs" />

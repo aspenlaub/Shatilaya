@@ -474,6 +474,48 @@ this.FeatureBackground();
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Nuget package is created in the master release folder")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CakeBuild")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("CakeBuild")]
+        public virtual void NugetPackageIsCreatedInTheMasterReleaseFolder()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nuget package is created in the master release folder", ((string[])(null)));
+#line 122
+this.ScenarioSetup(scenarioInfo);
+#line 6
+this.FeatureBackground();
+#line 123
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 124
+ testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 125
+ testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 126
+ testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 127
+    testRunner.And("the number of \"nupkg\" files in the master \"Release\" folder is 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 128
+ testRunner.And("the newest file in the master \"Release\" folder is of type \"nupkg\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 129
+ testRunner.And("I remember the last write time of the newest file in the master \"Release\" folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 130
+ testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 131
+ testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 132
+    testRunner.And("the number of \"nupkg\" files in the master \"Release\" folder is 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 133
+ testRunner.And("the newest file in the master \"Release\" folder is of type \"nupkg\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 134
+ testRunner.And("the last write time of the newest file in the master \"Release\" folder is as remem" +
+                    "bered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 135
+    testRunner.And("the number of \"nupkg\" files in the master \"Debug\" folder is 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

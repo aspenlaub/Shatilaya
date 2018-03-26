@@ -106,20 +106,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There is no valid XML in &apos;{0}&apos;.
+        ///   Looks up a localized string similar to There is no valid XML in &quot;{0}&quot;.
         /// </summary>
-        internal static string InvalidPackagesConfigFile {
+        internal static string InvalidXmlFile {
             get {
-                return ResourceManager.GetString("InvalidPackagesConfigFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There is no valid XML in &apos;{0}&apos;.
-        /// </summary>
-        internal static string InvalidProjectFile {
-            get {
-                return ResourceManager.GetString("InvalidProjectFile", resourceCulture);
+                return ResourceManager.GetString("InvalidXmlFile", resourceCulture);
             }
         }
         
@@ -129,6 +120,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         internal static string MissingElementInProjectFile {
             get {
                 return ResourceManager.GetString("MissingElementInProjectFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No apikey was found for this source.
+        /// </summary>
+        internal static string NoApiKeyFound {
+            get {
+                return ResourceManager.GetString("NoApiKeyFound", resourceCulture);
             }
         }
         

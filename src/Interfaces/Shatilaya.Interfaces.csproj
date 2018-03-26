@@ -58,6 +58,7 @@
     <Compile Include="IFolderUpdater.cs" />
     <Compile Include="IGitUtilities.cs" />
     <Compile Include="ILatestBuildCakeScriptProvider.cs" />
+    <Compile Include="INugetConfigReader.cs" />
     <Compile Include="INugetPackageRestorer.cs" />
     <Compile Include="INugetPackageInstaller.cs" />
     <Compile Include="INuSpecCreator.cs" />

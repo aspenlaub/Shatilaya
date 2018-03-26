@@ -32,7 +32,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             try {
                 projectDocument = XDocument.Load(projectFile);
             } catch {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidProjectFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, projectFile));
                 return document;
             }
 

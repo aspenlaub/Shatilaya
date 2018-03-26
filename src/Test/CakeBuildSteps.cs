@@ -18,6 +18,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot, MasterReleaseBinFolderSnapshot;
         protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(CakeBuildSteps), "Chab");
         protected IComponentProvider ComponentProvider;
+        protected IDictionary<string, DateTime> LastWriteTimes;
 
         public CakeBuildSteps() {
             var componentProviderMock = new Mock<IComponentProvider>();
@@ -25,6 +26,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
             ComponentProvider = componentProviderMock.Object;
+            LastWriteTimes = new Dictionary<string, DateTime>();
         }
 
         [BeforeFeature("CakeBuild")]
@@ -307,6 +309,35 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void ThenIDoNotFindAnyArtifactsInTheMasterReleaseFolder() {
             var folder = ChabTarget.MasterReleaseBinFolder();
             Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
+        }
+
+        [Then(@"the number of ""(.*)"" files in the master ""(.*)"" folder is (.*)")]
+        public void ThenTheNumberOfFilesInTheMasterFolderIs(string p0, string p1, int p2) {
+            var folder = p1 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+            var numberOfFiles = Directory.GetFiles(folder.FullName, "*." + p0).Length;
+            Assert.AreEqual(p2, numberOfFiles);
+        }
+
+        [Then(@"the newest file in the master ""(.*)"" folder is of type ""(.*)""")]
+        public void ThenTheNewestFileInTheMasterFolderIsOfType(string p0, string p1) {
+            var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+            var newestFile = folder.LastWrittenFileFullName();
+            Assert.IsTrue(newestFile.EndsWith(p1));
+        }
+
+        [Then(@"I remember the last write time of the newest file in the master ""(.*)"" folder")]
+        public void ThenIRememberTheLastWriteTimeOfTheNewestFileInTheMasterFolder(string p0) {
+            var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+            var newestFile = folder.LastWrittenFileFullName();
+            LastWriteTimes[p0] = File.GetLastWriteTime(newestFile);
+        }
+
+        [Then(@"the last write time of the newest file in the master ""(.*)"" folder is as remembered")]
+        public void ThenTheLastWriteTimeOfTheNewestFileInTheMasterFolderIsAsRemembered(string p0) {
+            Assert.IsTrue(LastWriteTimes.ContainsKey(p0));
+            var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+            var newestFile = folder.LastWrittenFileFullName();
+            Assert.AreEqual(LastWriteTimes[p0], File.GetLastWriteTime(newestFile));
         }
 
         #endregion

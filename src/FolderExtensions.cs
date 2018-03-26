@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
@@ -18,6 +19,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public static IFolder SubFolder(this IFolder folder, string subFolder) {
             return new Folder(folder.FullName + (subFolder.StartsWith("\\") ? subFolder : "\\" + subFolder));
+        }
+
+        public static string LastWrittenFileFullName(this IFolder folder) {
+            return Directory.GetFiles(folder.FullName, "*.*").OrderByDescending(f => File.GetLastWriteTime(f)).FirstOrDefault();
         }
     }
 }

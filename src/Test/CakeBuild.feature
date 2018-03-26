@@ -118,3 +118,18 @@ Scenario: Release artifacts are not copied to the master release folder when a t
 	Then a failed test case was reported
 	And I find the artifacts in the master debug folder
 	And I do not find any artifacts in the master release folder
+
+Scenario: Nuget package is created in the master release folder
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I clean up the master release folder
+	When I run the build.cake script
+	Then no cake errors were reported
+    And the number of "nupkg" files in the master "Release" folder is 1
+	And the newest file in the master "Release" folder is of type "nupkg"
+	And I remember the last write time of the newest file in the master "Release" folder
+	When I run the build.cake script
+	Then no cake errors were reported
+    And the number of "nupkg" files in the master "Release" folder is 1
+	And the newest file in the master "Release" folder is of type "nupkg"
+	And the last write time of the newest file in the master "Release" folder is as remembered
+    And the number of "nupkg" files in the master "Debug" folder is 0

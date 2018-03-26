@@ -6,6 +6,7 @@
         IFolderUpdater FolderUpdater { get; }
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
+        INugetConfigReader NugetConfigReader { get; }
         INugetPackageInstaller NugetPackageInstaller { get; }
         INugetPackageRestorer NugetPackageRestorer { get; }
         INuSpecCreator NuSpecCreator { get; }

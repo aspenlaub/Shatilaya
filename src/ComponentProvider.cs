@@ -30,6 +30,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public IFolderUpdater FolderUpdater { get { return DefaultComponent<IFolderUpdater, FolderUpdater>(); } }
         public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
         public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
+        public INugetConfigReader NugetConfigReader { get { return DefaultComponent<INugetConfigReader, NugetConfigReader>(); } }
         public INugetPackageInstaller NugetPackageInstaller { get { return DefaultComponent<INugetPackageInstaller, NugetPackageInstaller>(() => new NugetPackageInstaller(this)); } }
         public INugetPackageRestorer NugetPackageRestorer { get { return DefaultComponent<INugetPackageRestorer, NugetPackageRestorer>(() => new NugetPackageRestorer(this)); } }
         public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
