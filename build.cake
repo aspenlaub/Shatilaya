@@ -6,6 +6,7 @@ using Folder = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities.Folder;
 using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderUpdater;
 using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.FolderUpdateMethod;
 using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ErrorsAndInfos;
+using FolderExtensions = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderExtensions;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
 masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
@@ -136,7 +137,7 @@ Task("CreateNuGetPackage")
   .Description("Create nuget package in the master Release binaries folder")
   .Does(() => {
 	var folder = new Folder(masterReleaseBinFolder);
-	if (!folder.LastWrittenFileFullName().EndsWith("nupkg")) {
+	if (!FolderExtensions.LastWrittenFileFullName(folder).EndsWith("nupkg")) {
       var nuGetPackSettings = new NuGetPackSettings {
         BasePath = masterReleaseBinFolder, 
         OutputDirectory = masterReleaseBinFolder, 
