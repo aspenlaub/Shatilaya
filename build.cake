@@ -7,6 +7,7 @@ using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderUpdater;
 using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.FolderUpdateMethod;
 using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ErrorsAndInfos;
 using FolderExtensions = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderExtensions;
+using Regex = System.Text.RegularExpressions.Regex;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
 masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
@@ -21,6 +22,7 @@ var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
 var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake?g=" + System.Guid.NewGuid();
 var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
 var tempFolder = MakeAbsolute(Directory("./temp")).FullPath;
+var tempCakeBuildFileName = tempFolder + "/build.cake.new";
 var checkIfBuildCakeIsOutdated = true;
 var doDebugCompilation = true;
 var doReleaseCompilation = true;
@@ -40,9 +42,10 @@ Task("UpdateBuildCake")
   .Does(() => {
     var oldContents = System.IO.File.ReadAllText(buildCakeFileName);
     using (var webClient = new System.Net.WebClient()) {
-      webClient.DownloadFile(latestBuildCakeUrl, buildCakeFileName);
+      webClient.DownloadFile(latestBuildCakeUrl, tempCakeBuildFileName);
     }
-    if (oldContents.Replace("\r\n", "\n") != System.IO.File.ReadAllText(buildCakeFileName).Replace("\r\n", "\n")) {
+    if (Regex.Replace(oldContents, @"\s", "") != Regex.Replace(System.IO.File.ReadAllText(tempCakeBuildFileName), @"\s", "")) {
+	  System.IO.File.Move(tempCakeBuildFileName, buildCakeFileName);
       throw new Exception("Your build.cake file has been updated. Please retry running it.");
     }
   });
