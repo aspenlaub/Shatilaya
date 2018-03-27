@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Net;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using ICSharpCode.SharpZipLib.Zip;
 using LibGit2Sharp;
@@ -49,26 +50,36 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         /// </summary>
         private static void MakeSureGit2AssembliesAreInPlace(ErrorsAndInfos errorsAndInfos) {
             var folder = Directory.GetCurrentDirectory();
-            var zipStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aspenlaub.Net.GitHub.CSharp.Shatilaya.lib.zip");
-            if (Directory.Exists(folder + @"\lib")) {
-
-                /* Folder exists => make sure the file names are consistent with the embedded zip file, otherwise the lib.zip resource needs to be updated */
-                var zipFile = new ZipFile(zipStream);
-                // ReSharper disable once LoopCanBePartlyConvertedToQuery
-                foreach (var zipEntry in zipFile.Cast<ZipEntry>().Where(zipEntry => zipEntry.IsFile)) {
-                    if (File.Exists(folder + @"\" + zipEntry.Name.Replace('/', '\\'))) { continue; }
-
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, zipEntry.Name));
+            var downloadFolder = Path.GetTempPath() + @"\AspenlaubDownloads";
+            if (!Directory.Exists(downloadFolder)) {
+                Directory.CreateDirectory(downloadFolder);
+            }
+            var downloadedZipFileFullName = downloadFolder + @"\lib.zip";
+            if (!File.Exists(downloadedZipFileFullName) || File.GetLastWriteTime(downloadedZipFileFullName).AddMinutes(10) < DateTime.Now) {
+                using (var client = new WebClient()) {
+                    client.DownloadFile("https://www.aspenlaub.net/Github/lib.zip", downloadedZipFileFullName);
                 }
-            } else {
+            }
+            using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                if (Directory.Exists(folder + @"\lib")) {
 
-                /* Folder exists => create it from the embedded zip file */
-                var fastZip = new FastZip();
-                fastZip.ExtractZip(zipStream, folder, FastZip.Overwrite.Never, s => { return true; }, null, null, true,
-                    true);
-                if (Directory.Exists(folder + @"\lib")) { return; }
+                    /* Folder exists => make sure the file names are consistent with the zip file provided on aspenlaub.net, otherwise the lib.zip needs to be updated there */
+                    var zipFile = new ZipFile(zipStream);
+                    // ReSharper disable once LoopCanBePartlyConvertedToQuery
+                    foreach (var zipEntry in zipFile.Cast<ZipEntry>().Where(zipEntry => zipEntry.IsFile)) {
+                        if (File.Exists(folder + @"\" + zipEntry.Name.Replace('/', '\\'))) { continue; }
 
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FolderCouldNotBeCreated, folder));
+                        errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, zipEntry.Name));
+                    }
+                } else {
+
+                    /* Folder exists => create it from the downloaded zip file */
+                    var fastZip = new FastZip();
+                    fastZip.ExtractZip(zipStream, folder, FastZip.Overwrite.Never, s => { return true; }, null, null, true, true);
+                    if (Directory.Exists(folder + @"\lib")) { return; }
+
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FolderCouldNotBeCreated, folder));
+                }
             }
         }
     }

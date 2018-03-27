@@ -86,7 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\build.cake" />
-    <EmbeddedResource Include="lib.zip" />
     <None Include="packages.config" />
     <None Include="..\solution.cake" />
   </ItemGroup>
