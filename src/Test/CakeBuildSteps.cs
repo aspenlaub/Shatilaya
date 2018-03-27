@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
@@ -60,16 +61,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution")]
         public void GivenIHaveTheLatestBuild_CakeScript() {
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
-            var latestScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
-            Assert.IsTrue(latestScript.Length > 120);
-            Assert.IsTrue(latestScript.Contains("#load \"solution.cake\""));
+            var latestScriptWithoutBuildCakeCheck = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Length > 120);
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"checkIfBuildCakeIsOutdated = true;"));
+            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
+
             var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);
-            if (latestScript == currentScript) { return; }
+            if (Regex.Replace(latestScriptWithoutBuildCakeCheck, @"\s", "") == Regex.Replace(currentScript, @"\s", "")) { return; }
 
-            Assert.IsTrue(latestScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
-            latestScript = latestScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
-            File.WriteAllText(currentScriptFileName, latestScript);
+            File.WriteAllText(currentScriptFileName, latestScriptWithoutBuildCakeCheck);
         }
 
         [Given(@"I change the cake script so that debug build is suppressed")]
