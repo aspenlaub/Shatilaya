@@ -69,7 +69,11 @@ Task("Clean")
 Task("Restore")
   .Description("Restore nuget packages")
   .Does(() => {
-    NuGetRestore(solution, new NuGetRestoreSettings { ConfigFile = "./src/.nuget/nuget.config" });
+    var configFile = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\nuget.config";   
+    if (!System.IO.File.Exists(configFile)) {
+       throw new Exception(string.Format("Nuget configuration file \"{0}\" not found", configFile));
+    }
+    NuGetRestore(solution, new NuGetRestoreSettings { ConfigFile = configFile });
   });
 
 Task("DebugBuild")
