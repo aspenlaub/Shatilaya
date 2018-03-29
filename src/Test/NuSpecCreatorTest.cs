@@ -35,7 +35,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanCreateNuSpecForShatilaya() {
+        public void CanCreateNuSpecForPakled() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Pakled.git";
@@ -44,8 +44,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
             var sut = new NuSpecCreator(componentProviderMock.Object);
-            var solutionFileFullName = PakledTarget.Folder().FullName + @"\" + PakledTarget.SolutionId + ".sln";
-            var projectFileFullName = PakledTarget.Folder().FullName + @"\" + PakledTarget.SolutionId + ".csproj";
+            var solutionFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln";
+            var projectFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
             Document = XDocument.Load(projectFileFullName);
             var targetFrameworkElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:TargetFrameworkVersion", NamespaceManager).FirstOrDefault();
@@ -71,8 +71,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElement(@"/package/metadata/version", @"$version$");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string> { "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\ShatilayaBin\Release\Aspenlaub.*.dll", @"..\ShatilayaBin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\ShatilayaBin\Release\*.Test*.*", @"..\ShatilayaBin\Release\*.Test*.*" });
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\PakledBin\Release\Aspenlaub.*.dll", @"..\PakledBin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\PakledBin\Release\*.Test*.*", @"..\PakledBin\Release\*.Test*.*" });
             var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
         }
