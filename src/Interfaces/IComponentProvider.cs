@@ -14,5 +14,6 @@
         IObsoletePackageFinder ObsoletePackageFinder { get; }
         IPackageConfigsScanner PackageConfigsScanner { get; }
         IProcessRunner ProcessRunner { get; }
+        IProjectFactory ProjectFactory { get; }
     }
 }

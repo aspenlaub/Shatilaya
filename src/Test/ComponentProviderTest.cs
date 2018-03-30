@@ -22,6 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(sut.ObsoletePackageFinder);
             Assert.IsNotNull(sut.PackageConfigsScanner);
             Assert.IsNotNull(sut.ProcessRunner);
+            Assert.IsNotNull(sut.ProjectFactory);
         }
     }
 }

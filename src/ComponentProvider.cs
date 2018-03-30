@@ -38,5 +38,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public IObsoletePackageFinder ObsoletePackageFinder { get { return DefaultComponent<IObsoletePackageFinder, ObsoletePackageFinder>(() => new ObsoletePackageFinder(this)); } }
         public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }
         public IProcessRunner ProcessRunner { get { return DefaultComponent<IProcessRunner, ProcessRunner>(); } }
+        public IProjectFactory ProjectFactory { get { return DefaultComponent<IProjectFactory, ProjectFactory>(); } }
     }
 }
