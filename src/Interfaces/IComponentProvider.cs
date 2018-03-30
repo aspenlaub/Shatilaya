@@ -7,6 +7,7 @@
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
         INugetConfigReader NugetConfigReader { get; }
+        INugetFeedLister NugetFeedLister { get; }
         INugetPackageInstaller NugetPackageInstaller { get; }
         INugetPackageRestorer NugetPackageRestorer { get; }
         INuSpecCreator NuSpecCreator { get; }

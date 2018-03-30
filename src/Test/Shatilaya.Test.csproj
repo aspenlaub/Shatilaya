@@ -161,6 +161,7 @@
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
     <Compile Include="NugetConfigReaderTest.cs" />
+    <Compile Include="NugetFeedListerTest.cs" />
     <Compile Include="NugetPackageInstallerTest.cs" />
     <Compile Include="NuSpecCreatorTest.cs" />
     <Compile Include="ObsoletePackageFinderTest.cs" />
