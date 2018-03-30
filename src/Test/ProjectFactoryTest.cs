@@ -71,6 +71,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(project.ReferencedDllFiles.Any(f => f.EndsWith(".Json.dll")));
 
             Assert.AreEqual(rootNamespace, project.RootNamespace);
+
+            projectFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\Test\" + PakledConsumerTarget.SolutionId + ".Test.csproj";
+            Assert.IsTrue(File.Exists(projectFileFullName));
+            project = sut.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsNotNull(project);
+            Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
+            Assert.AreEqual(PakledConsumerTarget.SolutionId + ".Test", project.ProjectName);
         }
     }
 }

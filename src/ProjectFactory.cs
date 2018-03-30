@@ -60,11 +60,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected string ProjectName(string solutionFileFullName, FileInfo projectFileInfo) {
+            var solutionFolder = solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\'));
             foreach (var s in File.ReadAllLines(solutionFileFullName).ToList().Where(x => x.StartsWith("Project("))) {
                 string projectName, projectFile;
                 if (!ExtractProject(s, out projectName, out projectFile)) { continue; }
 
-                var projectFullFileName = projectFileInfo.DirectoryName + '\\' + projectFile;
+                var projectFullFileName = solutionFolder + '\\' + projectFile;
                 if (!File.Exists(projectFullFileName)) { continue; }
                 if (projectFullFileName != projectFileInfo.FullName) { continue; }
 
