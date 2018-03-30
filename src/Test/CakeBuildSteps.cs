@@ -66,6 +66,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"checkIfBuildCakeIsOutdated = true;"));
             latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"doNugetPush = true;"));
+            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
 
             var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);

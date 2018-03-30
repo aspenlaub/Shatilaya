@@ -26,9 +26,12 @@ var tempCakeBuildFileName = tempFolder + "/build.cake.new";
 var checkIfBuildCakeIsOutdated = true;
 var doDebugCompilation = true;
 var doReleaseCompilation = true;
+var doNugetPush = true;
+var solutionId = solution.Substring(solution.LastIndexOf('/') + 1).Replace(".sln", "");
 
 Setup(ctx => { 
   Information("Solution is: " + solution);
+  Information("Solution ID is: " + solutionId);
   Information("Target is: " + target);
   Information("Artifacts folder is: " + artifactsFolder);
   Information("Current GIT branch is: " + currentGitBranch.FriendlyName);
@@ -161,9 +164,15 @@ Task("CreateNuGetPackage")
         Properties = new Dictionary<string, string> { { "Configuration", "Release" } }
       };
 
-	  var solutionId = solution.Substring(solution.LastIndexOf('/') + 1).Replace(".sln", "");
       NuGetPack("./src/" + solutionId + ".csproj", nuGetPackSettings);
 	}
+  });
+
+Task("PushNuGetPackage")
+  .WithCriteria(() => doDebugCompilation && doReleaseCompilation && doNugetPush && currentGitBranch.FriendlyName == "master")
+  .Description("Push nuget package")
+  .Does(() => {
+    throw new Exception("Not implemented yet.");
   });
 
 Task("Default")
@@ -177,6 +186,7 @@ Task("Default")
   .IsDependentOn("RunTestsOnReleaseArtifacts")
   .IsDependentOn("CopyReleaseArtifacts")
   .IsDependentOn("CreateNuGetPackage")
+  .IsDependentOn("PushNuGetPackage")
   .Does(() => {
   });
 
