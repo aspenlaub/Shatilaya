@@ -178,7 +178,7 @@ Task("PushNuGetPackage")
 	var nugetPackageToPushFinder = componentProvider.NugetPackageToPushFinder;
 	string packageFileFullName, feedUrl, apiKey;
 	var finderErrorsAndInfos = new ErrorsAndInfos();
-	nugetPackageToPushFinder.FindPackageToPush(new Folder(masterReleaseBinFolder.Replace('/', '\\')), solution, out packageFileFullName, out feedUrl, out apiKey, finderErrorsAndInfos);
+	nugetPackageToPushFinder.FindPackageToPush(new Folder(masterReleaseBinFolder.Replace('/', '\\')), solution.Replace('/', '\\'), out packageFileFullName, out feedUrl, out apiKey, finderErrorsAndInfos);
     if (finderErrorsAndInfos.Errors.Any()) {
 	  throw new Exception(string.Join("\r\n", finderErrorsAndInfos.Errors));
 	}
