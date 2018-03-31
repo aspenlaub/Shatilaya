@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
@@ -61,17 +62,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
+            var developerSettingsSecret = new DeveloperSettingsSecret();
+            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            if (developerSettings == null) {
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                return null;
+            }
+
             var element = new XElement(Namespace + @"metadata");
             foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
                 element.Add(new XElement(Namespace + elementName, rootNamespaceElement.Value));
             }
 
             foreach (var elementName in new[] { @"authors", @"owners" }) {
-                element.Add(new XElement(Namespace + elementName, @"Wolfgang Berger (aspenlaub.net)"));
+                element.Add(new XElement(Namespace + elementName, developerSettings.Author));
             }
 
-            element.Add(new XElement(Namespace + @"projectUrl", @"https://github.com/aspenlaub/" + solutionId));
-            element.Add(new XElement(Namespace + @"iconUrl", @"https://www.aspenlaub.net/favicon.ico"));
+            element.Add(new XElement(Namespace + @"projectUrl", developerSettings.GitHubRepositoryUrl + solutionId));
+            element.Add(new XElement(Namespace + @"iconUrl", developerSettings.FaviconUrl));
             element.Add(new XElement(Namespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(Namespace + @"copyright", $"Copyright {year}"));

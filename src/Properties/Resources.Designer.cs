@@ -115,6 +115,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing &apos;DeveloperSettings&apos; secret. Open &quot;{0}&quot; in SecretSamples, modify it and save it in SecretRepository.
+        /// </summary>
+        internal static string MissingDeveloperSettings {
+            get {
+                return ResourceManager.GetString("MissingDeveloperSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At least one element was not found in &apos;{0}&apos;.
         /// </summary>
         internal static string MissingElementInProjectFile {

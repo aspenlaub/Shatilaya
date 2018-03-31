@@ -135,6 +135,9 @@
   <data name="InvalidXmlFile" xml:space="preserve">
     <value>There is no valid XML in "{0}"</value>
   </data>
+  <data name="MissingDeveloperSettings" xml:space="preserve">
+    <value>Missing 'DeveloperSettings' secret. Open "{0}" in SecretSamples, modify it and save it in SecretRepository</value>
+  </data>
   <data name="MissingElementInProjectFile" xml:space="preserve">
     <value>At least one element was not found in '{0}'</value>
   </data>

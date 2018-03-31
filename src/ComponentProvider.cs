@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
+using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class ComponentProvider : IComponentProvider {
@@ -37,6 +39,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
         public IObsoletePackageFinder ObsoletePackageFinder { get { return DefaultComponent<IObsoletePackageFinder, ObsoletePackageFinder>(() => new ObsoletePackageFinder(this)); } }
         public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }
+        public IPeghComponentProvider PeghComponentProvider { get { return DefaultComponent<IPeghComponentProvider, PeghComponentProvider>(); } }
         public IProcessRunner ProcessRunner { get { return DefaultComponent<IProcessRunner, ProcessRunner>(); } }
         public IProjectFactory ProjectFactory { get { return DefaultComponent<IProjectFactory, ProjectFactory>(); } }
     }

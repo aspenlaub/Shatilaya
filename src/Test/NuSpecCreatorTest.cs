@@ -5,10 +5,12 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -43,6 +45,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
+            var peghComponentProvider = new PeghComponentProvider();
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
             var sut = new NuSpecCreator(componentProviderMock.Object);
             var solutionFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln";
             var projectFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".csproj";
@@ -58,14 +62,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(0, errorsAndInfos.Infos.Count);
+            var developerSettingsSecret = new DeveloperSettingsSecret();
+            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            Assert.IsNotNull(developerSettings);
             VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/authors", @"Wolfgang Berger (aspenlaub.net)");
-            VerifyTextElement(@"/package/metadata/owners", @"Wolfgang Berger (aspenlaub.net)");
-            VerifyTextElement(@"/package/metadata/projectUrl", @"https://github.com/aspenlaub/" + PakledTarget.SolutionId);
-            VerifyTextElement(@"/package/metadata/iconUrl", @"https://www.aspenlaub.net/favicon.ico");
+            VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
+            VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
+            VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + PakledTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");

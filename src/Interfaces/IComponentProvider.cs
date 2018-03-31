@@ -1,4 +1,6 @@
-﻿namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
+﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
+
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {
         ICakeRunner CakeRunner { get; }
         IDependencyTreeBuilder DependencyTreeBuilder { get; }
@@ -13,6 +15,7 @@
         INuSpecCreator NuSpecCreator { get; }
         IObsoletePackageFinder ObsoletePackageFinder { get; }
         IPackageConfigsScanner PackageConfigsScanner { get; }
+        IPeghComponentProvider PeghComponentProvider { get; }
         IProcessRunner ProcessRunner { get; }
         IProjectFactory ProjectFactory { get; }
     }
