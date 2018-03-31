@@ -183,6 +183,7 @@ Task("PushNuGetPackage")
 	  throw new Exception(string.Join("\r\n", finderErrorsAndInfos.Errors));
 	}
     if (packageFileFullName != "" && feedUrl != "" && apiKey != "") {
+      Information("Pushing " + packageFileFullName + " to " + feedUrl + "..");
       NuGetPush(packageFileFullName, new NuGetPushSettings { Source = feedUrl, ApiKey = apiKey });
     }
   });
