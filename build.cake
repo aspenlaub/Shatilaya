@@ -185,7 +185,7 @@ Task("PushNuGetPackage")
 	}
     if (packageFileFullName != "" && feedUrl != "" && apiKey != "") {
       Information("Pushing " + packageFileFullName + " to " + feedUrl + "..");
-      NuGetPush(packageFileFullName, new NuGetPushSettings { Source = feedUrl, ApiKey = apiKey });
+      NuGetPush(packageFileFullName, new NuGetPushSettings { Source = feedUrl });
     }
   });
 
