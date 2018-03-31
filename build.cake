@@ -1,5 +1,6 @@
 #load "solution.cake"
 #addin nuget:?package=Cake.Git
+#addin nuget:?package=Nuget.Core
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
 
 using Folder = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities.Folder;

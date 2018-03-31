@@ -46,9 +46,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
             gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
+            var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
+            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
+            cakeScript = cakeScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
+            Assert.IsTrue(cakeScript.Contains(@"doNugetPush = true;"));
+            cakeScript = cakeScript.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
+            File.WriteAllText(cakeScriptFileFullName, cakeScript);
             ChabTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
-            Assert.AreEqual(3, errorsAndInfos.Errors.Count);
-            Assert.IsTrue(errorsAndInfos.Errors.All(e => e.Contains("PushNuGet") || e.Contains("Not implemented yet") || e.Contains("error")));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
             errorsAndInfos = new ErrorsAndInfos();
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.Setup(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
@@ -49,9 +50,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + PakledTarget.SolutionId + ".git";
             gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
+            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
+            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
+            cakeScript = cakeScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
+            Assert.IsTrue(cakeScript.Contains(@"doNugetPush = true;"));
+            cakeScript = cakeScript.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
+            File.WriteAllText(cakeScriptFileFullName, cakeScript);
             PakledTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
-            Assert.AreEqual(3, errorsAndInfos.Errors.Count);
-            Assert.IsTrue(errorsAndInfos.Errors.All(e => e.Contains("PushNuGet") || e.Contains("Not implemented yet") || e.Contains("error")));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
