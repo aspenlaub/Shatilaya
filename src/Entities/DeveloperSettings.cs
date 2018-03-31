@@ -8,13 +8,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         public string GitHubRepositoryUrl { get; set; }
         public string FaviconUrl { get; set; }
         public string NugetFeedUrl { get; set; }
+        public string NugetFeedId { get; set; }
 
         public DeveloperSettings Clone() {
             return new DeveloperSettings {
                 Author = Author,
                 GitHubRepositoryUrl = GitHubRepositoryUrl,
                 FaviconUrl = FaviconUrl,
-                NugetFeedUrl = NugetFeedUrl
+                NugetFeedUrl = NugetFeedUrl,
+                NugetFeedId = NugetFeedId
             };
         }
     }

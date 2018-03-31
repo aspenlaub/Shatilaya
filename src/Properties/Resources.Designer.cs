@@ -106,6 +106,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incomplete &apos;DeveloperSettings&apos;. Please update &quot;{0}&quot; in your SecretRepository.
+        /// </summary>
+        internal static string IncompleteDeveloperSettings {
+            get {
+                return ResourceManager.GetString("IncompleteDeveloperSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no valid XML in &quot;{0}&quot;.
         /// </summary>
         internal static string InvalidXmlFile {
@@ -138,6 +147,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         internal static string NoApiKeyFound {
             get {
                 return ResourceManager.GetString("NoApiKeyFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Folder &quot;{0}&quot; does not contain any packages.
+        /// </summary>
+        internal static string NoPackageFilesFound {
+            get {
+                return ResourceManager.GetString("NoPackageFilesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Feed &quot;{0}&quot; does not provide package &quot;{1}&quot;.
+        /// </summary>
+        internal static string NoRemotePackageFilesFound {
+            get {
+                return ResourceManager.GetString("NoRemotePackageFilesFound", resourceCulture);
             }
         }
         

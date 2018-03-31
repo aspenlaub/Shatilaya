@@ -151,6 +151,7 @@
     <Compile Include="NugetConfigReaderTest.cs" />
     <Compile Include="NugetFeedListerTest.cs" />
     <Compile Include="NugetPackageInstallerTest.cs" />
+    <Compile Include="NugetPackageToPushFinderTest.cs" />
     <Compile Include="NuSpecCreatorTest.cs" />
     <Compile Include="ObsoletePackageFinderTest.cs" />
     <Compile Include="ProjectFactoryTest.cs" />

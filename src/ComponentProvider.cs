@@ -36,6 +36,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public INugetFeedLister NugetFeedLister { get { return DefaultComponent<INugetFeedLister, NugetFeedLister>(); } }
         public INugetPackageInstaller NugetPackageInstaller { get { return DefaultComponent<INugetPackageInstaller, NugetPackageInstaller>(() => new NugetPackageInstaller(this)); } }
         public INugetPackageRestorer NugetPackageRestorer { get { return DefaultComponent<INugetPackageRestorer, NugetPackageRestorer>(() => new NugetPackageRestorer(this)); } }
+        public INugetPackageToPushFinder NugetPackageToPushFinder { get { return DefaultComponent<INugetPackageToPushFinder, NugetPackageToPushFinder>(() => new NugetPackageToPushFinder(this)); } }
         public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
         public IObsoletePackageFinder ObsoletePackageFinder { get { return DefaultComponent<IObsoletePackageFinder, ObsoletePackageFinder>(() => new ObsoletePackageFinder(this)); } }
         public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }

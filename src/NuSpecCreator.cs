@@ -69,17 +69,25 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return null;
             }
 
+            var author = developerSettings.Author;
+            var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
+            var faviconUrl = developerSettings.FaviconUrl;
+            if (string.IsNullOrEmpty(author) || string.IsNullOrEmpty(gitHubRepositoryUrl) || string.IsNullOrEmpty(faviconUrl)) {
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                return null;
+            }
+
             var element = new XElement(Namespace + @"metadata");
             foreach (var elementName in new[] { @"id", @"title", @"description", @"releaseNotes" }) {
                 element.Add(new XElement(Namespace + elementName, rootNamespaceElement.Value));
             }
 
             foreach (var elementName in new[] { @"authors", @"owners" }) {
-                element.Add(new XElement(Namespace + elementName, developerSettings.Author));
+                element.Add(new XElement(Namespace + elementName, author));
             }
 
-            element.Add(new XElement(Namespace + @"projectUrl", developerSettings.GitHubRepositoryUrl + solutionId));
-            element.Add(new XElement(Namespace + @"iconUrl", developerSettings.FaviconUrl));
+            element.Add(new XElement(Namespace + @"projectUrl", gitHubRepositoryUrl + solutionId));
+            element.Add(new XElement(Namespace + @"iconUrl", faviconUrl));
             element.Add(new XElement(Namespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(Namespace + @"copyright", $"Copyright {year}"));

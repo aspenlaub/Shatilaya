@@ -12,6 +12,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         INugetFeedLister NugetFeedLister { get; }
         INugetPackageInstaller NugetPackageInstaller { get; }
         INugetPackageRestorer NugetPackageRestorer { get; }
+        INugetPackageToPushFinder NugetPackageToPushFinder { get; }
         INuSpecCreator NuSpecCreator { get; }
         IObsoletePackageFinder ObsoletePackageFinder { get; }
         IPackageConfigsScanner PackageConfigsScanner { get; }

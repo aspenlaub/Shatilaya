@@ -89,6 +89,7 @@
     <Compile Include="NugetFeedLister.cs" />
     <Compile Include="NugetPackageRestorer.cs" />
     <Compile Include="NugetPackageInstaller.cs" />
+    <Compile Include="NugetPackageToPushFinder.cs" />
     <Compile Include="NuSpecCreator.cs" />
     <Compile Include="ObsoletePackageFinder.cs" />
     <Compile Include="PackageConfigsScanner.cs" />
