@@ -8,6 +8,7 @@ using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.Fold
 using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ErrorsAndInfos;
 using FolderExtensions = Aspenlaub.Net.GitHub.CSharp.Shatilaya.FolderExtensions;
 using Regex = System.Text.RegularExpressions.Regex;
+using ComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.ComponentProvider;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
 masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
@@ -172,7 +173,17 @@ Task("PushNuGetPackage")
   .WithCriteria(() => doDebugCompilation && doReleaseCompilation && doNugetPush && currentGitBranch.FriendlyName == "master")
   .Description("Push nuget package")
   .Does(() => {
-    throw new Exception("Not implemented yet.");
+    var componentProvider = new ComponentProvider();
+	var nugetPackageToPushFinder = componentProvider.NugetPackageToPushFinder;
+	string packageFileFullName, feedUrl, apiKey;
+	var finderErrorsAndInfos = new ErrorsAndInfos();
+	nugetPackageToPushFinder.FindPackageToPush(new Folder(masterReleaseBinFolder.Replace('/', '\\')), solution, out packageFileFullName, out feedUrl, out apiKey, finderErrorsAndInfos);
+    if (finderErrorsAndInfos.Errors.Any()) {
+	  throw new Exception(string.Join("\r\n", finderErrorsAndInfos.Errors));
+	}
+    if (packageFileFullName != "" && feedUrl != "" && apiKey != "") {
+      NuGetPush(packageFileFullName, new NuGetPushSettings { Source = feedUrl, ApiKey = apiKey });
+    }
   });
 
 Task("Default")
