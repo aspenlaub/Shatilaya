@@ -10,8 +10,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(sut);
             Assert.IsNotNull(sut.CakeRunner);
             Assert.IsNotNull(sut.DependencyTreeBuilder);
-            Assert.IsNotNull(sut.FolderDeleter);
-            Assert.IsNotNull(sut.FolderUpdater);
             Assert.IsNotNull(sut.GitUtilities);
             Assert.IsNotNull(sut.LatestBuildCakeScriptProvider);
             Assert.IsNotNull(sut.NugetConfigReader);

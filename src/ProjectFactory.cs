@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
@@ -16,7 +17,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
         }
 
-        public IProject Load(string solutionFileFullName, string projectFileFullName, ErrorsAndInfos errorsAndInfos) {
+        public IProject Load(string solutionFileFullName, string projectFileFullName, IErrorsAndInfos errorsAndInfos) {
             if (!File.Exists(solutionFileFullName)) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, solutionFileFullName));
                 return null;

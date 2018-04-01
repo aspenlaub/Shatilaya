@@ -1,9 +1,11 @@
 ﻿using System.IO;
 using System.Net;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LibGit2Sharp;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -40,7 +42,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         private static void CloneRepository(IFolder folder, string branch) {
-            if (folder.HasSubFolder(GitUtilities.GitSubFolder)) { return; }
+            if (folder.GitSubFolder().Exists()) { return; }
 
             if (folder.Exists()) {
                 var deleter = new FolderDeleter();

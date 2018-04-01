@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class NugetPackageRestorer : INugetPackageRestorer {
@@ -9,7 +11,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             ComponentProvider = componentProvider;
         }
 
-        public void RestoreNugetPackages(string solutionFileFullName, ErrorsAndInfos errorsAndInfos) {
+        public void RestoreNugetPackages(string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
             var directoryName = solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\'));
             if (!Directory.Exists(directoryName + @"\packages")) { return; }
 

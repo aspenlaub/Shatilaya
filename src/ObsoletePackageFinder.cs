@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class ObsoletePackageFinder : IObsoletePackageFinder {
@@ -12,7 +15,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             ComponentProvider = componentProvider;
         }
 
-        public void FindObsoletePackages(string solutionFolder, ErrorsAndInfos errorsAndInfos) {
+        public void FindObsoletePackages(string solutionFolder, IErrorsAndInfos errorsAndInfos) {
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFolder, true, errorsAndInfos);
             if (!Directory.Exists(solutionFolder + @"\packages\")) { return; }
 

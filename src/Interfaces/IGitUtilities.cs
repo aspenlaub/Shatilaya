@@ -1,4 +1,5 @@
 ﻿using LibGit2Sharp;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IGitUtilities {
@@ -22,6 +23,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="folder"></param>
         /// <param name="cloneOptions"></param>
         /// <param name="errorsAndInfos"></param>
-        void Clone(string url, IFolder folder, CloneOptions cloneOptions, ErrorsAndInfos errorsAndInfos);
+        void Clone(string url, IFolder folder, CloneOptions cloneOptions, IErrorsAndInfos errorsAndInfos);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class NugetConfigReader : INugetConfigReader {
-        public string GetApiKey(string nugetConfigFileFullName, string source, ErrorsAndInfos errorsAndInfos) {
+        public string GetApiKey(string nugetConfigFileFullName, string source, IErrorsAndInfos errorsAndInfos) {
             XDocument document;
             try {
                 document = XDocument.Load(nugetConfigFileFullName);

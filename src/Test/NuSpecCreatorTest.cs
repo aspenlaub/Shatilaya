@@ -5,11 +5,13 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {

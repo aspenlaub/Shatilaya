@@ -2,8 +2,10 @@
 using System.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Moq;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]

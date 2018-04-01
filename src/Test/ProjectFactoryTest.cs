@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]

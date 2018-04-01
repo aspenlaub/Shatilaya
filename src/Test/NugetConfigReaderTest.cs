@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {

@@ -2,17 +2,17 @@
 using System.IO;
 using System.Linq;
 using System.Net;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using ICSharpCode.SharpZipLib.Zip;
 using LibGit2Sharp;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class GitUtilities : IGitUtilities {
-        public const string GitSubFolder = @"\.git";
-
         public string CheckedOutBranch(IFolder folder) {
             while (folder.Exists()) {
-                if (!folder.HasSubFolder(GitSubFolder)) {
+                if (!folder.GitSubFolder().Exists()) {
                     folder = folder.ParentFolder();
                     if (folder == null) { return ""; }
 
@@ -28,7 +28,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void SynchronizeRepository(IFolder folder) {
-            if (!folder.HasSubFolder(GitSubFolder)) { return; }
+            if (!folder.GitSubFolder().Exists()) { return; }
 
             using (var repository = new Repository(folder.FullName)) {
                 foreach (var remote in repository.Network.Remotes) {
@@ -39,7 +39,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         }
 
-        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, ErrorsAndInfos errorsAndInfos) {
+        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, IErrorsAndInfos errorsAndInfos) {
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             Repository.Clone(url, folder.FullName, cloneOptions);
         }
@@ -48,7 +48,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         /// When tests are executed using cake, the lib sub folder does not make it to the working directory,
         /// so the execution fails and reports that a git2 assembly cannot be found
         /// </summary>
-        private static void MakeSureGit2AssembliesAreInPlace(ErrorsAndInfos errorsAndInfos) {
+        private static void MakeSureGit2AssembliesAreInPlace(IErrorsAndInfos errorsAndInfos) {
             var folder = Directory.GetCurrentDirectory();
             var downloadFolder = Path.GetTempPath() + @"\AspenlaubDownloads";
             if (!Directory.Exists(downloadFolder)) {

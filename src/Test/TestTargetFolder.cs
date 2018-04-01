@@ -1,8 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class TestTargetFolder {
@@ -53,7 +56,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             deleter.DeleteFolder(CakeFolder());
         }
 
-        public void RunBuildCakeScript(IComponentProvider componentProvider, ErrorsAndInfos errorsAndInfos) {
+        public void RunBuildCakeScript(IComponentProvider componentProvider, IErrorsAndInfos errorsAndInfos) {
             var runner = componentProvider.CakeRunner;
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));

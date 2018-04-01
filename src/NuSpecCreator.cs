@@ -5,8 +5,10 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class NuSpecCreator : INuSpecCreator {
@@ -21,7 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
         }
 
-        public XDocument CreateNuSpec(string solutionFileFullName, ErrorsAndInfos errorsAndInfos) {
+        public XDocument CreateNuSpec(string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
             var document = new XDocument();
             var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFile)) {
@@ -58,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return document;
         }
 
-        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, ErrorsAndInfos errorsAndInfos) {
+        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
@@ -108,7 +110,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return e.Parent?.Attributes("Condition").Any(v => v.Value.Contains("Release")) == true;
         }
 
-        protected XElement Files(XDocument projectDocument, ErrorsAndInfos errorsAndInfos) {
+        protected XElement Files(XDocument projectDocument, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
@@ -137,7 +139,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return filesElement;
         }
 
-        public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, ErrorsAndInfos errorsAndInfos) {
+        public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
             var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
             if (!required && !File.Exists(nuSpecFile)) { return; }
 

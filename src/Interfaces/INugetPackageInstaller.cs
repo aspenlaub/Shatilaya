@@ -1,4 +1,6 @@
-﻿namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
+﻿using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface INugetPackageInstaller {
         /// <summary>
         /// Install nuget package
@@ -8,6 +10,6 @@
         /// <param name="version"></param>
         /// <param name="excludeVersion"></param>
         /// <param name="errorsAndInfos"></param>
-        void InstallNugetPackage(IFolder packagesConfigFolder, string packageId, string version, bool excludeVersion, ErrorsAndInfos errorsAndInfos);
+        void InstallNugetPackage(IFolder packagesConfigFolder, string packageId, string version, bool excludeVersion, IErrorsAndInfos errorsAndInfos);
     }
 }
