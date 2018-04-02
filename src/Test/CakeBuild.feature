@@ -133,3 +133,17 @@ Scenario: Nuget package is created in the master release folder
 	And the newest file in the master "Release" folder is of type "nupkg"
 	And the last write time of the newest file in the master "Release" folder is as remembered
     And the number of "nupkg" files in the master "Debug" folder is 0
+
+Scenario: Uncommitted changes break the build
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I change the script so that it will check for uncomitted changes
+	And I change a source file so that it still can be compiled
+	When I run the build.cake script
+	Then an uncommitted change error was reported for the changed source file
+	And I do not find any artifacts in the master debug folder
+
+Scenario: Nuspec file is recreated
+	Given I copy the latest build.cake script from my Shatilaya solution
+	And I empty the nuspec file
+	When I run the build.cake script
+	Then a non-empty nuspec file is there again

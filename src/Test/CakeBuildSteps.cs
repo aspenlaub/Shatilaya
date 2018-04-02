@@ -72,6 +72,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"doNugetPush = true;"));
             latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"checkForUncommittedChanges = true;"));
+            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkForUncommittedChanges = true;", @"checkForUncommittedChanges = false;");
 
             var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);
@@ -89,6 +91,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(scriptFileName, script);
         }
 
+        [Given(@"I change the script so that it will check for uncomitted changes")]
+        public void GivenIChangeTheScriptSoThatItWillCheckForUncomittedChanges() {
+            var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
+            var currentScript = File.ReadAllText(currentScriptFileName);
+            Assert.IsTrue(currentScript.Contains(@"checkForUncommittedChanges = false;"));
+            currentScript = currentScript.Replace(@"checkForUncommittedChanges = false;", @"checkForUncommittedChanges = true;");
+            File.WriteAllText(currentScriptFileName, currentScript);
+        }
+
         [Given(@"Nuget packages are not restored yet")]
         public void GivenNugetPackagesAreNotRestoredYet() {
             Assert.IsFalse(OctoPackFolder().Exists());
@@ -102,6 +113,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var contents = File.ReadAllText(fileName);
             Assert.IsTrue(contents.Contains(@"new Cake()"));
             contents = contents.Replace(@"new Cake()", @"old Cake()");
+            File.WriteAllText(fileName, contents);
+        }
+
+        [Given(@"I change a source file so that it still can be compiled")]
+        public void GivenIChangeASourceFileSoThatItStillCanBeCompiled() {
+            var folder = ChabTarget.Folder().SubFolder("src");
+            var fileName = folder.FullName + @"\Oven.cs";
+            Assert.IsTrue(File.Exists(fileName));
+            var contents = File.ReadAllText(fileName);
+            Assert.IsTrue(contents.Contains(@"namespace Aspenlaub"));
+            contents = contents.Replace(@"namespace Aspenlaub", "/* Commented */\r\n" + @"namespace Aspenlaub");
             File.WriteAllText(fileName, contents);
         }
 
@@ -188,6 +210,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(scriptFileName, contents);
         }
 
+        [Given(@"I empty the nuspec file")]
+        public void GivenIDeleteTheNuspecFile() {
+            var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
+            Assert.IsTrue(File.Exists(nuSpecFileName));
+            File.WriteAllText(nuSpecFileName, "");
+        }
+
         #endregion
 
         #region When
@@ -245,6 +274,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
             Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
             Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
+        }
+
+        [Then(@"an uncommitted change error was reported for the changed source file")]
+        public void ThenAUncommittedChangeErrorWasReportedForTheChangedSourceFile() {
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("ncommitted change")));
         }
 
         [Then(@"build step ""(.*)"" was skipped")]
@@ -346,6 +380,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
             var newestFile = folder.LastWrittenFileFullName();
             Assert.AreEqual(LastWriteTimes[p0], File.GetLastWriteTime(newestFile));
+        }
+
+        [Then(@"a non-empty nuspec file is there again")]
+        public void ThenANon_EmptyNuspecFileIsThereAgain() {
+            var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
+            Assert.IsTrue(File.Exists(nuSpecFileName));
+            Assert.IsTrue(File.ReadAllText(nuSpecFileName).Length > 1024);
         }
 
         #endregion
