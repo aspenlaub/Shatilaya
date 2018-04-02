@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using LibGit2Sharp;
@@ -42,7 +43,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         private static void CloneRepository(IFolder folder, string branch) {
-            if (folder.GitSubFolder().Exists()) { return; }
+            if (folder.GitSubFolder().Exists()) {
+                return;
+            }
 
             if (folder.Exists()) {
                 var deleter = new FolderDeleter();
@@ -51,7 +54,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
 
             const string url = "https://github.com/aspenlaub/Pakled.git";
-            Repository.Clone(url, folder.FullName, new CloneOptions { BranchName = branch });
+            Repository.Clone(url, folder.FullName, new CloneOptions {BranchName = branch});
         }
 
         [TestMethod]
@@ -78,12 +81,31 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             try {
                 Dns.GetHostEntry("www.google.com");
                 online = true;
-            } catch {
+            }
+            catch {
                 online = false;
             }
 
             Assert.IsTrue(online, "You are not connected to the internet");
         }
+
+        [TestMethod]
+        public void CanGetHeadTipIdSha() {
+            var sut = new GitUtilities();
+            var headTipIdSha = sut.HeadTipIdSha(MasterFolder);
+            Assert.IsFalse(string.IsNullOrEmpty(headTipIdSha));
+            Assert.IsTrue(headTipIdSha.Length >= 40);
+        }
+
+        [TestMethod]
+        public void CanDetermineUncommittedChanges() {
+            var sut = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
+            sut.VerifyThatThereAreNoUncommittedChanges(MasterFolder, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            File.WriteAllText(MasterFolder.FullName + @"\change.cs", @"This is not a change");
+            sut.VerifyThatThereAreNoUncommittedChanges(MasterFolder, errorsAndInfos);
+            Assert.IsTrue(errorsAndInfos.Errors.Any(e => e.Contains(@"change.cs")));
+        }
     }
 }
-

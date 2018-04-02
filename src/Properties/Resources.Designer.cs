@@ -212,5 +212,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
                 return ResourceManager.GetString("TopLevelNamespaceLacksADot", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is an uncommitted change to &quot;{0}&quot;.
+        /// </summary>
+        internal static string UncommittedChangeTo {
+            get {
+                return ResourceManager.GetString("UncommittedChangeTo", resourceCulture);
+            }
+        }
     }
 }

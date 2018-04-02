@@ -168,4 +168,7 @@
   <data name="TopLevelNamespaceLacksADot" xml:space="preserve">
     <value>Top level namespace '{0}' does not contain any dot ('.')</value>
   </data>
+  <data name="UncommittedChangeTo" xml:space="preserve">
+    <value>There is an uncommitted change to "{0}"</value>
+  </data>
 </root>

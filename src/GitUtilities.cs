@@ -82,5 +82,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
             }
         }
+
+        public string HeadTipIdSha(IFolder repositoryFolder) {
+            if (!repositoryFolder.Exists()) { return ""; }
+
+            using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
+                return repo.Head.Tip.Id.Sha;
+            }
+        }
+
+        public void VerifyThatThereAreNoUncommittedChanges(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            if (!repositoryFolder.Exists()) { return; }
+
+            using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
+                var changes = repo.Diff.Compare<TreeChanges>(repo.Head.Tip.Tree, DiffTargets.Index | DiffTargets.WorkingDirectory).ToList();
+                foreach(var change in changes) {
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UncommittedChangeTo, change.Path));
+                }
+            }
+        }
     }
 }

@@ -24,5 +24,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="cloneOptions"></param>
         /// <param name="errorsAndInfos"></param>
         void Clone(string url, IFolder folder, CloneOptions cloneOptions, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Return the sha of the latest commit
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <returns></returns>
+        string HeadTipIdSha(IFolder repositoryFolder);
+
+        /// <summary>
+        /// Verify that the local repository does not contain uncommitted changes
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="errorsAndInfos"></param>
+        /// <returns></returns>
+        void VerifyThatThereAreNoUncommittedChanges(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
     }
 }
