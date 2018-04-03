@@ -143,10 +143,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return filesElement;
         }
 
-        public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
-            CreateNuSpecFileIfRequiredOrPresent(required, solutionFileFullName, new List<string>(), errorsAndInfos);
-        }
-
         public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
             if (!required && !File.Exists(nuSpecFile)) { return; }

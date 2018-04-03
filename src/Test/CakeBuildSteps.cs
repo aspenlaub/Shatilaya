@@ -69,12 +69,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestScriptWithoutBuildCakeCheck = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Length > 120);
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"checkIfBuildCakeIsOutdated = true;"));
-            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"doNugetPush = true;"));
-            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(@"checkForUncommittedChanges = true;"));
-            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(@"checkForUncommittedChanges = true;", @"checkForUncommittedChanges = false;");
+
+            var changer = new CakeScriptSettingsChanger();
+            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkIfBuildCakeIsOutdated", true);
+            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "doNugetPush", true);
+            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkForUncommittedChanges", true);
 
             var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);
@@ -214,7 +213,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Given(@"I empty the nuspec file")]
         public void GivenIDeleteTheNuspecFile() {
             var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
-            Assert.IsTrue(File.Exists(nuSpecFileName));
             File.WriteAllText(nuSpecFileName, "");
         }
 

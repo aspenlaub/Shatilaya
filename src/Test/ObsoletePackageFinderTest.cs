@@ -52,9 +52,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
             var cakeScript = File.ReadAllText(cakeScriptFileFullName);
             Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
-            cakeScript = cakeScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
-            Assert.IsTrue(cakeScript.Contains(@"doNugetPush = true;"));
-            cakeScript = cakeScript.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
+
+            var changer = new CakeScriptSettingsChanger();
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
+
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
             ChabTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));

@@ -22,6 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             componentProviderMock.SetupGet(c => c.NugetConfigReader).Returns(new NugetConfigReader());
             componentProviderMock.SetupGet(c => c.NugetFeedLister).Returns(new NugetFeedLister());
+            componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
             ComponentProvider = componentProviderMock.Object;
         }
 
@@ -57,9 +58,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
             var cakeScript = File.ReadAllText(cakeScriptFileFullName);
             Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
-            cakeScript = cakeScript.Replace(@"checkIfBuildCakeIsOutdated = true;", @"checkIfBuildCakeIsOutdated = false;");
-            Assert.IsTrue(cakeScript.Contains(@"doNugetPush = true;"));
-            cakeScript = cakeScript.Replace(@"doNugetPush = true;", @"doNugetPush = false;");
+
+            var changer = new CakeScriptSettingsChanger();
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
+
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
             PakledTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
@@ -71,7 +75,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
             string packageFileFullName, feedUrl, apiKey;
-            sut.FindPackageToPush(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
+            sut.FindPackageToPush(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(developerSettings.NugetFeedUrl, feedUrl);
             Assert.IsTrue(apiKey.Length > 256);

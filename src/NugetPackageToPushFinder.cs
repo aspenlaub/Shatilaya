@@ -16,6 +16,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void FindPackageToPush(IFolder packageFolderWithBinaries, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos) {
+            FindPackageToPush(packageFolderWithBinaries, null, solutionFileFullName, out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
+        }
+
+        public void FindPackageToPush(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos) {
             packageFileFullName = "";
             feedUrl = "";
             apiKey = "";
@@ -70,6 +74,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
             var latestRemotePackageVersion = remotePackages.Max(p => p.Version);
             if (latestRemotePackageVersion >= latestLocalPackageVersion) { return; }
+
+            var remotePackage = remotePackages.First(p => p.Version == latestRemotePackageVersion);
+            if (!string.IsNullOrEmpty(remotePackage.Tags) && repositoryFolder != null) {
+                var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(repositoryFolder);
+                var tags = remotePackage.Tags.Split(' ');
+                if (tags.Contains(headTipIdSha)) { return; }
+            }
 
             packageFileFullName = packageFolderWithBinaries.FullName + @"\" + packageId + "." + latestLocalPackageVersion + ".nupkg";
             if (File.Exists(packageFileFullName)) { return; }
