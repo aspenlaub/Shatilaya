@@ -15,10 +15,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             ComponentProvider = componentProvider;
         }
 
-        public void FindPackageToPush(IFolder packageFolderWithBinaries, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos) {
-            FindPackageToPush(packageFolderWithBinaries, null, solutionFileFullName, out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
-        }
-
         public void FindPackageToPush(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos) {
             packageFileFullName = "";
             feedUrl = "";
