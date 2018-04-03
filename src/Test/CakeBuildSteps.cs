@@ -14,6 +14,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using NuGet;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -387,6 +388,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
             Assert.IsTrue(File.Exists(nuSpecFileName));
             Assert.IsTrue(File.ReadAllText(nuSpecFileName).Length > 1024);
+        }
+
+        [Then(@"the newest nuget package in the master ""(.*)"" folder is tagged with the head tip id sha")]
+        public void ThenTheNewestNugetPackageInTheMasterFolderIsTaggedWithTheHeadTipIdSha(string p0) {
+            var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(ChabTarget.Folder());
+            var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
+            var repository = new LocalPackageRepository(packagesFolder);
+            var packages = repository.GetPackages();
+            var latestPackageVersion = packages.Max(p => p.Version);
+            var package = packages.FirstOrDefault(p => p.Version == latestPackageVersion);
+            Assert.IsNotNull(package);
+            var tags = package.Tags.Split(' ').Where(s => s != "").ToList();
+            Assert.IsTrue(tags.Contains(headTipIdSha));
         }
 
         #endregion

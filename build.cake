@@ -90,7 +90,8 @@ Task("UpdateNuspec")
     var solutionFileFullName = solution.Replace('/', '\\');
     var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
 	var nuSpecErrorsAndInfos = new ErrorsAndInfos();
-	componentProvider.NuSpecCreator.CreateNuSpecFileIfRequiredOrPresent(true, solutionFileFullName, nuSpecErrorsAndInfos);
+    var headTipIdSha = componentProvider.GitUtilities.HeadTipIdSha(new Folder(MakeAbsolute(DirectoryPath.FromString(".")).FullPath));
+	componentProvider.NuSpecCreator.CreateNuSpecFileIfRequiredOrPresent(true, solutionFileFullName, new List<string> { headTipIdSha }, nuSpecErrorsAndInfos);
     if (nuSpecErrorsAndInfos.Errors.Any()) {
 	  throw new Exception(string.Join("\r\n", nuSpecErrorsAndInfos.Errors));
 	}
