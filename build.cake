@@ -89,7 +89,6 @@ Task("UpdateNuspec")
   .Does(() => {
     var solutionFileFullName = solution.Replace('/', '\\');
     var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
-	var nuSpecContents = System.IO.File.ReadAllText(nuSpecFile);
 	var nuSpecErrorsAndInfos = new ErrorsAndInfos();
 	componentProvider.NuSpecCreator.CreateNuSpecFileIfRequiredOrPresent(true, solutionFileFullName, nuSpecErrorsAndInfos);
     if (nuSpecErrorsAndInfos.Errors.Any()) {
