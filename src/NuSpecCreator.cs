@@ -23,7 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
         }
 
-        public XDocument CreateNuSpec(string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
+        public XDocument CreateNuSpec(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var document = new XDocument();
             var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFile)) {
@@ -42,7 +42,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
             var element = new XElement(Namespace + "package");
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, errorsAndInfos);
+            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, errorsAndInfos);
             if (metaData == null) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFile));
                 return document;
@@ -60,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return document;
         }
 
-        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IErrorsAndInfos errorsAndInfos) {
+        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
@@ -94,6 +94,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var year = DateTime.Now.Year;
             element.Add(new XElement(Namespace + @"copyright", $"Copyright {year}"));
             element.Add(new XElement(Namespace + @"version", @"$version$"));
+            tags = tags.Where(t => !t.Contains('<') && !t.Contains('>') && !t.Contains('&') && !t.Contains(' ')).ToList();
+            if (tags.Any()) {
+                element.Add(new XElement(Namespace + @"tags", string.Join(" ", tags)));
+            }
 
             var dependenciesElement = new XElement(Namespace + @"dependencies");
             foreach (var dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion
@@ -140,10 +144,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
+            CreateNuSpecFileIfRequiredOrPresent(required, solutionFileFullName, new List<string>(), errorsAndInfos);
+        }
+
+        public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
             if (!required && !File.Exists(nuSpecFile)) { return; }
 
-            var document = CreateNuSpec(solutionFileFullName, errorsAndInfos);
+            var document = CreateNuSpec(solutionFileFullName, tags, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return; }
 
             const string tempFileName = @"c:\temp\temp.nuspec";

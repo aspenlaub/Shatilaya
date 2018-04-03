@@ -60,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(rootNamespaceElement);
             var outputPathElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
             Assert.IsNotNull(outputPathElement);
-            Document = sut.CreateNuSpec(solutionFileFullName, errorsAndInfos);
+            Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(0, errorsAndInfos.Infos.Count);
@@ -84,6 +84,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\PakledBin\Release\*.Test*.*", @"..\PakledBin\Release\*.Test*.*" });
             var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
+            VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
         private static bool ParentIsReleasePropertyGroup(XElement e) {
