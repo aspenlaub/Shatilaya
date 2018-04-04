@@ -105,7 +105,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected string DllFileFullName(string projectFolderFullName, XElement hintPathElement) {
-            return projectFolderFullName + '\\' + hintPathElement.Value;
+            return Path.Combine(projectFolderFullName, hintPathElement.Value);
         }
     }
 }
