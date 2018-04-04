@@ -64,7 +64,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-
             var solutionFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\" + PakledConsumerTarget.SolutionId + ".sln";
             var projectFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\" + PakledConsumerTarget.SolutionId + ".csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));

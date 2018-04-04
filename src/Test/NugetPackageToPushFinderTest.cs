@@ -5,8 +5,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -49,28 +50,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanFindNugetPackagesToPush() {
-            var gitUtilities = new GitUtilities();
+            var developerSettings = DeveloperSettings();
+
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + PakledTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            CloneTarget(errorsAndInfos);
 
-            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-            Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
-
-            var changer = new CakeScriptSettingsChanger();
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
-
-            File.WriteAllText(cakeScriptFileFullName, cakeScript);
-            PakledTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-
-            var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
-            Assert.IsNotNull(developerSettings);
+            ChangeCakeScriptAndRunIt(true, errorsAndInfos);
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
@@ -79,6 +64,58 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(developerSettings.NugetFeedUrl, feedUrl);
             Assert.IsTrue(apiKey.Length > 256);
+        }
+
+        private DeveloperSettings DeveloperSettings() {
+            var developerSettingsSecret = new DeveloperSettingsSecret();
+            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            Assert.IsNotNull(developerSettings);
+            return developerSettings;
+        }
+
+        [TestMethod]
+        public void PackageForTheSameCommitIsNotPushed() {
+            var developerSettings = DeveloperSettings();
+
+            var errorsAndInfos = new ErrorsAndInfos();
+            CloneTarget(errorsAndInfos);
+
+            var packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            if (!packages.Any()) { return; }
+
+            var latestPackageVersion = packages.Max(p => p.Version);
+            var latestPackage = packages.First(p => p.Version == latestPackageVersion);
+
+            var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledTarget.Folder());
+            Assert.IsTrue(latestPackage.Tags.Contains(headTipIdSha));
+
+            ChangeCakeScriptAndRunIt(false, errorsAndInfos);
+
+            packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Version));
+        }
+
+        private static void CloneTarget(IErrorsAndInfos errorsAndInfos) {
+            var gitUtilities = new GitUtilities();
+            var url = "https://github.com/aspenlaub/" + PakledTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions {BranchName = "master"}, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+        }
+
+        private void ChangeCakeScriptAndRunIt(bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
+            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
+            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+
+            var changer = new CakeScriptSettingsChanger();
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
+            if (disableNugetPush) {
+                cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
+            }
+            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
+
+            File.WriteAllText(cakeScriptFileFullName, cakeScript);
+            PakledTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
     }
 }
