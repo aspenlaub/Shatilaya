@@ -40,7 +40,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var projectElement = document.XPathSelectElements("./cp:Project", NamespaceManager).FirstOrDefault();
 
             var propertyGroups = document.XPathSelectElements("./cp:Project/cp:PropertyGroup", NamespaceManager).Select(x => ReadPropertyGroup(x)).ToList();
-            var dllFileFullNames = document.XPathSelectElements("./cp:Project/cp:ItemGroup/cp:Reference/cp:HintPath", NamespaceManager).Select(x => DllFileFullName(x));
+            var dllFileFullNames = document.XPathSelectElements("./cp:Project/cp:ItemGroup/cp:Reference/cp:HintPath", NamespaceManager).Select(x => DllFileFullName(projectFileInfo.DirectoryName, x));
 
             var project = new Project {
                 ProjectFileFullName = projectFileFullName,
@@ -104,8 +104,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return propertyGroup;
         }
 
-        protected string DllFileFullName(XElement hintPathElement) {
-            return hintPathElement.Value.Substring(hintPathElement.Value.LastIndexOf('\\') + 1);
+        protected string DllFileFullName(string projectFolderFullName, XElement hintPathElement) {
+            return projectFolderFullName + '\\' + hintPathElement.Value;
         }
     }
 }

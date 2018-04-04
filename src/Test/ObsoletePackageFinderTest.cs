@@ -51,7 +51,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
             var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-            Assert.IsTrue(cakeScript.Contains(@"checkIfBuildCakeIsOutdated = true;"));
 
             var changer = new CakeScriptSettingsChanger();
             cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
