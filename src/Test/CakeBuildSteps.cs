@@ -410,7 +410,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var package = packages.FirstOrDefault(p => p.Version == latestPackageVersion);
             Assert.IsNotNull(package);
             var unwantedReferences = package.AssemblyReferences.Where(a => a.Name.Contains("Test")).ToList();
-            Assert.IsFalse(unwantedReferences.Any(), unwantedReferences.First().Name);
+            Assert.IsFalse(unwantedReferences.Any());
         }
 
         #endregion
