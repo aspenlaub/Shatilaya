@@ -401,6 +401,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(tags.Contains(headTipIdSha));
         }
 
+        [Then(@"the newest nuget package in the master ""(.*)"" folder does not contain a test assembly")]
+        public void ThenTheNewestNugetPackageInTheMasterFolderDoesNotContainATestAssembly(string p0) {
+            var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
+            var repository = new LocalPackageRepository(packagesFolder);
+            var packages = repository.GetPackages();
+            var latestPackageVersion = packages.Max(p => p.Version);
+            var package = packages.FirstOrDefault(p => p.Version == latestPackageVersion);
+            Assert.IsNotNull(package);
+            var unwantedReferences = package.AssemblyReferences.Where(a => a.Name.Contains("Test")).ToList();
+            Assert.IsFalse(unwantedReferences.Any(), unwantedReferences.First().Name);
+        }
+
         #endregion
 
         protected static IFolder OctoPackFolder() {

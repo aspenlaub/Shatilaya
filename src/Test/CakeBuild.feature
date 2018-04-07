@@ -127,6 +127,7 @@ Scenario: Nuget package is created in the master release folder
     And the number of "nupkg" files in the master "Release" folder is 1
 	And the newest file in the master "Release" folder is of type "nupkg"
 	And the newest nuget package in the master "Release" folder is tagged with the head tip id sha
+	And the newest nuget package in the master "Release" folder does not contain a test assembly
 	And I remember the last write time of the newest file in the master "Release" folder
 	When I run the build.cake script
 	Then no cake errors were reported

@@ -137,7 +137,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             foreach (var fileElement in new[] { @"dll", @"pdb" }.Select(extension
                   => new XElement(Namespace + @"file",
                       new XAttribute(@"src", outputPathElement.Value + topLevelNamespace + ".*." + extension),
-                      new XAttribute(@"exclude", string.Join(",", outputPathElement.Value + @"*.Test*.*", outputPathElement.Value + @"*.exe")),
+                      new XAttribute(@"exclude", string.Join(";", outputPathElement.Value + @"*.Test*.*", outputPathElement.Value + @"*.exe")),
                       new XAttribute(@"target", @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", ""))))) {
                 filesElement.Add(fileElement);
             }
