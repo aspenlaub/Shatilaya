@@ -140,6 +140,7 @@
     <Compile Include="CakeRunnerTest.cs" />
     <Compile Include="CakeScriptSettingsChanger.cs" />
     <Compile Include="ComponentProviderTest.cs" />
+    <Compile Include="ExecutableFinderTest.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
     <Compile Include="NugetConfigReaderTest.cs" />

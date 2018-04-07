@@ -5,6 +5,8 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
@@ -150,7 +152,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var document = CreateNuSpec(solutionFileFullName, tags, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return; }
 
-            const string tempFileName = @"c:\temp\temp.nuspec";
+            var tempFileName = Path.GetTempPath() + @"\temp.nuspec";
             document.Save(tempFileName);
             if (File.Exists(nuSpecFile) && File.ReadAllText(nuSpecFile) == File.ReadAllText(tempFileName)) { return; }
 

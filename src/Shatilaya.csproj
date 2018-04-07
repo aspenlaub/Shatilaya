@@ -96,6 +96,7 @@
     <Compile Include="CakeRunner.cs" />
     <Compile Include="ComponentProvider.cs" />
     <Compile Include="DependencyTreeBuilder.cs" />
+    <Compile Include="ExecutableFinder.cs" />
     <Compile Include="GitUtilities.cs" />
     <Compile Include="LatestBuildCakeScriptProvider.cs" />
     <Compile Include="NugetConfigReader.cs" />

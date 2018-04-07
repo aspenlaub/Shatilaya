@@ -4,6 +4,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {
         ICakeRunner CakeRunner { get; }
         IDependencyTreeBuilder DependencyTreeBuilder { get; }
+        IExecutableFinder ExecutableFinder { get; }
         IGitUtilities GitUtilities { get; }
         ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get; }
         INugetConfigReader NugetConfigReader { get; }
