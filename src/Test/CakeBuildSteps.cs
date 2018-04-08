@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -63,7 +64,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 
-        [Given(@"I copy the latest build\.cake script from my Shatilaya solution")]
+        [Given(@"I copy the latest build\.cake script from my Shatilaya solution and reference the local assemblies")]
         public void GivenIHaveTheLatestBuild_CakeScript() {
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var latestScriptWithoutBuildCakeCheck = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
@@ -74,6 +75,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkIfBuildCakeIsOutdated", true);
             latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "doNugetPush", true);
             latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkForUncommittedChanges", true);
+
+            const string addShatilaya = @"#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya";
+            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(addShatilaya));
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            assemblyLocation = assemblyLocation.Substring(0, assemblyLocation.LastIndexOf('\\'));
+            var addLocalShatilaya = Directory.GetFiles(assemblyLocation, "*.dll").Select(assembly => $"#reference \"{assembly}\"").ToList();
+            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(addShatilaya, string.Join("\r\n", addLocalShatilaya));
 
             var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
             var currentScript = File.ReadAllText(currentScriptFileName);

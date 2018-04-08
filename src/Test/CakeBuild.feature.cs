@@ -130,7 +130,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 17
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 18
  testRunner.And("I change the cake script so that debug build is suppressed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 19
@@ -161,7 +162,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 27
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 28
  testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 29
@@ -184,7 +186,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 33
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 34
  testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 35
@@ -209,7 +212,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 40
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 41
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 42
@@ -232,7 +236,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 46
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 47
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 48
@@ -257,7 +262,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 53
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 54
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 55
@@ -290,7 +296,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 64
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 65
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 66
@@ -317,7 +324,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 72
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 73
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 74
@@ -344,7 +352,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 80
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 81
  testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 82
@@ -369,7 +378,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 87
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 88
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 89
@@ -394,7 +404,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 94
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 95
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 96
@@ -427,7 +438,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 105
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 106
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 107
@@ -456,7 +468,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 113
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 114
     testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 115
@@ -487,7 +500,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 123
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 124
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 125
@@ -535,7 +549,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 140
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 141
  testRunner.And("I change the script so that it will check for uncomitted changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 142
@@ -562,7 +577,8 @@ this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line 148
- testRunner.Given("I copy the latest build.cake script from my Shatilaya solution", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
+                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 149
  testRunner.And("I empty the nuspec file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 150
