@@ -7,11 +7,11 @@ using Moq;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
-    public class SelfBuildTest {
-        protected static TestTargetFolder ShatilayaTarget = new TestTargetFolder(nameof(SelfBuildTest), "Shatilaya");
+    public class DocuProjectBuildTest {
+        protected static TestTargetFolder RoxannTarget = new TestTargetFolder(nameof(DocuProjectBuildTest), "Roxann");
         protected IComponentProvider ComponentProvider;
 
-        public SelfBuildTest() {
+        public DocuProjectBuildTest() {
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
@@ -20,33 +20,33 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ShatilayaTarget.DeleteCakeFolder();
-            ShatilayaTarget.CreateCakeFolder();
+            RoxannTarget.DeleteCakeFolder();
+            RoxannTarget.CreateCakeFolder();
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            ShatilayaTarget.DeleteCakeFolder();
+            RoxannTarget.DeleteCakeFolder();
         }
 
         [TestInitialize]
         public void Initialize() {
-            ShatilayaTarget.Delete();
+            RoxannTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ShatilayaTarget.Delete();
+            RoxannTarget.Delete();
         }
 
         [TestMethod, Ignore]
-        public void CanBuildMyself() {
+        public void CanBuildProjectForDocumentation() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            const string url = "https://github.com/aspenlaub/Shatilaya.git";
-            gitUtilities.Clone(url, ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            const string url = "https://github.com/aspenlaub/Roxann.git";
+            gitUtilities.Clone(url, RoxannTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            ShatilayaTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            RoxannTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
     }
