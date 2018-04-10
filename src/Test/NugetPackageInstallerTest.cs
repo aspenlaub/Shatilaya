@@ -45,7 +45,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsFalse(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
             var sut = new NugetPackageInstaller(ComponentProvider);

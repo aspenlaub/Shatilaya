@@ -98,7 +98,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         private static void CloneTarget(IErrorsAndInfos errorsAndInfos) {
             var gitUtilities = new GitUtilities();
             var url = "https://github.com/aspenlaub/" + PakledTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions {BranchName = "master"}, errorsAndInfos);
+            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions {BranchName = "master"}, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 

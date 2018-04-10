@@ -46,7 +46,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";

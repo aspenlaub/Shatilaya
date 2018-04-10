@@ -22,8 +22,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="url"></param>
         /// <param name="folder"></param>
         /// <param name="cloneOptions"></param>
+        /// <param name="useCache"></param>
         /// <param name="errorsAndInfos"></param>
-        void Clone(string url, IFolder folder, CloneOptions cloneOptions, IErrorsAndInfos errorsAndInfos);
+        void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Return the sha of the latest commit

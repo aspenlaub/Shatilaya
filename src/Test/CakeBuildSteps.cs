@@ -60,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
             const string url = "https://github.com/aspenlaub/Chab.git";
             var errorsAndInfos = new ErrorsAndInfos();
-            ComponentProvider.GitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, errorsAndInfos);
+            ComponentProvider.GitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 

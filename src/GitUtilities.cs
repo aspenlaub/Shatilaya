@@ -39,9 +39,33 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         }
 
-        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, IErrorsAndInfos errorsAndInfos) {
+        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos) {
+            if (useCache && CloneFromCache(url, folder)) { return; }
+
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             Repository.Clone(url, folder.FullName, cloneOptions);
+            if (!useCache) { return; }
+
+            var zipFileName = CloneZipFileName(url);
+            if (File.Exists(zipFileName)) { return; }
+
+            var fastZip = new FastZip();
+            fastZip.CreateZip(zipFileName, folder.FullName, true, "");
+        }
+
+        protected bool CloneFromCache(string url, IFolder folder) {
+            DeleteOldDownloadFiles();
+
+            var zipFileName = CloneZipFileName(url);
+            if (!File.Exists(zipFileName)) { return false; }
+
+            var fastZip = new FastZip();
+            fastZip.ExtractZip(zipFileName, folder.FullName, FastZip.Overwrite.Always, s => true, null, null, true);
+            return true;
+        }
+
+        private static string CloneZipFileName(string url) {
+            return DownloadFolder() + '\\' + url.Replace(':', '-').Replace('/', '-').Replace('.', '-') + ".zip";
         }
 
         /// <summary>
@@ -49,13 +73,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         /// so the execution fails and reports that a git2 assembly cannot be found
         /// </summary>
         private static void MakeSureGit2AssembliesAreInPlace(IErrorsAndInfos errorsAndInfos) {
+            DeleteOldDownloadFiles();
             var folder = Directory.GetCurrentDirectory();
-            var downloadFolder = Path.GetTempPath() + @"\AspenlaubDownloads";
-            if (!Directory.Exists(downloadFolder)) {
-                Directory.CreateDirectory(downloadFolder);
-            }
+            var downloadFolder = DownloadFolder();
             var downloadedZipFileFullName = downloadFolder + @"\lib.zip";
-            if (!File.Exists(downloadedZipFileFullName) || File.GetLastWriteTime(downloadedZipFileFullName).AddMinutes(10) < DateTime.Now) {
+            if (!File.Exists(downloadedZipFileFullName)) {
                 using (var client = new WebClient()) {
                     client.DownloadFile("https://www.aspenlaub.net/Github/lib.zip", downloadedZipFileFullName);
                 }
@@ -83,6 +105,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             }
         }
 
+        private static string DownloadFolder() {
+            var downloadFolder = Path.GetTempPath() + @"\AspenlaubDownloads";
+            if (!Directory.Exists(downloadFolder)) {
+                Directory.CreateDirectory(downloadFolder);
+            }
+            return downloadFolder;
+        }
+
         public string HeadTipIdSha(IFolder repositoryFolder) {
             if (!repositoryFolder.Exists()) { return ""; }
 
@@ -99,6 +129,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 foreach(var change in changes) {
                     errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UncommittedChangeTo, change.Path));
                 }
+            }
+        }
+
+        protected static void DeleteOldDownloadFiles() {
+            var downloadFolder = DownloadFolder();
+            if (!Directory.Exists(downloadFolder)) { return; }
+
+            foreach (var file in Directory.GetFiles(downloadFolder, "*.*").Where(f => File.GetLastWriteTime(f).AddMinutes(10) < DateTime.Now)) {
+                File.Delete(file);
             }
         }
     }
