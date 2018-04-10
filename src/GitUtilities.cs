@@ -44,9 +44,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Action onCloned, IErrorsAndInfos errorsAndInfos) {
-            if (useCache && CloneFromCache(url, folder)) { return; }
-
+            var canCloneBeUsed = useCache && CloneFromCache(url, folder);
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
+            if (canCloneBeUsed) { return; }
+
             Repository.Clone(url, folder.FullName, cloneOptions);
             onCloned();
             if (!useCache) { return; }
