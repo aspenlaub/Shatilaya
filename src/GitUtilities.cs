@@ -59,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected bool CloneFromCache(string url, IFolder folder) {
-            DeleteOldDownloadFiles();
+            DeleteOldDownloadFiles("*---*.*");
 
             var zipFileName = CloneZipFileName(url);
             if (!File.Exists(zipFileName)) { return false; }
@@ -78,7 +78,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         /// so the execution fails and reports that a git2 assembly cannot be found
         /// </summary>
         private static void MakeSureGit2AssembliesAreInPlace(IErrorsAndInfos errorsAndInfos) {
-            DeleteOldDownloadFiles();
+            DeleteOldDownloadFiles("lib.zip");
             var folder = Directory.GetCurrentDirectory();
             var downloadFolder = DownloadFolder();
             var downloadedZipFileFullName = downloadFolder + @"\lib.zip";
@@ -137,11 +137,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             }
         }
 
-        protected static void DeleteOldDownloadFiles() {
+        protected static void DeleteOldDownloadFiles(string wildcard) {
             var downloadFolder = DownloadFolder();
             if (!Directory.Exists(downloadFolder)) { return; }
 
-            foreach (var file in Directory.GetFiles(downloadFolder, "*.*").Where(f => File.GetLastWriteTime(f).AddMinutes(30) < DateTime.Now)) {
+            foreach (var file in Directory.GetFiles(downloadFolder, wildcard).Where(f => File.GetLastWriteTime(f).AddMinutes(30) < DateTime.Now)) {
                 File.Delete(file);
             }
         }
