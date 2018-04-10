@@ -23,16 +23,11 @@ Scenario: Output folders are cleaned up
 	And no artifact exists
 	And no intermediate build output exists
 
-Scenario: Nuget packages are restored
+Scenario: Nuget packages are restored and debug artifacts are built
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	When I run the build.cake script
 	Then no cake errors were reported
 	Then the Nuget packages are restored
-
-Scenario: Debug artifacts are built
-	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	When I run the build.cake script
-	Then no cake errors were reported
     And 2 "Debug" artifact/-s was/were produced
 	And 0 "Debug" nupkg file/-s was/were produced
 
@@ -42,19 +37,13 @@ Scenario: Debug build failure
 	When I run the build.cake script
 	Then a compilation error was reported for the changed source file
 
-Scenario: Debug artifacts are copied to the master debug folder
+Scenario: Debug artifacts are copied to the master debug folder, but only if changed
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master debug folder
 	When I run the build.cake script
 	Then no cake errors were reported
 	And I find the artifacts in the master debug folder
-
-Scenario: Only changed artifacts are copied to the master debug folder
-	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	And I clean up the master debug folder
-	And I run the build.cake script
-	And no cake errors were reported
-	And I save the master debug folder file names and timestamps
+	Given I save the master debug folder file names and timestamps
     And I wait two seconds
 	When I run the build.cake script
 	Then no cake errors were reported
@@ -83,19 +72,13 @@ Scenario: Release artifacts are built
     And 2 "Release" artifact/-s was/were produced
 	And 0 "Release" nupkg file/-s was/were produced
 
-Scenario: Release artifacts are copied to the master release folder
+Scenario: Release artifacts are copied to the master release folder, but only if changed
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master release folder
 	When I run the build.cake script
 	Then no cake errors were reported
 	And I find the artifacts in the master release folder
-
-Scenario: Only changed artifacts are copied to the master release folder
-	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	And I clean up the master release folder
-	And I run the build.cake script
-	And no cake errors were reported
-	And I save the master release folder file names and timestamps
+	Given I save the master release folder file names and timestamps
     And I wait two seconds
 	When I run the build.cake script
 	Then no cake errors were reported
