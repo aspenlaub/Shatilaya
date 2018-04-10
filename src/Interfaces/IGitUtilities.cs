@@ -1,4 +1,5 @@
-﻿using LibGit2Sharp;
+﻿using System;
+using LibGit2Sharp;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
@@ -25,6 +26,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="useCache"></param>
         /// <param name="errorsAndInfos"></param>
         void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Cover of Repository.Clone
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="folder"></param>
+        /// <param name="cloneOptions"></param>
+        /// <param name="useCache"></param>
+        /// <param name="onCloned"></param>
+        /// <param name="errorsAndInfos"></param>
+        void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Action onCloned, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Return the sha of the latest commit

@@ -38,6 +38,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return new Process {
                 StartInfo = {
                     WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
                     FileName = executableFullName,
                     Arguments = arguments,
                     WorkingDirectory = workingFolder,

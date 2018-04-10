@@ -40,10 +40,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos) {
+            Clone(url, folder, cloneOptions, useCache, () => { }, errorsAndInfos);
+        }
+
+        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Action onCloned, IErrorsAndInfos errorsAndInfos) {
             if (useCache && CloneFromCache(url, folder)) { return; }
 
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             Repository.Clone(url, folder.FullName, cloneOptions);
+            onCloned();
             if (!useCache) { return; }
 
             var zipFileName = CloneZipFileName(url);
@@ -136,7 +141,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var downloadFolder = DownloadFolder();
             if (!Directory.Exists(downloadFolder)) { return; }
 
-            foreach (var file in Directory.GetFiles(downloadFolder, "*.*").Where(f => File.GetLastWriteTime(f).AddMinutes(10) < DateTime.Now)) {
+            foreach (var file in Directory.GetFiles(downloadFolder, "*.*").Where(f => File.GetLastWriteTime(f).AddMinutes(30) < DateTime.Now)) {
                 File.Delete(file);
             }
         }
