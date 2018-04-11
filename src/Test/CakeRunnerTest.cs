@@ -85,5 +85,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"00:00:00")));
             Assert.IsFalse(errorsAndInfos.Infos.Any(m => m.Contains(ThisIsNotCake)));
         }
+
+        [TestMethod]
+        public void CanCallScriptAgainstNonExistingTargetButGetAnError() {
+            var errorsAndInfos = new ErrorsAndInfos();
+            Sut.CallCake(CakeExeFileFullName, ScriptsFolder.FullName + @"\success.cake", "NonExistingTarget", errorsAndInfos);
+            Assert.AreEqual(2, errorsAndInfos.Errors.Count);
+            Assert.IsTrue(errorsAndInfos.Errors.Any(e => e.Contains("The target 'NonExistingTarget' was not found")));
+        }
     }
 }

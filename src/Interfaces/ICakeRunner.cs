@@ -9,5 +9,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="scriptFileFullName"></param>
         /// <param name="errorsAndInfos"></param>
         void CallCake(string cakeExeFullName, string scriptFileFullName, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Call cake and run build.cake in a specified folder, return errors
+        /// </summary>
+        /// <param name="cakeExeFullName"></param>
+        /// <param name="scriptFileFullName"></param>
+        /// <param name="target"></param>
+        /// <param name="errorsAndInfos"></param>
+        void CallCake(string cakeExeFullName, string scriptFileFullName, string target, IErrorsAndInfos errorsAndInfos);
     }
 }
