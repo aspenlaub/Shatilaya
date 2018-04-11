@@ -65,7 +65,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(0, errorsAndInfos.Infos.Count);
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
             VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);

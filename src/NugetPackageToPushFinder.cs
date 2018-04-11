@@ -30,7 +30,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (errorsAndInfos.Errors.Any()) { return; }
 
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
             if (developerSettings == null) {
                 errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return;

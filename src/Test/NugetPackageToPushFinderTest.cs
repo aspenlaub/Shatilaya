@@ -50,9 +50,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanFindNugetPackagesToPush() {
-            var developerSettings = DeveloperSettings();
-
             var errorsAndInfos = new ErrorsAndInfos();
+            var developerSettings = DeveloperSettings(errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
             CloneTarget(errorsAndInfos);
 
             ChangeCakeScriptAndRunIt(true, errorsAndInfos);
@@ -66,18 +67,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(apiKey.Length > 256);
         }
 
-        private DeveloperSettings DeveloperSettings() {
+        private DeveloperSettings DeveloperSettings(IErrorsAndInfos errorsAndInfos) {
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret);
+            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
             return developerSettings;
         }
 
         [TestMethod]
         public void PackageForTheSameCommitIsNotPushed() {
-            var developerSettings = DeveloperSettings();
-
             var errorsAndInfos = new ErrorsAndInfos();
+            var developerSettings = DeveloperSettings(errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
             CloneTarget(errorsAndInfos);
 
             var packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
