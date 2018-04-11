@@ -70,12 +70,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestScriptWithoutBuildCakeCheck = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Length > 120);
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
-
-            var changer = new CakeScriptSettingsChanger();
-            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkIfBuildCakeIsOutdated", true);
-            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "doNugetPush", true);
-            latestScriptWithoutBuildCakeCheck = changer.ChangeCakeScriptSetting(latestScriptWithoutBuildCakeCheck, "checkForUncommittedChanges", true);
-
             const string addShatilaya = @"#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya";
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(addShatilaya));
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
@@ -88,24 +82,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             if (Regex.Replace(latestScriptWithoutBuildCakeCheck, @"\s", "") == Regex.Replace(currentScript, @"\s", "")) { return; }
 
             File.WriteAllText(currentScriptFileName, latestScriptWithoutBuildCakeCheck);
-        }
-
-        [Given(@"I change the cake script so that debug build is suppressed")]
-        public void GivenIChangeTheCakeScriptSoThatDebugBuildIsSuppressed() {
-            var scriptFileName = ChabTarget.FullName() + @"\build.cake";
-            var script = File.ReadAllText(scriptFileName);
-            Assert.IsTrue(script.Contains(@"doDebugCompilation = true;"));
-            script = script.Replace(@"doDebugCompilation = true;", @"doDebugCompilation = false;");
-            File.WriteAllText(scriptFileName, script);
-        }
-
-        [Given(@"I change the script so that it will check for uncomitted changes")]
-        public void GivenIChangeTheScriptSoThatItWillCheckForUncomittedChanges() {
-            var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
-            var currentScript = File.ReadAllText(currentScriptFileName);
-            Assert.IsTrue(currentScript.Contains(@"checkForUncommittedChanges = false;"));
-            currentScript = currentScript.Replace(@"checkForUncommittedChanges = false;", @"checkForUncommittedChanges = true;");
-            File.WriteAllText(currentScriptFileName, currentScript);
         }
 
         [Given(@"Nuget packages are not restored yet")]
@@ -231,6 +207,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void WhenIRunTheBuild_CakeScript() {
             ChabTarget.RunBuildCakeScript(ComponentProvider, CakeErrorsAndInfos);
         }
+
+        [When(@"I run the build\.cake script with target ""(.*)""")]
+        public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
+            ChabTarget.RunBuildCakeScript(ComponentProvider, target, CakeErrorsAndInfos);
+        }
         #endregion
 
         #region Then
@@ -288,9 +269,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("ncommitted change")));
         }
 
-        [Then(@"build step ""(.*)"" was skipped")]
+        [Then(@"build step ""(.*)"" was not a target")]
         public void ThenBuildStepWasSkipped(string p0) {
-            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(p0) && m.Contains(@"Skipped")));
+            Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(m => m.Contains(p0)));
         }
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]

@@ -15,17 +15,16 @@ Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 
 Scenario: Output folders are cleaned up
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	And I change the cake script so that debug build is suppressed
-	When I run the build.cake script
+	When I run the build.cake script with target "CleanRestoreUpdateNuspec"
 	Then no cake errors were reported
-	And build step "DebugBuild" was skipped
-	And build step "UpdateBuildCake" was skipped
+	And build step "DebugBuild" was not a target
+	And build step "UpdateBuildCake" was not a target
 	And no artifact exists
 	And no intermediate build output exists
 
 Scenario: Nuget packages are restored and debug artifacts are built
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	Then the Nuget packages are restored
     And 2 "Debug" artifact/-s was/were produced
@@ -34,18 +33,18 @@ Scenario: Nuget packages are restored and debug artifacts are built
 Scenario: Debug build failure
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I change a source file so that it cannot be compiled
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a compilation error was reported for the changed source file
 
 Scenario: Debug artifacts are copied to the master debug folder, but only if changed
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master debug folder
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	And I find the artifacts in the master debug folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	And the contents of the master debug folder has not changed
 
@@ -53,7 +52,7 @@ Scenario: Debug artifacts are not copied to the master debug folder when build f
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master debug folder
 	And I change a source file so that it cannot be compiled
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a compilation error was reported for the changed source file
 	And I do not find any artifacts in the master debug folder
 
@@ -61,13 +60,13 @@ Scenario: Debug artifacts are not copied to the master debug folder when a test 
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master debug folder
 	And I change a test case so that it will fail
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a failed test case was reported
 	And I do not find any artifacts in the master debug folder
 
 Scenario: Release artifacts are built
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
     And 2 "Release" artifact/-s was/were produced
 	And 0 "Release" nupkg file/-s was/were produced
@@ -75,12 +74,12 @@ Scenario: Release artifacts are built
 Scenario: Release artifacts are copied to the master release folder, but only if changed
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master release folder
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	And I find the artifacts in the master release folder
 	Given I save the master release folder file names and timestamps
     And I wait two seconds
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	And the contents of the master release folder has not changed
 
@@ -88,7 +87,7 @@ Scenario: Release artifacts are not copied to the master release folder when bui
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master release folder
 	And I change a source file so that it cannot be compiled
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a compilation error was reported for the changed source file
 	And I do not find any artifacts in the master release folder
 
@@ -97,7 +96,7 @@ Scenario: Release artifacts are not copied to the master release folder when a t
     And I clean up the master debug folder
 	And I clean up the master release folder
 	And I change a test case so that it will fail in release
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a failed test case was reported
 	And I find the artifacts in the master debug folder
 	And I do not find any artifacts in the master release folder
@@ -105,14 +104,14 @@ Scenario: Release artifacts are not copied to the master release folder when a t
 Scenario: Nuget package is created in the master release folder
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I clean up the master release folder
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
     And the number of "nupkg" files in the master "Release" folder is 1
 	And the newest file in the master "Release" folder is of type "nupkg"
 	And the newest nuget package in the master "Release" folder is tagged with the head tip id sha
 	And the newest nuget package in the master "Release" folder does not contain a test assembly
 	And I remember the last write time of the newest file in the master "Release" folder
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
     And the number of "nupkg" files in the master "Release" folder is 1
 	And the newest file in the master "Release" folder is of type "nupkg"
@@ -121,14 +120,13 @@ Scenario: Nuget package is created in the master release folder
 
 Scenario: Uncommitted changes break the build
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	And I change the script so that it will check for uncomitted changes
 	And I change a source file so that it still can be compiled
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakeAndDoNotPush"
 	Then an uncommitted change error was reported for the changed source file
 	And I do not find any artifacts in the master debug folder
 
 Scenario: Nuspec file is recreated
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
 	And I empty the nuspec file
-	When I run the build.cake script
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a non-empty nuspec file is there again

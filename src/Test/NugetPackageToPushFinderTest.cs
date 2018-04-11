@@ -105,18 +105,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         private void ChangeCakeScriptAndRunIt(bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
-            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-
-            var changer = new CakeScriptSettingsChanger();
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
-            if (disableNugetPush) {
-                cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
-            }
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
-
-            File.WriteAllText(cakeScriptFileFullName, cakeScript);
-            PakledTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            var target = disableNugetPush ? "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush" : "IgnoreOutdatedBuildCakePendingChanges";
+            PakledTarget.RunBuildCakeScript(ComponentProvider, target, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
     }

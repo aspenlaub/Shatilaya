@@ -57,11 +57,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         public void RunBuildCakeScript(IComponentProvider componentProvider, IErrorsAndInfos errorsAndInfos) {
+            RunBuildCakeScript(componentProvider, "", errorsAndInfos);
+        }
+
+        public void RunBuildCakeScript(IComponentProvider componentProvider, string target, IErrorsAndInfos errorsAndInfos) {
             var runner = componentProvider.CakeRunner;
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
             var scriptFileFullName = FullName() + @"\build.cake";
-            runner.CallCake(cakeExeFileFullName, scriptFileFullName, errorsAndInfos);
+            runner.CallCake(cakeExeFileFullName, scriptFileFullName, target, errorsAndInfos);
         }
 
         public void CreateCakeFolder() {

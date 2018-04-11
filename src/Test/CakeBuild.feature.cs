@@ -133,18 +133,16 @@ this.FeatureBackground();
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 18
- testRunner.And("I change the cake script so that debug build is suppressed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("I run the build.cake script with target \"CleanRestoreUpdateNuspec\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 19
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 20
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 20
+ testRunner.And("build step \"DebugBuild\" was not a target", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 21
- testRunner.And("build step \"DebugBuild\" was skipped", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("build step \"UpdateBuildCake\" was not a target", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 22
- testRunner.And("build step \"UpdateBuildCake\" was skipped", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 23
  testRunner.And("no artifact exists", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
+#line 23
  testRunner.And("no intermediate build output exists", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -157,22 +155,23 @@ this.FeatureBackground();
         public virtual void NugetPackagesAreRestoredAndDebugArtifactsAreBuilt()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nuget packages are restored and debug artifacts are built", ((string[])(null)));
-#line 26
+#line 25
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 27
+#line 26
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 27
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 28
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 29
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 30
+#line 29
  testRunner.Then("the Nuget packages are restored", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 31
+#line 30
     testRunner.And("2 \"Debug\" artifact/-s was/were produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 32
+#line 31
  testRunner.And("0 \"Debug\" nupkg file/-s was/were produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -185,18 +184,19 @@ this.FeatureBackground();
         public virtual void DebugBuildFailure()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Debug build failure", ((string[])(null)));
-#line 34
+#line 33
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 35
+#line 34
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 36
+#line 35
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 36
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 37
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 38
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -209,30 +209,32 @@ this.FeatureBackground();
         public virtual void DebugArtifactsAreCopiedToTheMasterDebugFolderButOnlyIfChanged()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Debug artifacts are copied to the master debug folder, but only if changed", ((string[])(null)));
-#line 40
+#line 39
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 41
+#line 40
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 42
+#line 41
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 42
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 43
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 44
- testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 45
  testRunner.And("I find the artifacts in the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 46
+#line 45
  testRunner.Given("I save the master debug folder file names and timestamps", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 47
+#line 46
     testRunner.And("I wait two seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 47
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 48
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 49
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 50
+#line 49
  testRunner.And("the contents of the master debug folder has not changed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -245,22 +247,23 @@ this.FeatureBackground();
         public virtual void DebugArtifactsAreNotCopiedToTheMasterDebugFolderWhenBuildFails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Debug artifacts are not copied to the master debug folder when build fails", ((string[])(null)));
-#line 52
+#line 51
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 53
+#line 52
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 54
+#line 53
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 55
+#line 54
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 55
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 56
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 57
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 58
+#line 57
  testRunner.And("I do not find any artifacts in the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -273,22 +276,23 @@ this.FeatureBackground();
         public virtual void DebugArtifactsAreNotCopiedToTheMasterDebugFolderWhenATestCaseFails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Debug artifacts are not copied to the master debug folder when a test case fails", ((string[])(null)));
-#line 60
+#line 59
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 61
+#line 60
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 62
+#line 61
  testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 63
+#line 62
  testRunner.And("I change a test case so that it will fail", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 63
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 64
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 65
  testRunner.Then("a failed test case was reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 66
+#line 65
  testRunner.And("I do not find any artifacts in the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -301,20 +305,21 @@ this.FeatureBackground();
         public virtual void ReleaseArtifactsAreBuilt()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Release artifacts are built", ((string[])(null)));
-#line 68
+#line 67
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 69
+#line 68
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 69
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 70
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 71
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 72
+#line 71
     testRunner.And("2 \"Release\" artifact/-s was/were produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 73
+#line 72
  testRunner.And("0 \"Release\" nupkg file/-s was/were produced", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -327,30 +332,32 @@ this.FeatureBackground();
         public virtual void ReleaseArtifactsAreCopiedToTheMasterReleaseFolderButOnlyIfChanged()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Release artifacts are copied to the master release folder, but only if changed", ((string[])(null)));
-#line 75
+#line 74
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 76
+#line 75
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 77
+#line 76
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 77
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 78
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 79
- testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 80
  testRunner.And("I find the artifacts in the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 81
+#line 80
  testRunner.Given("I save the master release folder file names and timestamps", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 82
+#line 81
     testRunner.And("I wait two seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 82
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 83
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 84
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 85
+#line 84
  testRunner.And("the contents of the master release folder has not changed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -363,22 +370,23 @@ this.FeatureBackground();
         public virtual void ReleaseArtifactsAreNotCopiedToTheMasterReleaseFolderWhenBuildFails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Release artifacts are not copied to the master release folder when build fails", ((string[])(null)));
-#line 87
+#line 86
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 88
+#line 87
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 89
+#line 88
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 90
+#line 89
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 90
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 91
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 92
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 93
+#line 92
  testRunner.And("I do not find any artifacts in the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -393,26 +401,27 @@ this.FeatureBackground();
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Release artifacts are not copied to the master release folder when a test case fa" +
                     "ils", ((string[])(null)));
-#line 95
+#line 94
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 96
+#line 95
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 97
+#line 96
     testRunner.And("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 98
+#line 97
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 99
+#line 98
  testRunner.And("I change a test case so that it will fail in release", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 99
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 100
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 101
  testRunner.Then("a failed test case was reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 102
+#line 101
  testRunner.And("I find the artifacts in the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 103
+#line 102
  testRunner.And("I do not find any artifacts in the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -425,43 +434,45 @@ this.FeatureBackground();
         public virtual void NugetPackageIsCreatedInTheMasterReleaseFolder()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nuget package is created in the master release folder", ((string[])(null)));
-#line 105
+#line 104
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 106
+#line 105
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 107
+#line 106
  testRunner.And("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 107
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 108
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 109
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 110
+#line 109
     testRunner.And("the number of \"nupkg\" files in the master \"Release\" folder is 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 111
+#line 110
  testRunner.And("the newest file in the master \"Release\" folder is of type \"nupkg\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 112
+#line 111
  testRunner.And("the newest nuget package in the master \"Release\" folder is tagged with the head t" +
                     "ip id sha", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 113
+#line 112
  testRunner.And("the newest nuget package in the master \"Release\" folder does not contain a test a" +
                     "ssembly", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 114
+#line 113
  testRunner.And("I remember the last write time of the newest file in the master \"Release\" folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 114
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 115
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 116
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 117
+#line 116
     testRunner.And("the number of \"nupkg\" files in the master \"Release\" folder is 1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 118
+#line 117
  testRunner.And("the newest file in the master \"Release\" folder is of type \"nupkg\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 119
+#line 118
  testRunner.And("the last write time of the newest file in the master \"Release\" folder is as remem" +
                     "bered", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 120
+#line 119
     testRunner.And("the number of \"nupkg\" files in the master \"Debug\" folder is 0", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -474,22 +485,20 @@ this.FeatureBackground();
         public virtual void UncommittedChangesBreakTheBuild()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Uncommitted changes break the build", ((string[])(null)));
-#line 122
+#line 121
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 123
+#line 122
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 124
- testRunner.And("I change the script so that it will check for uncomitted changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 125
+#line 123
  testRunner.And("I change a source file so that it still can be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 126
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 127
+#line 124
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakeAndDoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 125
  testRunner.Then("an uncommitted change error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 128
+#line 126
  testRunner.And("I do not find any artifacts in the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -502,18 +511,19 @@ this.FeatureBackground();
         public virtual void NuspecFileIsRecreated()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Nuspec file is recreated", ((string[])(null)));
-#line 130
+#line 128
 this.ScenarioSetup(scenarioInfo);
 #line 6
 this.FeatureBackground();
-#line 131
+#line 129
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 132
+#line 130
  testRunner.And("I empty the nuspec file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 133
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 134
+#line 131
+ testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
+                    "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 132
  testRunner.Then("a non-empty nuspec file is there again", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

@@ -52,16 +52,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             gitUtilities.Clone(url, PakledConsumerTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-            var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-
-            var changer = new CakeScriptSettingsChanger();
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkIfBuildCakeIsOutdated", true);
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "doNugetPush", true);
-            cakeScript = changer.ChangeCakeScriptSetting(cakeScript, "checkForUncommittedChanges", true);
-
-            File.WriteAllText(cakeScriptFileFullName, cakeScript);
-            PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             var solutionFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\" + PakledConsumerTarget.SolutionId + ".sln";
