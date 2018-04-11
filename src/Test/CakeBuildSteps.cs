@@ -190,8 +190,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void GivenIModifyTheBuild_CakeScript() {
             var scriptFileName = ChabTarget.Folder().FullName + @"\build.cake";
             var contents = File.ReadAllText(scriptFileName);
-            contents = contents.Replace("Please retry", "Retry");
-            File.WriteAllText(scriptFileName, contents);
+            var changedContents = contents.Replace("Please check it in", "Check it in");
+            Assert.AreNotEqual(changedContents, contents);
+            File.WriteAllText(scriptFileName, changedContents);
         }
 
         [Given(@"I empty the nuspec file")]
