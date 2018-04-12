@@ -6,9 +6,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         private DeveloperSettings vDeveloperSettings;
         public DeveloperSettings DefaultValue {
             get {
-                return vDeveloperSettings ?? (vDeveloperSettings = new DeveloperSettings { Author = Environment.UserName, GitHubRepositoryUrl = "https://github.com/" + Guid,
-                    FaviconUrl = "https://www." + Guid + ".net/favicon.ico", NugetFeedUrl = "https://www." + Guid + "nuget" });
+                return vDeveloperSettings ?? (vDeveloperSettings = Sample());
             }
+        }
+
+        private DeveloperSettings Sample() {
+            return new DeveloperSettings {
+                Author = Environment.UserName,
+                Email = Environment.UserName.Replace('@', '-').Replace(' ', '-') + "@" + Guid + ".com",
+                GitHubRepositoryUrl = "https://github.com/" + Guid,
+                FaviconUrl = "https://www." + Guid + ".net/favicon.ico",
+                NugetFeedUrl = "https://www." + Guid + "nuget" };
         }
 
         public string Guid { get { return "C9CA6C10-7409-487F-B406-A9EF9AD835A5"; } }

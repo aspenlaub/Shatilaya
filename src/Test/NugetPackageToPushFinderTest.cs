@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -51,7 +52,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanFindNugetPackagesToPush() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = DeveloperSettings(errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             CloneTarget(errorsAndInfos);
 
@@ -69,6 +69,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         private DeveloperSettings DeveloperSettings(IErrorsAndInfos errorsAndInfos) {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsNotNull(developerSettings);
             return developerSettings;
         }
@@ -104,6 +105,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         private void ChangeCakeScriptAndRunIt(bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
+            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
+            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            cakeScript = CakeBuildSteps.UseLocalShatilayaAssemblies(cakeScript);
+            File.WriteAllText(cakeScriptFileFullName, cakeScript);
+
             var target = disableNugetPush ? "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush" : "IgnoreOutdatedBuildCakePendingChanges";
             PakledTarget.RunBuildCakeScript(ComponentProvider, target, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));

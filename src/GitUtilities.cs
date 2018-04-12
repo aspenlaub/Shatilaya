@@ -47,7 +47,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Func<bool> extraCacheCondition, Action onCloned, IErrorsAndInfos errorsAndInfos) {
             var canCloneBeUsed = useCache && CloneFromCache(url, folder);
             var zipFileName = CloneZipFileName(url);
-            if (!extraCacheCondition()) {
+            if (canCloneBeUsed && !extraCacheCondition()) {
                 canCloneBeUsed = false;
                 var deleter = new FolderDeleter();
                 deleter.DeleteFolder(folder);

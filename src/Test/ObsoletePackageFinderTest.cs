@@ -49,6 +49,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
+            var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
+            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            cakeScript = CakeBuildSteps.UseLocalShatilayaAssemblies(cakeScript);
+            File.WriteAllText(cakeScriptFileFullName, cakeScript);
+
             ChabTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
