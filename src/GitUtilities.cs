@@ -6,6 +6,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using LibGit2Sharp;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
@@ -40,11 +41,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos) {
-            Clone(url, folder, cloneOptions, useCache, () => { }, errorsAndInfos);
+            Clone(url, folder, cloneOptions, useCache, () => true, () => { }, errorsAndInfos);
         }
 
-        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Action onCloned, IErrorsAndInfos errorsAndInfos) {
+        public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, Func<bool> extraCacheCondition, Action onCloned, IErrorsAndInfos errorsAndInfos) {
             var canCloneBeUsed = useCache && CloneFromCache(url, folder);
+            var zipFileName = CloneZipFileName(url);
+            if (!extraCacheCondition()) {
+                canCloneBeUsed = false;
+                var deleter = new FolderDeleter();
+                deleter.DeleteFolder(folder);
+                File.Delete(zipFileName);
+            }
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             if (canCloneBeUsed) { return; }
 
@@ -52,7 +60,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             onCloned();
             if (!useCache) { return; }
 
-            var zipFileName = CloneZipFileName(url);
             if (File.Exists(zipFileName)) { return; }
 
             var fastZip = new FastZip();
