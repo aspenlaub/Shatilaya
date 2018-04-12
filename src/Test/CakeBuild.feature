@@ -15,7 +15,7 @@ Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 
 Scenario: Output folders are cleaned up
 	Given I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
-	When I run the build.cake script with target "CleanRestoreUpdateNuspec"
+	When I run the build.cake script with target "CleanRestorePullUpdateNuspec"
 	Then no cake errors were reported
 	And build step "DebugBuild" was not a target
 	And build step "UpdateBuildCake" was not a target

@@ -141,5 +141,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 File.Delete(file);
             }
         }
+
+        public void Reset(IFolder repositoryFolder, string headTipIdSha, IErrorsAndInfos errorsAndInfos) {
+            using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
+                var commit = repo.Head.Commits.FirstOrDefault(c => c.Sha == headTipIdSha);
+                if (commit == null) {
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CommitNotFound, headTipIdSha));
+                } else {
+                    repo.Reset(ResetMode.Hard, commit);
+                }
+            }
+        }
     }
 }

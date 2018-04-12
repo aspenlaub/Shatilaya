@@ -133,7 +133,7 @@ this.FeatureBackground();
  testRunner.Given("I copy the latest build.cake script from my Shatilaya solution and reference the " +
                     "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 18
- testRunner.When("I run the build.cake script with target \"CleanRestoreUpdateNuspec\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the build.cake script with target \"CleanRestorePullUpdateNuspec\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 19
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 20

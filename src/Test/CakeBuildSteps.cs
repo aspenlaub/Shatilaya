@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -65,28 +63,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution and reference the local assemblies")]
-        public void GivenIHaveTheLatestBuild_CakeScript() {
-            var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
-            var latestScriptWithoutBuildCakeCheck = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Length > 120);
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
-            latestScriptWithoutBuildCakeCheck = UseLocalShatilayaAssemblies(latestScriptWithoutBuildCakeCheck);
-
-            var currentScriptFileName = ChabTarget.FullName() + @"\build.cake";
-            var currentScript = File.ReadAllText(currentScriptFileName);
-            if (Regex.Replace(latestScriptWithoutBuildCakeCheck, @"\s", "") == Regex.Replace(currentScript, @"\s", "")) { return; }
-
-            File.WriteAllText(currentScriptFileName, latestScriptWithoutBuildCakeCheck);
-        }
-
-        public static string UseLocalShatilayaAssemblies(string latestScriptWithoutBuildCakeCheck) {
-            const string addShatilaya = @"#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya";
-            Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains(addShatilaya));
-            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
-            assemblyLocation = assemblyLocation.Substring(0, assemblyLocation.LastIndexOf('\\'));
-            var addLocalShatilaya = Directory.GetFiles(assemblyLocation, "*.dll").Select(assembly => $"#reference \"{assembly}\"").ToList();
-            latestScriptWithoutBuildCakeCheck = latestScriptWithoutBuildCakeCheck.Replace(addShatilaya, string.Join("\r\n", addLocalShatilaya));
-            return latestScriptWithoutBuildCakeCheck;
+        public void GivenIHaveTheLatestBuildCakeScript() {
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(ChabTarget);
         }
 
         [Given(@"Nuget packages are not restored yet")]

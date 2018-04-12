@@ -61,6 +61,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Commit &apos;{0}&apos; not found.
+        /// </summary>
+        internal static string CommitNotFound {
+            get {
+                return ResourceManager.GetString("CommitNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to copy &quot;{0}&quot; to &quot;{1}&quot;.
         /// </summary>
         internal static string FailedToCopy {

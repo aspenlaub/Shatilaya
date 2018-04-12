@@ -54,7 +54,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.cake";
             var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-            cakeScript = CakeBuildSteps.UseLocalShatilayaAssemblies(cakeScript);
+            cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);

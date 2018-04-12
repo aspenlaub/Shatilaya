@@ -136,10 +136,12 @@
       <DependentUpon>CakeBuild.feature</DependentUpon>
     </Compile>
     <Compile Include="CakeBuildSteps.cs" />
+    <Compile Include="CakeBuildUtilities.cs" />
     <Compile Include="CakeInstaller.cs" />
     <Compile Include="CakeRunnerTest.cs" />
     <Compile Include="ComponentProviderTest.cs" />
     <Compile Include="ExecutableFinderTest.cs" />
+    <Compile Include="GitPullTest.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
     <Compile Include="NugetConfigReaderTest.cs" />
