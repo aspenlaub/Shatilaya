@@ -67,15 +67,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.AreEqual("", sut.CheckedOutBranch(NoGitFolder));
         }
 
-        [TestMethod]
-        public void CanSynchronizeRepositories() {
-            CheckThatWeAreOnline();
-
-            var sut = new GitUtilities();
-            sut.SynchronizeRepository(MasterFolder);
-            sut.SynchronizeRepository(DevelopmentFolder);
-        }
-
         protected static void CheckThatWeAreOnline() {
             bool online;
             try {

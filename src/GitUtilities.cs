@@ -28,18 +28,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return "";
         }
 
-        public void SynchronizeRepository(IFolder folder) {
-            if (!folder.GitSubFolder().Exists()) { return; }
-
-            using (var repository = new Repository(folder.FullName)) {
-                foreach (var remote in repository.Network.Remotes) {
-                    var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
-                    Commands.Fetch(repository, remote.Name, refSpecs, null, "");
-                }
-            }
-
-        }
-
         public void Clone(string url, IFolder folder, CloneOptions cloneOptions, bool useCache, IErrorsAndInfos errorsAndInfos) {
             Clone(url, folder, cloneOptions, useCache, () => true, () => { }, errorsAndInfos);
         }

@@ -12,12 +12,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         string CheckedOutBranch(IFolder folder);
 
         /// <summary>
-        /// Synchronize the check-out folder (assuming there are no local changes)
-        /// </summary>
-        /// <param name="folder"></param>
-        void SynchronizeRepository(IFolder folder);
-
-        /// <summary>
         /// Cover of Repository.Clone
         /// </summary>
         /// <param name="url"></param>
