@@ -35,28 +35,28 @@
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh, Version=1.0.6676.33526, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh, Version=1.0.6676.40077, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Components, Version=1.0.6676.33526, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Components.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Components, Version=1.0.6676.40077, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Components.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Entities, Version=1.0.6676.33368, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Entities, Version=1.0.6676.40077, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.GUI, Version=1.0.6676.33369, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.GUI.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.GUI, Version=1.0.6676.40078, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.GUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces, Version=1.0.6676.33368, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces, Version=1.0.6676.40077, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities, Version=1.0.6676.33368, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.33526\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities, Version=1.0.6676.40077, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6676.40077\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
