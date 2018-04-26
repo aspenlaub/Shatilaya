@@ -126,7 +126,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(sut.IsBranchAheadOfMaster(MasterFolder));
             CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(DoNotPullFolder);
             var errorsAndInfos = new ErrorsAndInfos();
-            DoNotPullFolder.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+            DoNotPullFolder.RunBuildCakeScript(ComponentProvider, "CleanRestorePullUpdateNuspec", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(sut.IsBranchAheadOfMaster(DoNotPullFolder.Folder()));
         }
