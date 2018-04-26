@@ -121,6 +121,15 @@ Task("VerifyThatThereAreNoUncommittedChanges")
 	}
   });
 
+Task("VerifyThatDevelopmentBranchIsAheadOfMaster")
+  .WithCriteria(() => currentGitBranch.FriendlyName != "master")
+  .Description("Verify that if the development branch is at least one commit after the master")
+  .Does(() => {
+    if (!componentProvider.GitUtilities.IsBranchAheadOfMaster(new Folder(repositoryFolder))) {
+	  throw new Exception("Branch must be at least one commit ahead of the origin/master");
+	}
+  });
+
 Task("DebugBuild")
   .Description("Build solution in Debug and clean up intermediate output folder")
   .Does(() => {
@@ -258,14 +267,16 @@ Task("IgnoreOutdatedBuildCakePendingChanges")
 
 Task("IgnoreOutdatedBuildCakeAndDoNotPush")
   .Description("Default except check for outdated build.cake and except nuget push")
-  .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges")
+  .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
   .IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage")
   .Does(() => {
   });
 
 Task("LittleThings")
   .Description("Default but do not build or test in debug or release, and do not create or push nuget package")
-  .IsDependentOn("UpdateBuildCake").IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").Does(() => {
+  .IsDependentOn("UpdateBuildCake").IsDependentOn("CleanRestorePullUpdateNuspec")
+  .IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
+  .Does(() => {
   });
 
 Task("Default")

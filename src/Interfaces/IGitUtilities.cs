@@ -47,5 +47,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
         void VerifyThatThereAreNoUncommittedChanges(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Check if checked out branch is ahead of the master
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <returns></returns>
+        bool IsBranchAheadOfMaster(IFolder repositoryFolder);
     }
 }

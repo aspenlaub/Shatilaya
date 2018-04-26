@@ -152,5 +152,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
             }
         }
+
+        public bool IsBranchAheadOfMaster(IFolder repositoryFolder) {
+            using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
+                var head = repo.Head;
+                var masterBranch = repo.Branches["origin/master"];
+                var divergence = repo.ObjectDatabase.CalculateHistoryDivergence(head.Tip, masterBranch.Tip);
+                return divergence.AheadBy > 0;
+
+            }
+        }
     }
 }
