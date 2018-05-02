@@ -1,4 +1,5 @@
 #load "solution.cake"
+#addin nuget:?package=Newtonsoft.Json
 #addin nuget:?package=Cake.Git
 #addin nuget:?package=Nuget.Core
 #addin nuget:?package=DotNetZip
