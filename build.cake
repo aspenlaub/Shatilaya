@@ -4,7 +4,7 @@
 #addin nuget:?package=DotNetZip
 #addin nuget:?package=Octokit
 #addin nuget:?package=Octokit.Reactive
-#addin nuget:?package=System.Reactive
+using System.Reactive.Linq;
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
 
 using Folder = Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.Folder;
