@@ -7,7 +7,6 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Moq;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
@@ -19,7 +18,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected IComponentProvider ComponentProvider;
 
         public GitUtilitiesTest() {
-            var componentProviderMock = new Mock<Interfaces.IComponentProvider>();
+            var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             ComponentProvider = componentProviderMock.Object;
@@ -129,6 +128,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             DoNotPullFolder.RunBuildCakeScript(ComponentProvider, "CleanRestorePullUpdateNuspec", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(sut.IsBranchAheadOfMaster(DoNotPullFolder.Folder()));
+        }
+
+        [TestMethod]
+        public void CanIdentifyOwnerAndName() {
+            var sut = new GitUtilities();
+            string owner, name;
+            var errorsAndInfos = new ErrorsAndInfos();
+            sut.IdentifyOwnerAndName(MasterFolder, out owner, out name, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.AreEqual("aspenlaub", owner);
+            Assert.AreEqual("Pakled", name);
         }
     }
 }

@@ -54,5 +54,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="repositoryFolder"></param>
         /// <returns></returns>
         bool IsBranchAheadOfMaster(IFolder repositoryFolder);
+
+        /// <summary>
+        /// Find out owner and name from checked out repository
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="owner"></param>
+        /// <param name="name"></param>
+        /// <param name="errorsAndInfos"></param>
+        void IdentifyOwnerAndName(IFolder repositoryFolder, out string owner, out string name, IErrorsAndInfos errorsAndInfos);
     }
 }

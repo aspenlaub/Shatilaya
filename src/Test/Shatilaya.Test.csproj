@@ -141,6 +141,7 @@
     <Compile Include="CakeRunnerTest.cs" />
     <Compile Include="ComponentProviderTest.cs" />
     <Compile Include="ExecutableFinderTest.cs" />
+    <Compile Include="GitHubUtilitiesTest.cs" />
     <Compile Include="GitPullTest.cs" />
     <Compile Include="GitUtilitiesTest.cs" />
     <Compile Include="DependencyTreeBuilderTest.cs" />
