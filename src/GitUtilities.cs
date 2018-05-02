@@ -37,8 +37,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var zipFileName = CloneZipFileName(url);
             if (canCloneBeUsed && !extraCacheCondition()) {
                 canCloneBeUsed = false;
-                var deleter = new FolderDeleter();
-                deleter.DeleteFolder(folder);
+                if (folder.Exists()) {
+                    var deleter = new FolderDeleter();
+                    deleter.DeleteFolder(folder);
+                }
                 File.Delete(zipFileName);
             }
             MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
