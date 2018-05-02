@@ -125,18 +125,15 @@ Task("VerifyThatDevelopmentBranchIsAheadOfMaster")
   .WithCriteria(() => currentGitBranch.FriendlyName != "master")
   .Description("Verify that if the development branch is at least one commit after the master")
   .Does(() => {
-    /*
     if (!componentProvider.GitUtilities.IsBranchAheadOfMaster(new Folder(repositoryFolder))) {
 	  throw new Exception("Branch must be at least one commit ahead of the origin/master");
 	}
-	*/
   });
 
 Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
   .WithCriteria(() => currentGitBranch.FriendlyName == "master")
   .Description("Verify that the master branch does not have open pull requests")
   .Does(() => {
-    /*
     var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
     if (componentProvider.GitHubUtilities.HasOpenPullRequest(new Folder(repositoryFolder), noPullRequestsErrorsAndInfos)) {
 	  throw new Exception("There are open pull requests");
@@ -144,7 +141,6 @@ Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
     if (noPullRequestsErrorsAndInfos.Errors.Any()) {
 	  throw new Exception(string.Join("\r\n", noPullRequestsErrorsAndInfos.Errors));
 	}
-	*/
   });
 
 Task("DebugBuild")
