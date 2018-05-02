@@ -31,6 +31,12 @@ Create or update a nuspec file that will help with the creation of a nuget packa
 ### VerifyThatThereAreNoUncommittedChanges
 This step is necessary for me because I later tag the nuget package with the commit unique identification, so that running ```build.cake``` again will result in another package file, but that will not be pushed to my nuget feed.
 
+### VerifyThatDevelopmentBranchIsAheadOfMaster
+Running ```build.cake``` for a development branch is only necessary if the branch is ahead of the master
+
+### VerifyThatMasterBranchDoesNotHaveOpenPullRequests
+Stop the master branch build if there are open pull requests
+
 ### DebugBuild
 Build the solution, results are in ```artifacts\Debug```
 
