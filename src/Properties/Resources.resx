@@ -123,6 +123,9 @@
   <data name="CommitNotFound" xml:space="preserve">
     <value>Commit '{0}' not found</value>
   </data>
+  <data name="CouldNotGetListOfPullRequests" xml:space="preserve">
+    <value>Could not get list of pull requests</value>
+  </data>
   <data name="ExactlyOneRemoteExpected" xml:space="preserve">
     <value>The checked out repository must have exactly one remote</value>
   </data>

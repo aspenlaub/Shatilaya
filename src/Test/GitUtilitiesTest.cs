@@ -131,7 +131,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanIdentifyOwnerAndName() {
+        public void CanIdentifyUrlOwnerAndName() {
             var sut = new GitUtilities();
             string owner, name;
             var errorsAndInfos = new ErrorsAndInfos();

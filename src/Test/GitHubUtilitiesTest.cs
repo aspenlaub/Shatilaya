@@ -10,7 +10,7 @@ using Moq;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
-    [TestClass, Ignore]
+    [TestClass]
     public class GitHubUtilitiesTest {
         protected IFolder MasterFolder;
         protected IComponentProvider ComponentProvider;

@@ -108,6 +108,7 @@
     <Compile Include="IProject.cs" />
     <Compile Include="IProjectFactory.cs" />
     <Compile Include="IPropertyGroup.cs" />
+    <Compile Include="IPullRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

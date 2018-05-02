@@ -79,6 +79,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not get list of pull requests.
+        /// </summary>
+        internal static string CouldNotGetListOfPullRequests {
+            get {
+                return ResourceManager.GetString("CouldNotGetListOfPullRequests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The checked out repository must have exactly one remote.
         /// </summary>
         internal static string ExactlyOneRemoteExpected {
