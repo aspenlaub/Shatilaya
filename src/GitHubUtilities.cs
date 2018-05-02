@@ -51,6 +51,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = WebRequestMethods.Http.Get;
             request.UserAgent = GetType().Namespace;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var response = (HttpWebResponse)request.GetResponse();
             var responseStream = response.GetResponseStream();
             if (responseStream == null) {
