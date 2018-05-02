@@ -134,7 +134,6 @@ Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
   .WithCriteria(() => currentGitBranch.FriendlyName == "master")
   .Description("Verify that the master branch does not have open pull requests")
   .Does(() => {
-    /*
     var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
     if (componentProvider.GitHubUtilities.HasOpenPullRequest(new Folder(repositoryFolder), noPullRequestsErrorsAndInfos)) {
 	  throw new Exception("There are open pull requests");
@@ -142,7 +141,6 @@ Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
     if (noPullRequestsErrorsAndInfos.Errors.Any()) {
 	  throw new Exception(string.Join("\r\n", noPullRequestsErrorsAndInfos.Errors));
 	}
-	*/
   });
 
 Task("DebugBuild")
