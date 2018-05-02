@@ -93,6 +93,7 @@
     <Compile Include="IDependencyTreeBuilder.cs" />
     <Compile Include="IComponentProvider.cs" />
     <Compile Include="IExecutableFinder.cs" />
+    <Compile Include="IGitHubUtilities.cs" />
     <Compile Include="IGitUtilities.cs" />
     <Compile Include="ILatestBuildCakeScriptProvider.cs" />
     <Compile Include="INugetConfigReader.cs" />

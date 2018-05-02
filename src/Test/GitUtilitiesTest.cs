@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -129,6 +130,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             DoNotPullFolder.RunBuildCakeScript(ComponentProvider, "CleanRestorePullUpdateNuspec", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(sut.IsBranchAheadOfMaster(DoNotPullFolder.Folder()));
+        }
+
+        [TestMethod]
+        public void CanIdentifyOwnerAndName() {
+            var sut = new GitUtilities();
+            string owner, name;
+            var errorsAndInfos = new ErrorsAndInfos();
+            sut.IdentifyOwnerAndName(MasterFolder, out owner, out name, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.AreEqual("aspenlaub", owner);
+            Assert.AreEqual("Pakled", name);
         }
     }
 }

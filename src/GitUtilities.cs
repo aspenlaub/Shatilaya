@@ -162,5 +162,34 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
             }
         }
+
+        public void IdentifyOwnerAndName(IFolder repositoryFolder, out string owner, out string name, IErrorsAndInfos errorsAndInfos) {
+            owner = "";
+            name = "";
+
+            using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
+                var remotes = repo.Network.Remotes.ToList();
+                if (remotes.Count != 1) {
+                    errorsAndInfos.Errors.Add(Properties.Resources.ExactlyOneRemoteExpected);
+                    return;
+                }
+
+                var url = remotes.First().Url;
+                var urlComponents = url.Split('/');
+                if ("github.com" != urlComponents[urlComponents.Length - 3]) {
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CannotInterpretRepositoryUrl, url));
+                    return;
+                }
+
+                owner = urlComponents[urlComponents.Length - 2];
+                name = urlComponents[urlComponents.Length - 1];
+                if (!name.EndsWith(".git")) {
+                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CannotInterpretRepositoryUrl, url));
+                    return;
+                }
+
+                name = name.Substring(0, name.Length - 4);
+            }
+        }
     }
 }

@@ -61,11 +61,29 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot interpret &quot;{0}&quot; as a GitHub repository url.
+        /// </summary>
+        internal static string CannotInterpretRepositoryUrl {
+            get {
+                return ResourceManager.GetString("CannotInterpretRepositoryUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Commit &apos;{0}&apos; not found.
         /// </summary>
         internal static string CommitNotFound {
             get {
                 return ResourceManager.GetString("CommitNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The checked out repository must have exactly one remote.
+        /// </summary>
+        internal static string ExactlyOneRemoteExpected {
+            get {
+                return ResourceManager.GetString("ExactlyOneRemoteExpected", resourceCulture);
             }
         }
         
