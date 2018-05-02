@@ -9,5 +9,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
         bool HasOpenPullRequest(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Return number of pull requests (open or closed)
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="errorsAndInfos"></param>
+        /// <returns></returns>
+        int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
     }
 }

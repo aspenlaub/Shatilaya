@@ -59,8 +59,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCheckIfPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
-            Assert.IsTrue(sut.HasOpenPullRequest(MasterFolder, errorsAndInfos));
+            var hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(hasOpenPullRequest);
+        }
+
+        [TestMethod]
+        public void CanListPullRequests() {
+            var sut = new GitHubUtilities(ComponentProvider);
+            var errorsAndInfos = new ErrorsAndInfos();
+            var numberOfPullRequests = sut.NumberOfPullRequests(MasterFolder, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(numberOfPullRequests > 1);
         }
     }
 }

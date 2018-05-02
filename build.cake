@@ -130,6 +130,19 @@ Task("VerifyThatDevelopmentBranchIsAheadOfMaster")
 	}
   });
 
+Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
+  .WithCriteria(() => currentGitBranch.FriendlyName == "master")
+  .Description("Verify that the master branch does not have open pull requests")
+  .Does(() => {
+    var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
+    if (componentProvider.GitHubUtilities.HasOpenPullRequest(new Folder(repositoryFolder), noPullRequestsErrorsAndInfos)) {
+	  throw new Exception("There are open pull requests");
+	}
+    if (noPullRequestsErrorsAndInfos.Errors.Any()) {
+	  throw new Exception(string.Join("\r\n", noPullRequestsErrorsAndInfos.Errors));
+	}
+  });
+
 Task("DebugBuild")
   .Description("Build solution in Debug and clean up intermediate output folder")
   .Does(() => {
@@ -268,6 +281,7 @@ Task("IgnoreOutdatedBuildCakePendingChanges")
 Task("IgnoreOutdatedBuildCakeAndDoNotPush")
   .Description("Default except check for outdated build.cake and except nuget push")
   .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
+  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
   .IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage")
   .Does(() => {
   });
@@ -276,6 +290,7 @@ Task("LittleThings")
   .Description("Default but do not build or test in debug or release, and do not create or push nuget package")
   .IsDependentOn("UpdateBuildCake").IsDependentOn("CleanRestorePullUpdateNuspec")
   .IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
+  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
   .Does(() => {
   });
 
