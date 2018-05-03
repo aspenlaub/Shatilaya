@@ -13,7 +13,7 @@ using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.Compon
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetPackageToPushFinderTest {
-        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "Pakled");
+        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "PakledConsumer");
         protected IComponentProvider ComponentProvider;
 
         public NugetPackageToPushFinderTest() {
