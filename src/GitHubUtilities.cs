@@ -22,6 +22,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return pullRequests.Any();
         }
 
+        public bool HasOpenPullRequest(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = PullRequests(repositoryFolder, "open", errorsAndInfos);
+            return pullRequests.Any(p => !semicolonSeparatedListOfPullRequestNumbersToIgnore.Split(';').Contains(p.Number));
+        }
+
         public int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
             return PullRequests(repositoryFolder, "all", errorsAndInfos).Count;
         }

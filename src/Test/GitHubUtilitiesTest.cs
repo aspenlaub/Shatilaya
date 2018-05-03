@@ -62,6 +62,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(hasOpenPullRequest);
+            hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, "2", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(hasOpenPullRequest);
         }
 
         [TestMethod]

@@ -11,6 +11,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         bool HasOpenPullRequest(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
+        /// Check if checked out branch has an open pull request
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="semicolonSeparatedListOfPullRequestNumbersToIgnore"></param>
+        /// <param name="errorsAndInfos"></param>
+        /// <returns></returns>
+        bool HasOpenPullRequest(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
         /// Return number of pull requests (open or closed)
         /// </summary>
         /// <param name="repositoryFolder"></param>
