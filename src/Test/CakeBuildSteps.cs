@@ -244,13 +244,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"a compilation error was reported for the changed source file")]
         public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
             Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
         }
 
         [Then(@"an uncommitted change error was reported for the changed source file")]
         public void ThenAUncommittedChangeErrorWasReportedForTheChangedSourceFile() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("ncommitted change")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("ncommitted change")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Then(@"build step ""(.*)"" was not a target")]
@@ -260,7 +260,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]
         public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Then(@"I find the artifacts in the master debug folder")]
@@ -275,7 +275,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"the contents of the master debug folder has not changed")]
         public void ThenTheContentsOfTheMasterDebugFolderHasNotChanged() {
             foreach (var snapShotFile in MasterDebugBinFolderSnapshot) {
-                Assert.AreEqual(snapShotFile.Value, File.GetLastWriteTime(snapShotFile.Key));
+                VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
             }
         }
 
@@ -287,7 +287,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"a failed test case was reported")]
         public void ThenAFailedTestCaseWasReported() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSTest: Process returned an error")));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSTest: Process returned an error")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
             Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
         }
 
@@ -315,8 +315,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"the contents of the master release folder has not changed")]
         public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
             foreach (var snapShotFile in MasterReleaseBinFolderSnapshot) {
-                Assert.AreEqual(snapShotFile.Value, File.GetLastWriteTime(snapShotFile.Key));
+                VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
             }
+        }
+
+        protected void VerifyEqualLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
+            Assert.AreEqual(lastKnownWriteTime, File.GetLastWriteTime(fileName),
+                fileName + " updated " + File.GetLastWriteTime(fileName).ToLongTimeString() + " after " + lastKnownWriteTime.ToLongTimeString());
         }
 
         [Then(@"I do not find any artifacts in the master release folder")]
