@@ -30,6 +30,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
             foreach (var folder in folders.Select(f => new Folder(f))) {
                 var deleter = new FolderDeleter();
+                foreach (var file in new[] {@"dll", @"pdb", @"nupkg"}.SelectMany(extension => Directory.GetFiles(folder.FullName, $"*.{extension}", SearchOption.AllDirectories))) {
+                    File.Delete(file);
+                }
+
                 if (deleter.CanDeleteFolder(folder)) {
                     deleter.DeleteFolder(folder);
                     errorsAndInfos.Infos.Add(string.Format(Properties.Resources.ObsoleteFolderDeleted, folder.FullName));

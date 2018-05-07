@@ -13,7 +13,7 @@ using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.Compon
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetPackageToPushFinderTest {
-        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "PakledConsumer");
+        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "Pakled");
         protected IComponentProvider ComponentProvider;
 
         public NugetPackageToPushFinderTest() {
@@ -89,7 +89,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestPackage = packages.First(p => p.Version == latestPackageVersion);
 
             var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledTarget.Folder());
-            Assert.IsTrue(latestPackage.Tags.Contains(headTipIdSha));
+            Assert.IsTrue(latestPackage.Tags.Contains(headTipIdSha), $"No package has been pushed for {headTipIdSha} and {PakledTarget.SolutionId}, please run build.cake for this solution");
 
             ChangeCakeScriptAndRunIt(false, errorsAndInfos);
 
