@@ -169,15 +169,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(fileName, contents);
         }
 
-        [Given(@"I modify the build\.cake script")]
-        public void GivenIModifyTheBuild_CakeScript() {
-            var scriptFileName = ChabTarget.Folder().FullName + @"\build.cake";
-            var contents = File.ReadAllText(scriptFileName);
-            var changedContents = contents.Replace("Please check it in", "Check it in");
-            Assert.AreNotEqual(changedContents, contents);
-            File.WriteAllText(scriptFileName, changedContents);
-        }
-
         [Given(@"I empty the nuspec file")]
         public void GivenIDeleteTheNuspecFile() {
             var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
@@ -211,9 +202,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 Assert.IsNotNull(stream);
                 string expectedContents;
                 using (var reader = new StreamReader(stream, Encoding.Default)) {
-                    expectedContents = reader.ReadToEnd();
+                    expectedContents = reader.ReadToEnd().Replace("\r\n", "\n");
                 }
-                var actualContents = File.ReadAllText(scriptFileFullName);
+                var actualContents = File.ReadAllText(scriptFileFullName).Replace("\r\n", "\n");
 
                 /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
                 Assert.AreEqual(expectedContents, actualContents);
