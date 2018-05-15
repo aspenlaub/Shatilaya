@@ -60,20 +60,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCheckIfPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
-            var hasOpenPullRequest = HasOpenPullRequest(sut, "", errorsAndInfos);
+            bool inconclusive;
+            var hasOpenPullRequest = HasOpenPullRequest(sut, "", errorsAndInfos, out inconclusive);
+            if (inconclusive) { return; }
+
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(hasOpenPullRequest);
-            hasOpenPullRequest = HasOpenPullRequest(sut, "2", errorsAndInfos);
+            hasOpenPullRequest = HasOpenPullRequest(sut, "2", errorsAndInfos, out inconclusive);
+            if (inconclusive) { return; }
+
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsFalse(hasOpenPullRequest);
         }
 
-        protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos) {
+        protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
+            inconclusive = false;
             var hasOpenPullRequest = false;
             try {
                 hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, semicolonSeparatedListOfPullRequestNumbersToIgnore, errorsAndInfos);
-            } catch (WebException e) {
-                Assert.Inconclusive(e.Message);
+            } catch (WebException) {
+                inconclusive = true; // ToDo: use Assert.Inconclusive
             }
             return hasOpenPullRequest;
         }
