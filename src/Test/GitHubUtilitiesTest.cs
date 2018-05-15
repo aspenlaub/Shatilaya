@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Net;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
@@ -59,12 +60,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCheckIfPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
-            var hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, errorsAndInfos);
+            var hasOpenPullRequest = HasOpenPullRequest(sut, "", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(hasOpenPullRequest);
-            hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, "2", errorsAndInfos);
+            hasOpenPullRequest = HasOpenPullRequest(sut, "2", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsFalse(hasOpenPullRequest);
+        }
+
+        protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos) {
+            var hasOpenPullRequest = false;
+            try {
+                hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, semicolonSeparatedListOfPullRequestNumbersToIgnore, errorsAndInfos);
+            } catch (WebException e) {
+                Assert.Inconclusive(e.Message);
+            }
+            return hasOpenPullRequest;
         }
 
         [TestMethod]
