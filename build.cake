@@ -171,7 +171,7 @@ Task("RunTestsOnDebugArtifacts")
 	if (msTestExe == "") {
       VSTest(debugArtifactsFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
 	} else {
-      MSTest(debugArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
+      MSTest(debugArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false, MapInconclusiveToFailed = false });
 	}
     CleanDirectory(testResultsFolder); 
     DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
@@ -211,7 +211,7 @@ Task("RunTestsOnReleaseArtifacts")
 	if (msTestExe == "") {
       VSTest(releaseArtifactsFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
 	} else {
-      MSTest(releaseArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
+      MSTest(releaseArtifactsFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false, MapInconclusiveToFailed = false });
 	}
     CleanDirectory(testResultsFolder); 
     DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
