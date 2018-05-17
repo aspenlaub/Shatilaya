@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Properties;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
@@ -18,12 +17,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public void CallCake(string cakeExeFullName, string scriptFileFullName, string target, IErrorsAndInfos errorsAndInfos) {
             if (!File.Exists(cakeExeFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Resources.FileNotFound, cakeExeFullName));
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, cakeExeFullName));
                 return;
             }
 
             if (!File.Exists(scriptFileFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Resources.FileNotFound, scriptFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, scriptFileFullName));
                 return;
             }
 
