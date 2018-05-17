@@ -94,7 +94,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                     foreach (var zipEntry in zipFile.Cast<ZipEntry>().Where(zipEntry => zipEntry.IsFile)) {
                         if (File.Exists(folder + @"\" + zipEntry.Name.Replace('/', '\\'))) { continue; }
 
-                        errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, zipEntry.Name));
+                        errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, zipEntry.Name));
                     }
                 } else {
 
@@ -103,7 +103,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                     fastZip.ExtractZip(zipStream, folder, FastZip.Overwrite.Never, s => { return true; }, null, null, true, true);
                     if (Directory.Exists(folder + @"\lib")) { return; }
 
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FolderCouldNotBeCreated, folder));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.FolderCouldNotBeCreated, folder));
                 }
             }
         }
@@ -130,7 +130,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
                 var changes = repo.Diff.Compare<TreeChanges>(repo.Head.Tip.Tree, DiffTargets.Index | DiffTargets.WorkingDirectory).ToList();
                 foreach(var change in changes) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.UncommittedChangeTo, change.Path));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.UncommittedChangeTo, change.Path));
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
                 var commit = repo.Head.Commits.FirstOrDefault(c => c.Sha == headTipIdSha);
                 if (commit == null) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CommitNotFound, headTipIdSha));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.CommitNotFound, headTipIdSha));
                 } else {
                     repo.Reset(ResetMode.Hard, commit);
                 }
@@ -172,21 +172,21 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             using (var repo = new Repository(repositoryFolder.FullName, new RepositoryOptions())) {
                 var remotes = repo.Network.Remotes.ToList();
                 if (remotes.Count != 1) {
-                    errorsAndInfos.Errors.Add(Properties.Resources.ExactlyOneRemoteExpected);
+                    errorsAndInfos.Errors.Add(Texts.ExactlyOneRemoteExpected);
                     return;
                 }
 
                 var url = remotes.First().Url;
                 var urlComponents = url.Split('/');
                 if ("github.com" != urlComponents[urlComponents.Length - 3]) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CannotInterpretRepositoryUrl, url));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.CannotInterpretRepositoryUrl, url));
                     return;
                 }
 
                 owner = urlComponents[urlComponents.Length - 2];
                 name = urlComponents[urlComponents.Length - 1];
                 if (!name.EndsWith(".git")) {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.CannotInterpretRepositoryUrl, url));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.CannotInterpretRepositoryUrl, url));
                     return;
                 }
 

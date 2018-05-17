@@ -21,7 +21,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             apiKey = "";
             var projectFileFullName = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFileFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.ProjectFileNotFound, projectFileFullName));
                 return;
             }
 
@@ -34,13 +34,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (errorsAndInfos.Errors.Any()) { return; }
 
             if (developerSettings == null) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                errorsAndInfos.Errors.Add(string.Format(Texts.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return;
             }
 
             var feedId = developerSettings.NugetFeedId;
             if (string.IsNullOrEmpty(feedId)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                errorsAndInfos.Errors.Add(string.Format(Texts.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return;
             }
 
@@ -50,14 +50,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
             feedUrl = developerSettings.NugetFeedUrl;
             if (string.IsNullOrEmpty(feedUrl)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                errorsAndInfos.Errors.Add(string.Format(Texts.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return;
             }
 
             var localPackageRepository = new LocalPackageRepository(packageFolderWithBinaries.FullName);
             var localPackages = localPackageRepository.GetPackages().Where(p => p.IsReleaseVersion()).ToList();
             if (!localPackages.Any()) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoPackageFilesFound, packageFolderWithBinaries.FullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.NoPackageFilesFound, packageFolderWithBinaries.FullName));
                 return;
             }
 
@@ -66,7 +66,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var packageId = project.RootNamespace;
             var remotePackages = ComponentProvider.NugetFeedLister.ListReleasedPackages(feedUrl, packageId);
             if (!remotePackages.Any()) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.NoRemotePackageFilesFound, feedUrl, packageId));
+                errorsAndInfos.Errors.Add(string.Format(Texts.NoRemotePackageFilesFound, feedUrl, packageId));
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             packageFileFullName = packageFolderWithBinaries.FullName + @"\" + packageId + "." + latestLocalPackageVersion + ".nupkg";
             if (File.Exists(packageFileFullName)) { return; }
 
-            errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, packageFileFullName));
+            errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, packageFileFullName));
         }
     }
 }

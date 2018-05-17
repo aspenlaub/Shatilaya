@@ -43,7 +43,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (errorsAndInfos.AnyErrors()) { return pullRequests; }
 
             if (result == null) {
-                errorsAndInfos.Errors.Add(Properties.Resources.CouldNotGetListOfPullRequests);
+                errorsAndInfos.Errors.Add(Texts.CouldNotGetListOfPullRequests);
                 return pullRequests;
             }
 
@@ -60,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var response = (HttpWebResponse)request.GetResponse();
             var responseStream = response.GetResponseStream();
             if (responseStream == null) {
-                errorsAndInfos.Errors.Add(Properties.Resources.CouldNotGetListOfPullRequests);
+                errorsAndInfos.Errors.Add(Texts.CouldNotGetListOfPullRequests);
                 return null;
             }
 

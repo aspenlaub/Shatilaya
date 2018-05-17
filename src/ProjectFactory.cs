@@ -19,13 +19,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public IProject Load(string solutionFileFullName, string projectFileFullName, IErrorsAndInfos errorsAndInfos) {
             if (!File.Exists(solutionFileFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, solutionFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, solutionFileFullName));
                 return null;
             }
 
             var projectFileInfo = new FileInfo(projectFileFullName);
             if (projectFileInfo.Directory == null) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, projectFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, projectFileFullName));
                 return null;
             }
 
@@ -33,7 +33,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             try {
                 document = XDocument.Load(projectFileFullName);
             } catch {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, projectFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, projectFileFullName));
                 return null;
             }
 

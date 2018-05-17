@@ -17,12 +17,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public void CallCake(string cakeExeFullName, string scriptFileFullName, string target, IErrorsAndInfos errorsAndInfos) {
             if (!File.Exists(cakeExeFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, cakeExeFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, cakeExeFullName));
                 return;
             }
 
             if (!File.Exists(scriptFileFullName)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FileNotFound, scriptFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, scriptFileFullName));
                 return;
             }
 

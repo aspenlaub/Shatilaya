@@ -27,7 +27,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var document = new XDocument();
             var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFile)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.ProjectFileNotFound, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.ProjectFileNotFound, projectFile));
                 return document;
             }
 
@@ -35,7 +35,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             try {
                 projectDocument = XDocument.Load(projectFile);
             } catch {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, projectFile));
                 return document;
             }
 
@@ -44,14 +44,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
             var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, errorsAndInfos);
             if (metaData == null) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.MissingElementInProjectFile, projectFile));
                 return document;
             }
 
             element.Add(metaData);
             var files = Files(projectDocument, errorsAndInfos);
             if (files == null) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingElementInProjectFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.MissingElementInProjectFile, projectFile));
                 return document;
             }
 
@@ -67,7 +67,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
             if (developerSettings == null) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                errorsAndInfos.Errors.Add(string.Format(Texts.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return null;
             }
 
@@ -75,7 +75,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var gitHubRepositoryUrl = developerSettings.GitHubRepositoryUrl;
             var faviconUrl = developerSettings.FaviconUrl;
             if (string.IsNullOrEmpty(author) || string.IsNullOrEmpty(gitHubRepositoryUrl) || string.IsNullOrEmpty(faviconUrl)) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
+                errorsAndInfos.Errors.Add(string.Format(Texts.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return null;
             }
 
@@ -127,7 +127,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var filesElement = new XElement(Namespace + @"files");
             var topLevelNamespace = rootNamespaceElement.Value;
             if (!topLevelNamespace.Contains('.')) {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.TopLevelNamespaceLacksADot, topLevelNamespace));
+                errorsAndInfos.Errors.Add(string.Format(Texts.TopLevelNamespaceLacksADot, topLevelNamespace));
                 return null;
             }
 
@@ -155,7 +155,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             if (File.Exists(nuSpecFile) && File.ReadAllText(nuSpecFile) == File.ReadAllText(tempFileName)) { return; }
 
             File.Copy(tempFileName, nuSpecFile, true);
-            errorsAndInfos.Infos.Add(string.Format(Properties.Resources.NuSpecFileUpdated, nuSpecFile));
+            errorsAndInfos.Infos.Add(string.Format(Texts.NuSpecFileUpdated, nuSpecFile));
         }
     }
 }

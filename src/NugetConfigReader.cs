@@ -11,21 +11,21 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             try {
                 document = XDocument.Load(nugetConfigFileFullName);
             } catch {
-                errorsAndInfos.Errors.Add(string.Format(Properties.Resources.InvalidXmlFile, nugetConfigFileFullName));
+                errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, nugetConfigFileFullName));
                 return "";
             }
 
             var sourceElement = document.XPathSelectElements("./configuration/packageSources/add[@key=\"" + source + "\"]").FirstOrDefault();
             var sourceKey = sourceElement?.Attribute("value")?.Value;
             if (string.IsNullOrEmpty(sourceKey)) {
-                errorsAndInfos.Errors.Add(Properties.Resources.NoApiKeyFound);
+                errorsAndInfos.Errors.Add(Texts.NoApiKeyFound);
                 return "";
             }
 
             var apiKeyElement = document.XPathSelectElements("./configuration/apikeys/add[@key=\"" + sourceKey + "\"]").FirstOrDefault();
             var apiKey = apiKeyElement?.Attribute("value")?.Value;
             if (string.IsNullOrEmpty(apiKey)) {
-                errorsAndInfos.Errors.Add(Properties.Resources.NoApiKeyFound);
+                errorsAndInfos.Errors.Add(Texts.NoApiKeyFound);
             }
 
             return apiKey;

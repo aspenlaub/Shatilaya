@@ -36,9 +36,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
                 if (deleter.CanDeleteFolder(folder)) {
                     deleter.DeleteFolder(folder);
-                    errorsAndInfos.Infos.Add(string.Format(Properties.Resources.ObsoleteFolderDeleted, folder.FullName));
+                    errorsAndInfos.Infos.Add(string.Format(Texts.ObsoleteFolderDeleted, folder.FullName));
                 } else {
-                    errorsAndInfos.Errors.Add(string.Format(Properties.Resources.FolderIsObsolete, folder.FullName));
+                    errorsAndInfos.Errors.Add(string.Format(Texts.FolderIsObsolete, folder.FullName));
                 }
             }
         }
