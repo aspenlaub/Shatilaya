@@ -12,7 +12,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeInstaller {
-        protected const string CakeVersion = "0.26.0";
+        protected const string CakeVersion = "0.28.0";
 
         public void InstallCake(IFolder cakeFolder) {
             var gitUtilities = new GitUtilities();

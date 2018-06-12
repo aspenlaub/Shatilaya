@@ -56,7 +56,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(ChabTarget.Folder().SubFolder(@"src\OctoPack.3.6.0").Exists());
 
             errorsAndInfos = new ErrorsAndInfos();
-            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("tools"), "Cake", "0.24.0", true, errorsAndInfos);
+            const string oldCakeVersion = "0.24.0";
+            sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("tools"), "Cake", oldCakeVersion, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsTrue(ChabTarget.Folder().SubFolder(@"tools\Cake").Exists());
             Assert.IsTrue(File.Exists(ChabTarget.Folder().SubFolder(@"tools\Cake").FullName + @"\Cake.exe"));
@@ -64,7 +65,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             errorsAndInfos = new ErrorsAndInfos();
             sut.InstallNugetPackage(ChabTarget.Folder().SubFolder("tools"), "Cake", "", true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
-            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Successfully uninstalled") && i.Contains("Cake.0.24.0")));
+            Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Successfully uninstalled") && i.Contains(oldCakeVersion)));
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains("Successfully installed")));
         }
     }
