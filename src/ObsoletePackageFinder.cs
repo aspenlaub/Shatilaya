@@ -30,7 +30,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
             foreach (var folder in folders.Select(f => new Folder(f))) {
                 var deleter = new FolderDeleter();
-                foreach (var file in new[] {@"dll", @"pdb", @"nupkg"}.SelectMany(extension => Directory.GetFiles(folder.FullName, $"*.{extension}", SearchOption.AllDirectories))) {
+                foreach (var file in new[] {@"dll", @"pdb", @"nupkg", @"_"}.SelectMany(extension => Directory.GetFiles(folder.FullName, $"*.{extension}", SearchOption.AllDirectories))) {
                     File.Delete(file);
                 }
 
