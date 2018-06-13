@@ -1,10 +1,17 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class CakeRunner : ICakeRunner {
+        public const string PinnedCakeVersion = "0.28.0";
+
         protected IComponentProvider ComponentProvider;
 
         public CakeRunner(IComponentProvider componentProvider) {
@@ -26,6 +33,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return;
             }
 
+            var toolsFolder = new Folder(cakeExeFullName.Substring(0, 6 + cakeExeFullName.LastIndexOf(@"\tools\", StringComparison.Ordinal)));
+            VerifyCakeVersion(toolsFolder, errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) { return; }
+
             var scriptFileFolderFullName = scriptFileFullName.Substring(0, scriptFileFullName.LastIndexOf('\\'));
             var runner = ComponentProvider.ProcessRunner;
             var arguments = "\"" + scriptFileFullName + "\" -mono";
@@ -33,6 +44,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 arguments = arguments + " -target=" + target;
             }
             runner.RunProcess(cakeExeFullName, arguments, scriptFileFolderFullName, errorsAndInfos);
+        }
+
+        public void VerifyCakeVersion(IFolder toolsFolder, IErrorsAndInfos errorsAndInfos) {
+            var packagesConfigFileFullName = toolsFolder.FullName + @"\packages.config";
+            var document = XDocument.Load(packagesConfigFileFullName);
+            var element = document.XPathSelectElements("/packages/package").FirstOrDefault(e => e.Attribute("id")?.Value == "Cake");
+            if (element == null) {
+                errorsAndInfos.Errors.Add(string.Format(Texts.CouldNotReadCakeVersion, packagesConfigFileFullName));
+                return;
+            }
+
+            var attribute = element.Attribute("version");
+            if (attribute == null) {
+                errorsAndInfos.Errors.Add(string.Format(Texts.CouldNotReadCakeVersion, packagesConfigFileFullName));
+                return;
+            }
+
+            if (attribute.Value == PinnedCakeVersion) { return; }
+
+            errorsAndInfos.Errors.Add(string.Format(Texts.WrongCakeVersion, attribute.Value, packagesConfigFileFullName));
         }
     }
 }

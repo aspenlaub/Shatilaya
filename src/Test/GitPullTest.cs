@@ -49,6 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var url = "https://github.com/aspenlaub/" + ChabTargetOne.SolutionId + ".git";
             foreach (var target in new[] { ChabTargetOne, ChabTargetTwo }) {
                 gitUtilities.Clone(url, target.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+                ComponentProvider.CakeRunner.VerifyCakeVersion(target.Folder().SubFolder("tools"), errorsAndInfos);
                 Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             }
 

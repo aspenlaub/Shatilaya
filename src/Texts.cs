@@ -3,6 +3,7 @@
         public const string CannotInterpretRepositoryUrl = "Cannot interpret \"{0}\" as a GitHub repository url";
         public const string CommitNotFound = "Commit '{0}' not found";
         public const string CouldNotGetListOfPullRequests = "Could not get list of pull requests";
+        public const string CouldNotReadCakeVersion = "Could not read cake version from {0}";
         public const string ExactlyOneRemoteExpected = "The checked out repository must have exactly one remote";
         public const string FailedToCopy = "Failed to copy \"{0}\" to \"{1}\"";
         public const string FailedToRename = "Failed to rename \"{0}\" into \"{1}\"";
@@ -22,5 +23,6 @@
         public const string ProjectFileNotFound = "There is no project file \"{0}\"";
         public const string TopLevelNamespaceLacksADot = "Top level namespace '{0}' does not contain any dot ('.')";
         public const string UncommittedChangeTo = "There is an uncommitted change to \"{0}\"";
+        public const string WrongCakeVersion = "Wrong cake version {0} in {1}";
     }
 }

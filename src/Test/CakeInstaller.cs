@@ -12,8 +12,6 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class CakeInstaller {
-        protected const string CakeVersion = "0.28.0";
-
         public void InstallCake(IFolder cakeFolder) {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
@@ -29,7 +27,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(element);
             var attribute = element.Attribute("version");
             Assert.IsNotNull(attribute);
-            attribute.SetValue(CakeVersion);
+            attribute.SetValue(CakeRunner.PinnedCakeVersion);
             document.Save(packagesConfigFileFullName);
 
             var powershellExecuter = new PowershellExecuter();

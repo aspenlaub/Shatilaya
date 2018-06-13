@@ -18,5 +18,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="target"></param>
         /// <param name="errorsAndInfos"></param>
         void CallCake(string cakeExeFullName, string scriptFileFullName, string target, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Verify that we are using the pinned cake version
+        /// </summary>
+        /// <param name="toolsFolder"></param>
+        /// <param name="errorsAndInfos"></param>
+        void VerifyCakeVersion(IFolder toolsFolder, IErrorsAndInfos errorsAndInfos);
     }
 }
