@@ -43,7 +43,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void LatestChangedArePulled() {
+        public void LatestChangesArePulled() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabTargetOne.SolutionId + ".git";
