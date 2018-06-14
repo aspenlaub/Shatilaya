@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
@@ -51,6 +52,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 gitUtilities.Clone(url, target.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
                 ComponentProvider.CakeRunner.VerifyCakeVersion(target.Folder().SubFolder("tools"), errorsAndInfos);
                 Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
+                var addinsFolder = target.Folder().SubFolder("tools").SubFolder("Addins");
+                if (!addinsFolder.Exists()) { continue; }
+
+                var deleter = new FolderDeleter();
+                deleter.DeleteFolder(addinsFolder);
             }
 
             // https://github.com/aspenlaub/Chab/commit/12fb5504d9380aabfc8d4c4ef2cf21117c810290 came before
