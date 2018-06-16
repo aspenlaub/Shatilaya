@@ -88,6 +88,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(hasOpenPullRequest);
+
+            var hasPullRequest = HasPullRequestForThisBranchAndItsHeadTip(sut, errorsAndInfos, out inconclusive);
+            if (inconclusive) { return; }
+
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(hasPullRequest);
         }
 
         protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
@@ -106,6 +112,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var hasOpenPullRequest = false;
             try {
                 hasOpenPullRequest = sut.HasOpenPullRequestForThisBranch(master ? MasterFolder : DevelopmentFolder, errorsAndInfos);
+            } catch (WebException) {
+                inconclusive = true; // ToDo: use Assert.Inconclusive
+            }
+            return hasOpenPullRequest;
+        }
+
+        protected bool HasPullRequestForThisBranchAndItsHeadTip(GitHubUtilities sut, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
+            inconclusive = false;
+            var hasOpenPullRequest = false;
+            try {
+                hasOpenPullRequest = sut.HasPullRequestForThisBranchAndItsHeadTip(DevelopmentFolder, errorsAndInfos);
             } catch (WebException) {
                 inconclusive = true; // ToDo: use Assert.Inconclusive
             }

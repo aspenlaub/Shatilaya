@@ -34,5 +34,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
         bool HasOpenPullRequestForThisBranch(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Check if there is a pull request for the checked out branch with matching head tip id sha (not necessarily open)
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="errorsAndInfos"></param>
+        /// <returns></returns>
+        bool HasPullRequestForThisBranchAndItsHeadTip(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
     }
 }

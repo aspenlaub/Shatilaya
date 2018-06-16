@@ -6,5 +6,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         public string Number { get; set; }
         public string State { get; set; }
         public string Branch { get; set; }
+        public string Sha { get; set; }
     }
 }

@@ -37,6 +37,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return PullRequests(repositoryFolder, "all", errorsAndInfos).Count;
         }
 
+
+        public bool HasPullRequestForThisBranchAndItsHeadTip(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = PullRequests(repositoryFolder, "all", errorsAndInfos);
+            var checkedOutBranch = ComponentProvider.GitUtilities.CheckedOutBranch(repositoryFolder);
+            var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(repositoryFolder);
+            return pullRequests.Any(p => p.Branch == checkedOutBranch && p.Sha == headTipIdSha);
+        }
+
         protected IList<PullRequest> PullRequests(IFolder repositoryFolder, string state, IErrorsAndInfos errorsAndInfos) {
             var pullRequests = new List<PullRequest>();
             string owner, name;
@@ -88,7 +96,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected static PullRequest CreatePullRequest(JToken jToken) {
-            return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>(), Branch = jToken["head"]["ref"].Value<string>() };
+            return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>(), Branch = jToken["head"]["ref"].Value<string>(), Sha = jToken["head"]["sha"].Value<string>() };
         }
 
         private PersonalAccessTokens PersonalAccessTokens(IErrorsAndInfos errorsAndInfos) {
