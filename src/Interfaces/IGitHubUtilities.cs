@@ -3,7 +3,7 @@
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IGitHubUtilities {
         /// <summary>
-        /// Check if checked out branch has an open pull request
+        /// Check if there is an open pull request (not necessarily for the checked out branch)
         /// </summary>
         /// <param name="repositoryFolder"></param>
         /// <param name="errorsAndInfos"></param>
@@ -11,7 +11,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         bool HasOpenPullRequest(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
-        /// Check if checked out branch has an open pull request
+        /// Check if there is an open pull request (not necessarily for the checked out branch)
         /// </summary>
         /// <param name="repositoryFolder"></param>
         /// <param name="semicolonSeparatedListOfPullRequestNumbersToIgnore"></param>
@@ -26,5 +26,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
         int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+
+        /// <summary>
+        /// Check if there is an open pull request for the checked out branch
+        /// </summary>
+        /// <param name="repositoryFolder"></param>
+        /// <param name="errorsAndInfos"></param>
+        /// <returns></returns>
+        bool HasOpenPullRequestForThisBranch(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
     }
 }

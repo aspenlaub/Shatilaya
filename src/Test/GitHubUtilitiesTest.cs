@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Configuration;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
@@ -13,7 +14,7 @@ using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ICom
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class GitHubUtilitiesTest {
-        protected IFolder MasterFolder;
+        protected IFolder MasterFolder, DevelopmentFolder;
         protected IComponentProvider ComponentProvider;
 
         public GitHubUtilitiesTest() {
@@ -28,15 +29,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void Initialize() {
             var checkOutFolder = Path.GetTempPath() + nameof(GitUtilitiesTest) + '\\';
             MasterFolder = new Folder(checkOutFolder + @"Pakled-Master");
+            DevelopmentFolder = new Folder(checkOutFolder + @"Pakled-Development");
 
             CleanUp();
             CloneRepository(MasterFolder, "master");
+            CloneRepository(DevelopmentFolder, "do-not-pull-from-me");
         }
 
         [TestCleanup]
         public void CleanUp() {
             var deleter = new FolderDeleter();
-            foreach (var folder in new[] { MasterFolder }.Where(folder => folder.Exists())) {
+            foreach (var folder in new[] { MasterFolder, DevelopmentFolder }.Where(folder => folder.Exists())) {
                 deleter.DeleteFolder(folder);
             }
         }
@@ -66,11 +69,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(hasOpenPullRequest);
+
             hasOpenPullRequest = HasOpenPullRequest(sut, "2", errorsAndInfos, out inconclusive);
             if (inconclusive) { return; }
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsFalse(hasOpenPullRequest);
+
+            hasOpenPullRequest = HasOpenPullRequestForThisBranch(sut, true, errorsAndInfos, out inconclusive);
+            if (inconclusive) { return; }
+
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(hasOpenPullRequest);
+
+            hasOpenPullRequest = HasOpenPullRequestForThisBranch(sut, false, errorsAndInfos, out inconclusive);
+            if (inconclusive) { return; }
+
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(hasOpenPullRequest);
         }
 
         protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
@@ -84,13 +100,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             return hasOpenPullRequest;
         }
 
+        protected bool HasOpenPullRequestForThisBranch(GitHubUtilities sut, bool master, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
+            inconclusive = false;
+            var hasOpenPullRequest = false;
+            try {
+                hasOpenPullRequest = sut.HasOpenPullRequestForThisBranch(master ? MasterFolder : DevelopmentFolder, errorsAndInfos);
+            } catch (WebException) {
+                inconclusive = true; // ToDo: use Assert.Inconclusive
+            }
+            return hasOpenPullRequest;
+        }
+
         [TestMethod]
-        public void CanListPullRequests() {
+        public void CanCheckHowManyPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
             var numberOfPullRequests = sut.NumberOfPullRequests(MasterFolder, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(numberOfPullRequests > 1);
         }
+
+        // HasOpenPullRequestForThisBranch(
     }
 }

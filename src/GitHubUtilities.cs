@@ -27,6 +27,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return pullRequests.Any(p => !semicolonSeparatedListOfPullRequestNumbersToIgnore.Split(';').Contains(p.Number));
         }
 
+        public bool HasOpenPullRequestForThisBranch(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = PullRequests(repositoryFolder, "open", errorsAndInfos);
+            var checkedOutBranch = ComponentProvider.GitUtilities.CheckedOutBranch(repositoryFolder);
+            return pullRequests.Any(p => p.Branch == checkedOutBranch);
+        }
+
         public int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
             return PullRequests(repositoryFolder, "all", errorsAndInfos).Count;
         }
@@ -73,7 +79,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected static PullRequest CreatePullRequest(JToken jToken) {
-            return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>() };
+            return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>(), Branch = jToken["head"]["ref"].Value<string>() };
         }
     }
 }
