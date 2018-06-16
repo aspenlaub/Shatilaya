@@ -152,7 +152,7 @@ Task("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
 
 Task("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests")
   .WithCriteria(() => currentGitBranch.FriendlyName != "master")
-  .Description("Verify that the master branch does have open pull requests for the checked out development branch")
+  .Description("Verify that the master branch does not have open pull requests for the checked out development branch")
   .Does(() => {
     var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
     bool thereAreOpenPullRequests;
@@ -165,7 +165,22 @@ Task("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests")
     }
   });
 
-Task("DebugBuild")
+Task("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
+  .WithCriteria(() => currentGitBranch.FriendlyName != "master")
+  .Description("Verify that the master branch does have a pull request for the checked out development branch head tip")
+  .Does(() => {
+    var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
+    bool thereArePullRequests;
+    thereArePullRequests = componentProvider.GitHubUtilities.HasPullRequestForThisBranchAndItsHeadTip(new Folder(repositoryFolder), noPullRequestsErrorsAndInfos);
+    if (!thereArePullRequests) {
+      throw new Exception("There is no pull request for this development branch and its head tip");
+    }
+    if (noPullRequestsErrorsAndInfos.Errors.Any()) {
+      throw new Exception(string.Join("\r\n", noPullRequestsErrorsAndInfos.Errors));
+    }
+  });
+  
+ Task("DebugBuild")
   .Description("Build solution in Debug and clean up intermediate output folder")
   .Does(() => {
     MSBuild(solution, settings 
@@ -303,7 +318,7 @@ Task("IgnoreOutdatedBuildCakePendingChanges")
 Task("IgnoreOutdatedBuildCakeAndDoNotPush")
   .Description("Default except check for outdated build.cake and except nuget push")
   .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
-  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests")
+  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
   .IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage")
   .Does(() => {
   });
@@ -312,7 +327,7 @@ Task("LittleThings")
   .Description("Default but do not build or test in debug or release, and do not create or push nuget package")
   .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("UpdateBuildCake")
   .IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
-  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests")
+  .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
   .Does(() => {
   });
 
