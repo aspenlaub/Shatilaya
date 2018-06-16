@@ -22,6 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(new Pegh.Components.ComponentProvider());
             ComponentProvider = componentProviderMock.Object;
         }
 

@@ -75,6 +75,9 @@
     <Compile Include="DependencyNode.cs" />
     <Compile Include="DeveloperSettings.cs" />
     <Compile Include="DeveloperSettingsSecret.cs" />
+    <Compile Include="PersonalAccessToken.cs" />
+    <Compile Include="PersonalAccessTokens.cs" />
+    <Compile Include="PersonalAccessTokensSecret.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyGroup.cs" />

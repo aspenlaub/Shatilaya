@@ -45,7 +45,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
 
             var url = $"https://api.github.com/repos/{owner}/{name}/pulls?state=" + state;
-            var result = RunJsonWebRequest(url, errorsAndInfos) as JArray;
+            var result = RunJsonWebRequest(url, owner, errorsAndInfos) as JArray;
             if (errorsAndInfos.AnyErrors()) { return pullRequests; }
 
             if (result == null) {
@@ -58,10 +58,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return pullRequests;
         }
 
-        protected object RunJsonWebRequest(string url, IErrorsAndInfos errorsAndInfos) {
+        protected object RunJsonWebRequest(string url, string owner, IErrorsAndInfos errorsAndInfos) {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = WebRequestMethods.Http.Get;
             request.UserAgent = GetType().Namespace;
+            var personalAccessTokens = PersonalAccessTokens(errorsAndInfos);
+            if (errorsAndInfos.AnyErrors()) {
+                return null;
+            }
+
+            var personalAccessToken = personalAccessTokens.FirstOrDefault(p => p.Owner == owner && p.TokenName == "CakeBuild");
+            if (personalAccessToken != null) {
+                request.Headers.Add("Authorization", "token " + personalAccessToken.Token);
+            }
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var response = (HttpWebResponse)request.GetResponse();
             var responseStream = response.GetResponseStream();
@@ -80,6 +89,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         protected static PullRequest CreatePullRequest(JToken jToken) {
             return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>(), Branch = jToken["head"]["ref"].Value<string>() };
+        }
+
+        private PersonalAccessTokens PersonalAccessTokens(IErrorsAndInfos errorsAndInfos) {
+            var personalAccessTokensSecret = new PersonalAccessTokensSecret();
+            var personalAccessTokens = ComponentProvider.PeghComponentProvider.SecretRepository.Get(personalAccessTokensSecret, errorsAndInfos);
+            return personalAccessTokens;
         }
     }
 }
