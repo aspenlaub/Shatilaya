@@ -11,6 +11,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         protected const string ValueName = "Dbghelp_path";
         protected const string PathToMsTest = @"\mstest.exe";
         protected const string PathToVsTest = @"\CommonExtensions\Microsoft\TestWindow\vstest.console.exe";
+        protected const string Vs7RegistryKey = @"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7";
+        protected const string Vs7SubFolder = @"Common7\IDE";
 
         public string FindMsTestExe(int toolsVersionNumber) {
             var folder = ToolsFolder(toolsVersionNumber);
@@ -28,8 +30,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return folder.Exists() && File.Exists(fullFileName) ? fullFileName : "";
         }
 
+        public bool HaveVs7() {
+            return Registry.LocalMachine.OpenSubKey(Vs7RegistryKey) != null;
+        }
+
         protected IFolder ToolsFolder(int toolsVersionNumber) {
-            var key = Registry.LocalMachine.OpenSubKey(string.Format(RegistryKeyTemplate, toolsVersionNumber));
+            var key = Registry.LocalMachine.OpenSubKey(Vs7RegistryKey);
+            if (key != null) {
+                return new Folder((string) key.GetValue($"{toolsVersionNumber}.0")).SubFolder(Vs7SubFolder);
+            }
+
+            key = Registry.LocalMachine.OpenSubKey(string.Format(RegistryKeyTemplate, toolsVersionNumber));
             return key == null ? null : new Folder((string) key.GetValue(ValueName));
         }
     }
