@@ -27,21 +27,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(() => new CakeRunner(this)); } }
-        public IDependencyTreeBuilder DependencyTreeBuilder { get { return DefaultComponent<IDependencyTreeBuilder, DependencyTreeBuilder>(); } }
-        public IExecutableFinder ExecutableFinder { get { return DefaultComponent<IExecutableFinder, ExecutableFinder>(); } }
-        public IGitUtilities GitUtilities { get { return DefaultComponent<IGitUtilities, GitUtilities>(); } }
+        public IDependencyTreeBuilder DependencyTreeBuilder => DefaultComponent<IDependencyTreeBuilder, DependencyTreeBuilder>();
+        public IExecutableFinder ExecutableFinder => DefaultComponent<IExecutableFinder, ExecutableFinder>();
+        public IGitUtilities GitUtilities => DefaultComponent<IGitUtilities, GitUtilities>();
         public IGitHubUtilities GitHubUtilities { get { return DefaultComponent<IGitHubUtilities, GitHubUtilities>(() => new GitHubUtilities(this)); } }
-        public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider { get { return DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>(); } }
-        public INugetConfigReader NugetConfigReader { get { return DefaultComponent<INugetConfigReader, NugetConfigReader>(); } }
-        public INugetFeedLister NugetFeedLister { get { return DefaultComponent<INugetFeedLister, NugetFeedLister>(); } }
+        public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider => DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>();
+        public INugetConfigReader NugetConfigReader => DefaultComponent<INugetConfigReader, NugetConfigReader>();
+        public INugetFeedLister NugetFeedLister => DefaultComponent<INugetFeedLister, NugetFeedLister>();
         public INugetPackageInstaller NugetPackageInstaller { get { return DefaultComponent<INugetPackageInstaller, NugetPackageInstaller>(() => new NugetPackageInstaller(this)); } }
         public INugetPackageRestorer NugetPackageRestorer { get { return DefaultComponent<INugetPackageRestorer, NugetPackageRestorer>(() => new NugetPackageRestorer(this)); } }
         public INugetPackageToPushFinder NugetPackageToPushFinder { get { return DefaultComponent<INugetPackageToPushFinder, NugetPackageToPushFinder>(() => new NugetPackageToPushFinder(this)); } }
         public INuSpecCreator NuSpecCreator { get { return DefaultComponent<INuSpecCreator, NuSpecCreator>(() => new NuSpecCreator(this)); } }
         public IObsoletePackageFinder ObsoletePackageFinder { get { return DefaultComponent<IObsoletePackageFinder, ObsoletePackageFinder>(() => new ObsoletePackageFinder(this)); } }
-        public IPackageConfigsScanner PackageConfigsScanner { get { return DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>(); } }
-        public IPeghComponentProvider PeghComponentProvider { get { return DefaultComponent<IPeghComponentProvider, PeghComponentProvider>(); } }
-        public IProcessRunner ProcessRunner { get { return DefaultComponent<IProcessRunner, ProcessRunner>(); } }
-        public IProjectFactory ProjectFactory { get { return DefaultComponent<IProjectFactory, ProjectFactory>(); } }
+        public IPackageConfigsScanner PackageConfigsScanner => DefaultComponent<IPackageConfigsScanner, PackageConfigsScanner>();
+        public IPeghComponentProvider PeghComponentProvider => DefaultComponent<IPeghComponentProvider, PeghComponentProvider>();
+        public IProcessRunner ProcessRunner => DefaultComponent<IProcessRunner, ProcessRunner>();
+        public IProjectFactory ProjectFactory => DefaultComponent<IProjectFactory, ProjectFactory>();
+        public IToolsVersionFinder ToolsVersionFinder { get { return DefaultComponent<IToolsVersionFinder, ToolsVersionFinder>(() => new ToolsVersionFinder(this)); } }
     }
 }

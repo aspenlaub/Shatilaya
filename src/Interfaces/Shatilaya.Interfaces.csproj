@@ -109,6 +109,7 @@
     <Compile Include="IProjectFactory.cs" />
     <Compile Include="IPropertyGroup.cs" />
     <Compile Include="IPullRequest.cs" />
+    <Compile Include="IToolsVersionFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

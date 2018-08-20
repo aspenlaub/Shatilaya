@@ -18,5 +18,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         IPeghComponentProvider PeghComponentProvider { get; }
         IProcessRunner ProcessRunner { get; }
         IProjectFactory ProjectFactory { get; }
+        IToolsVersionFinder ToolsVersionFinder { get; }
     }
 }

@@ -160,6 +160,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DocuProjectBuildTest.cs" />
     <Compile Include="TestTargetFolder.cs" />
+    <Compile Include="ToolsVersionFinderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Entities\Shatilaya.Entities.csproj">
