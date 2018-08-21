@@ -2,6 +2,7 @@
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {
+        ICakeInstaller CakeInstaller { get; }
         ICakeRunner CakeRunner { get; }
         IDependencyTreeBuilder DependencyTreeBuilder { get; }
         IExecutableFinder ExecutableFinder { get; }

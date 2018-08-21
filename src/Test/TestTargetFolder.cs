@@ -72,7 +72,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             if (CakeFolder().Exists()) { return; }
 
             var cakeInstaller = new CakeInstaller();
-            cakeInstaller.InstallCake(CakeFolder());
+            IErrorsAndInfos errorsAndInfos;
+            cakeInstaller.InstallCake(CakeFolder(), out errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 
         public IFolder CakeFolder() {

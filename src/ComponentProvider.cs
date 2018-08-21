@@ -26,6 +26,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return (T)DefaultComponents[typeof(T)];
         }
 
+        public ICakeInstaller CakeInstaller => DefaultComponent<ICakeInstaller, CakeInstaller>();
         public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(() => new CakeRunner(this)); } }
         public IDependencyTreeBuilder DependencyTreeBuilder => DefaultComponent<IDependencyTreeBuilder, DependencyTreeBuilder>();
         public IExecutableFinder ExecutableFinder => DefaultComponent<IExecutableFinder, ExecutableFinder>();

@@ -23,7 +23,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public static void Initialize(TestContext context) {
             DeleteFolder(CakeFolder());
             var cakeInstaller = new CakeInstaller();
-            cakeInstaller.InstallCake(CakeFolder());
+            IErrorsAndInfos errorsAndInfos;
+            cakeInstaller.InstallCake(CakeFolder(), out errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 
             ScriptsFolder = CakeScriptsFolder();
