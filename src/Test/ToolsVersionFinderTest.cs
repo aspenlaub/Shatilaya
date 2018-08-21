@@ -20,6 +20,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             executableFinderMock.Setup(e => e.FindMsTestExe(It.IsAny<int>())).Returns<int>(v => v <= 17 ? "." : "");
             executableFinderMock.Setup(e => e.FindVsTestExe(It.IsAny<int>())).Returns<int>(v => v <= 17 ? "." : "");
             Assert.AreEqual(17, sut.LatestAvailableToolsVersion());
+
+            var componentProvider = new ComponentProvider();
+            sut = new ToolsVersionFinder(componentProvider);
+            Assert.IsTrue(sut.LatestAvailableToolsVersion() >= 14);
         }
     }
 }

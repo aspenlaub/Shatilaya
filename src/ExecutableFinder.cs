@@ -37,7 +37,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         protected IFolder ToolsFolder(int toolsVersionNumber) {
             var key = Registry.LocalMachine.OpenSubKey(Vs7RegistryKey);
             if (key != null) {
-                return new Folder((string) key.GetValue($"{toolsVersionNumber}.0")).SubFolder(Vs7SubFolder);
+                var name = $"{toolsVersionNumber}.0";
+                try {
+                    return new Folder((string) key.GetValue(name)).SubFolder(Vs7SubFolder);
+                } catch {
+                    return null;
+                }
             }
 
             key = Registry.LocalMachine.OpenSubKey(string.Format(RegistryKeyTemplate, toolsVersionNumber));
