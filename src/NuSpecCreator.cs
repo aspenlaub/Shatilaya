@@ -136,11 +136,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                   => new XElement(Namespace + @"file",
                       new XAttribute(@"src", outputPathElement.Value + topLevelNamespace + ".*." + extension),
                       new XAttribute(@"exclude", string.Join(";", outputPathElement.Value + @"*.Test*.*", outputPathElement.Value + @"*.exe")),
-                      new XAttribute(@"target", @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", ""))))) {
+                      new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }
 
             return filesElement;
+        }
+
+        private static string TargetFrameworkElementToLibNetSuffix(XElement targetFrameworkElement) {
+            var targetFramework = targetFrameworkElement.Value;
+            return targetFramework.StartsWith("v") ? targetFramework.Replace("v", "").Replace(".", "") : targetFramework;
         }
 
         public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
