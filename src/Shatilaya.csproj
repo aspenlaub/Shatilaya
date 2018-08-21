@@ -39,36 +39,36 @@
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh, Version=1.0.6709.36322, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh, Version=1.0.6750.33219, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Components, Version=1.0.6709.36323, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Components.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Components, Version=1.0.6750.33219, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Components.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Entities, Version=1.0.6709.36322, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Entities, Version=1.0.6750.33219, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.GUI, Version=1.0.6709.36323, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.GUI.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.GUI, Version=1.0.6750.33220, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.GUI.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces, Version=1.0.6709.36322, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces, Version=1.0.6750.33219, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities, Version=1.0.6709.36323, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6709.36322\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities.dll</HintPath>
+    <Reference Include="Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities, Version=1.0.6750.33219, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Aspenlaub.Net.GitHub.CSharp.Pegh.1.0.6750.33219\lib\net46\Aspenlaub.Net.GitHub.CSharp.Pegh.SampleEntities.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DotNetZip, Version=1.11.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.0.999, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
