@@ -18,6 +18,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NuSpecCreatorTest {
         protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NuSpecCreator), "Pakled");
+        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NuSpecCreator), "ChabStandard");
 
         protected XDocument Document;
         protected XmlNamespaceManager NamespaceManager;
@@ -31,11 +32,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [TestInitialize]
         public void Initialize() {
             PakledTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
             PakledTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestMethod]
@@ -87,6 +90,55 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
+        [TestMethod]
+        public void CanCreateNuSpecForChabStandard() {
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
+            const string url = "https://github.com/aspenlaub/ChabStandard.git";
+            gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
+            var peghComponentProvider = new PeghComponentProvider();
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
+            var sut = new NuSpecCreator(componentProviderMock.Object);
+            var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";
+            var projectFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".csproj";
+            Assert.IsTrue(File.Exists(projectFileFullName));
+            Document = XDocument.Load(projectFileFullName);
+            var targetFrameworkElement = Document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
+            Assert.IsNotNull(targetFrameworkElement);
+            var rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
+            Assert.IsNotNull(rootNamespaceElement);
+            var outputPathElement = Document.XPathSelectElements("./Project/PropertyGroup/OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
+            Assert.IsNotNull(outputPathElement);
+            Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+            Assert.IsNotNull(Document);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.AreEqual(0, errorsAndInfos.Infos.Count);
+            var developerSettingsSecret = new DeveloperSettingsSecret();
+            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            Assert.IsNotNull(developerSettings);
+            VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/description", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/releaseNotes", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/authors", developerSettings.Author);
+            VerifyTextElement(@"/package/metadata/owners", developerSettings.Author);
+            VerifyTextElement(@"/package/metadata/projectUrl", developerSettings.GitHubRepositoryUrl + ChabStandardTarget.SolutionId);
+            VerifyTextElement(@"/package/metadata/iconUrl", developerSettings.FaviconUrl);
+            VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
+            var year = DateTime.Now.Year;
+            VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
+            VerifyTextElement(@"/package/metadata/version", @"$version$");
+            VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string>());
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\ChabStandardBin\Release\*.Test*.*", @"..\ChabStandardBin\Release\*.Test*.*" });
+            var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
+            VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
+            VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
+        }
+
         private static bool ParentIsReleasePropertyGroup(XElement e) {
             return e.Parent?.Attributes("Condition").Any(v => v.Value.Contains("Release")) == true;
         }
@@ -94,13 +146,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected void VerifyTextElement(string xpath, string expectedContents) {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
-            Assert.IsNotNull(element);
+            Assert.IsNotNull(element, $"Element not found using {xpath}, expected {expectedContents}");
         }
 
         protected void VerifyElements(string xpath, string attributeName, IList<string> attributeValues) {
             xpath = xpath.Replace("/", "/nu:");
             var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
-            Assert.AreEqual(attributeValues.Count, elements.Count);
+            Assert.AreEqual(attributeValues.Count, elements.Count, $"Expected {attributeValues.Count} elements using {xpath}, got {elements.Count}");
         }
     }
 }
