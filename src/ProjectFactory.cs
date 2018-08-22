@@ -37,15 +37,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return null;
             }
 
-            var projectElement = document.XPathSelectElements("./cp:Project", NamespaceManager).FirstOrDefault();
-
-            var propertyGroups = document.XPathSelectElements("./cp:Project/cp:PropertyGroup", NamespaceManager).Select(x => ReadPropertyGroup(x)).ToList();
-            var dllFileFullNames = document.XPathSelectElements("./cp:Project/cp:ItemGroup/cp:Reference/cp:HintPath", NamespaceManager).Select(x => DllFileFullName(projectFileInfo.DirectoryName, x));
+            var propertyCpGroups = document.XPathSelectElements("./cp:Project/cp:PropertyGroup", NamespaceManager).Select(x => ReadPropertyGroup(x, true)).ToList();
+            var propertyGroups = propertyCpGroups.Any() ? propertyCpGroups : document.XPathSelectElements("./Project/PropertyGroup", NamespaceManager).Select(x => ReadPropertyGroup(x, false)).ToList();
+            var cpDllFileFullNames = document.XPathSelectElements("./cp:Project/cp:ItemGroup/cp:Reference/cp:HintPath", NamespaceManager).Select(x => DllFileFullName(projectFileInfo.DirectoryName, x)).ToList();
+            var dllFileFullNames = cpDllFileFullNames.Any() ? cpDllFileFullNames : document.XPathSelectElements("./Project/ItemGroup/Reference/HintPath", NamespaceManager).Select(x => DllFileFullName(projectFileInfo.DirectoryName, x)).ToList();
+            var targetFrameworkCpElement = document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:TargetFrameworkVersion", NamespaceManager).FirstOrDefault();
+            var targetFrameworkElement = document.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault() ?? targetFrameworkCpElement;
 
             var project = new Project {
                 ProjectFileFullName = projectFileFullName,
                 ProjectName = ProjectName(solutionFileFullName, projectFileInfo),
-                ToolsVersion = projectElement?.Attribute("ToolsVersion")?.Value ?? "",
+                TargetFramework = targetFrameworkElement?.Value ?? "",
                 RootNamespace = propertyGroups.FirstOrDefault(p => p.RootNamespace != "")?.RootNamespace ?? ""
             };
 
@@ -91,14 +93,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return true;
         }
 
-        protected IPropertyGroup ReadPropertyGroup(XElement propertyGroupElement) {
+        protected IPropertyGroup ReadPropertyGroup(XElement propertyGroupElement, bool cp) {
             var propertyGroup = new PropertyGroup {
-                AssemblyName = propertyGroupElement?.XPathSelectElement("cp:AssemblyName", NamespaceManager)?.Value ?? "",
-                RootNamespace = propertyGroupElement?.XPathSelectElement("cp:RootNamespace", NamespaceManager)?.Value ?? "",
-                OutputPath = propertyGroupElement?.XPathSelectElement("cp:OutputPath", NamespaceManager)?.Value ?? "",
-                IntermediateOutputPath = propertyGroupElement?.XPathSelectElement("cp:IntermediateOutputPath", NamespaceManager)?.Value ?? "",
-                UseVsHostingProcess = propertyGroupElement?.XPathSelectElement("cp:UseVSHostingProcess", NamespaceManager)?.Value ?? "",
-                GenerateBuildInfoConfigFile = propertyGroupElement?.XPathSelectElement("cp:GenerateBuildInfoConfigFile", NamespaceManager)?.Value ?? "",
+                AssemblyName = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "AssemblyName", NamespaceManager)?.Value ?? "",
+                RootNamespace = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "RootNamespace", NamespaceManager)?.Value ?? "",
+                OutputPath = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "OutputPath", NamespaceManager)?.Value ?? "",
+                IntermediateOutputPath = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "IntermediateOutputPath", NamespaceManager)?.Value ?? "",
+                UseVsHostingProcess = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "UseVSHostingProcess", NamespaceManager)?.Value ?? "",
+                GenerateBuildInfoConfigFile = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "GenerateBuildInfoConfigFile", NamespaceManager)?.Value ?? "",
                 Condition = propertyGroupElement?.Attribute("Condition")?.Value ?? ""
             };
             return propertyGroup;

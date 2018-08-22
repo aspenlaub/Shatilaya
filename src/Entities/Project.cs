@@ -5,7 +5,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
     public class Project : IProject {
         public string ProjectFileFullName { get; set; }
         public string ProjectName { get; set; }
-        public string ToolsVersion { get; set; }
+        public string TargetFramework { get; set; }
         public string RootNamespace { get; set; }
 
         public IList<IPropertyGroup> PropertyGroups { get; }
