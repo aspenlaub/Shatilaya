@@ -148,7 +148,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         private static string TargetFrameworkElementToLibNetSuffix(XElement targetFrameworkElement) {
             var targetFramework = targetFrameworkElement.Value;
-            return targetFramework.StartsWith("v") ? targetFramework.Replace("v", "").Replace(".", "") : targetFramework;
+            return targetFramework.StartsWith("v") ? targetFramework.Replace("v", "").Replace(".", "") : targetFramework.StartsWith("net") ? targetFramework.Substring(3) : targetFramework;
         }
 
         public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {

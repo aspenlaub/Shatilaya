@@ -83,8 +83,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElement(@"/package/metadata/version", @"$version$");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string> { "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\PakledBin\Release\Aspenlaub.*.dll", @"..\PakledBin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\PakledBin\Release\*.Test*.*", @"..\PakledBin\Release\*.Test*.*" });
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\PakledBin\Release\Aspenlaub.*.dll", @"..\..\PakledBin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\PakledBin\Release\*.Test*.*;..\..\PakledBin\Release\*.exe", @"..\..\PakledBin\Release\*.Test*.*;..\..\PakledBin\Release\*.exe" });
             var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
@@ -132,9 +132,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElement(@"/package/metadata/version", @"$version$");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string>());
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\ChabStandardBin\Release\*.Test*.*", @"..\ChabStandardBin\Release\*.Test*.*" });
-            var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe", @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe" });
+            var target = @"lib\" + targetFrameworkElement.Value;
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
@@ -153,6 +153,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             xpath = xpath.Replace("/", "/nu:");
             var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
             Assert.AreEqual(attributeValues.Count, elements.Count, $"Expected {attributeValues.Count} elements using {xpath}, got {elements.Count}");
+            for (var i = 0; i < attributeValues.Count; i ++) {
+                var element = elements[i];
+                var attributeValue = attributeValues[i];
+                var actualValue = element.Attribute(attributeName)?.Value;
+                Assert.AreEqual(attributeValue, actualValue, $"Expected {attributeValue} for {attributeName} using {xpath}, got {actualValue}");
+            }
         }
     }
 }
