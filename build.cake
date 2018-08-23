@@ -266,6 +266,16 @@ Task("CreateNuGetPackage")
   .WithCriteria(() => currentGitBranch.FriendlyName == "master")
   .Description("Create nuget package in the master Release binaries folder")
   .Does(() => {
+    var projectErrorsAndInfos = new ErrorsAndInfos();
+    var projectLogic = componentProvider.ProjectLogic;
+    var projectFactory = componentProvider.ProjectFactory;
+    var solutionFileFullName = solution.Replace('/', '\\');
+    if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos))) {
+        throw new Exception("The release configuration needs a NuspecFile entry");
+    }
+    if (projectErrorsAndInfos.Errors.Any()) {
+        throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
+    }
     var folder = new Folder(masterReleaseBinFolder);
     if (!FolderExtensions.LastWrittenFileFullName(folder).EndsWith("nupkg")) {
       var nuGetPackSettings = new NuGetPackSettings {
