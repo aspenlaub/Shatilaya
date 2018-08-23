@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Aspenlaub.Net.GitHub.CSharp.Pegh;
@@ -14,7 +13,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected static TestTargetFolder PakledConsumerTarget = new TestTargetFolder(nameof(ProjectFactoryTest), "PakledConsumer");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(ProjectFactoryTest), "ChabStandard");
 
-        protected XDocument Document;
         protected IComponentProvider ComponentProvider;
 
         public ProjectFactoryTest() {
@@ -71,6 +69,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(File.Exists(projectFileFullName));
             var sut = new ProjectFactory();
             var project = sut.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
+            var projectLogic = new ProjectLogic();
+            Assert.IsFalse(projectLogic.IsANetStandardOrCoreProject(project));
+            Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project));
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
@@ -143,6 +144,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(File.Exists(projectFileFullName));
             var sut = new ProjectFactory();
             var project = sut.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
+            var projectLogic = new ProjectLogic();
+            Assert.IsTrue(projectLogic.IsANetStandardOrCoreProject(project));
+            Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project));
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);

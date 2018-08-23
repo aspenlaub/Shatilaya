@@ -108,6 +108,7 @@
     <Compile Include="IProcessRunner.cs" />
     <Compile Include="IProject.cs" />
     <Compile Include="IProjectFactory.cs" />
+    <Compile Include="IProjectLogic.cs" />
     <Compile Include="IPropertyGroup.cs" />
     <Compile Include="IPullRequest.cs" />
     <Compile Include="IToolsVersionFinder.cs" />

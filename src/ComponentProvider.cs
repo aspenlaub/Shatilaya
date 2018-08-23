@@ -44,6 +44,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public IPeghComponentProvider PeghComponentProvider => DefaultComponent<IPeghComponentProvider, PeghComponentProvider>();
         public IProcessRunner ProcessRunner => DefaultComponent<IProcessRunner, ProcessRunner>();
         public IProjectFactory ProjectFactory => DefaultComponent<IProjectFactory, ProjectFactory>();
+        public IProjectLogic ProjectLogic => DefaultComponent<IProjectLogic, ProjectLogic>();
         public IToolsVersionFinder ToolsVersionFinder { get { return DefaultComponent<IToolsVersionFinder, ToolsVersionFinder>(() => new ToolsVersionFinder(this)); } }
     }
 }
