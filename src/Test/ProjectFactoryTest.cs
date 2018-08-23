@@ -88,6 +88,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     Assert.AreEqual("", propertyGroup.GenerateBuildInfoConfigFile);
                     Assert.AreEqual("", propertyGroup.IntermediateOutputPath);
                     Assert.AreEqual("", propertyGroup.OutputPath);
+                    Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
+                    Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
+                    Assert.AreEqual("", propertyGroup.NuspecFile);
                 } else {
                     Assert.AreEqual("", propertyGroup.AssemblyName);
                     if (propertyGroup.Condition.Contains("Debug|")) {
@@ -100,6 +103,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                         Assert.AreEqual(@"..\..\" + PakledConsumerTarget.SolutionId + @"Bin\Release\", propertyGroup.OutputPath);
                     }
                     Assert.AreEqual("false", propertyGroup.GenerateBuildInfoConfigFile);
+                    Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
+                    Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
+                    Assert.AreEqual("", propertyGroup.NuspecFile);
                 }
             }
 
@@ -154,16 +160,25 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     Assert.AreEqual("", propertyGroup.GenerateBuildInfoConfigFile);
                     Assert.AreEqual("", propertyGroup.IntermediateOutputPath);
                     Assert.AreEqual("", propertyGroup.OutputPath);
+                    Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
+                    Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
+                    Assert.AreEqual("", propertyGroup.NuspecFile);
                 } else {
                     Assert.AreEqual("", propertyGroup.AssemblyName);
                     if (propertyGroup.Condition.Contains("Debug|")) {
                         Assert.AreEqual("", propertyGroup.UseVsHostingProcess);
                         Assert.AreEqual(@"..\temp\obj\Debug\", propertyGroup.IntermediateOutputPath);
                         Assert.AreEqual(@"..\..\" + ChabStandardTarget.SolutionId + @"Bin\Debug\", propertyGroup.OutputPath);
+                        Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
+                        Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
+                        Assert.AreEqual("", propertyGroup.NuspecFile);
                     } else {
                         Assert.AreEqual("false", propertyGroup.UseVsHostingProcess);
                         Assert.AreEqual(@"..\temp\obj\Release\", propertyGroup.IntermediateOutputPath);
                         Assert.AreEqual(@"..\..\" + ChabStandardTarget.SolutionId + @"Bin\Release\", propertyGroup.OutputPath);
+                        Assert.AreEqual("false", propertyGroup.AppendTargetFrameworkToOutputPath);
+                        Assert.AreEqual("false", propertyGroup.AllowUnsafeBlocks);
+                        Assert.AreEqual("ChabStandard.nuspec", propertyGroup.NuspecFile);
                     }
                     Assert.AreEqual("false", propertyGroup.GenerateBuildInfoConfigFile);
                 }

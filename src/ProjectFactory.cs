@@ -94,14 +94,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         protected IPropertyGroup ReadPropertyGroup(XElement propertyGroupElement, bool cp) {
+            var namespaceSelector = cp ? "cp:" : "";
             var propertyGroup = new PropertyGroup {
-                AssemblyName = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "AssemblyName", NamespaceManager)?.Value ?? "",
-                RootNamespace = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "RootNamespace", NamespaceManager)?.Value ?? "",
-                OutputPath = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "OutputPath", NamespaceManager)?.Value ?? "",
-                IntermediateOutputPath = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "IntermediateOutputPath", NamespaceManager)?.Value ?? "",
-                UseVsHostingProcess = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "UseVSHostingProcess", NamespaceManager)?.Value ?? "",
-                GenerateBuildInfoConfigFile = propertyGroupElement?.XPathSelectElement((cp ? "cp:" : "") + "GenerateBuildInfoConfigFile", NamespaceManager)?.Value ?? "",
-                Condition = propertyGroupElement?.Attribute("Condition")?.Value ?? ""
+                AssemblyName = propertyGroupElement?.XPathSelectElement(namespaceSelector + "AssemblyName", NamespaceManager)?.Value ?? "",
+                RootNamespace = propertyGroupElement?.XPathSelectElement(namespaceSelector + "RootNamespace", NamespaceManager)?.Value ?? "",
+                OutputPath = propertyGroupElement?.XPathSelectElement(namespaceSelector + "OutputPath", NamespaceManager)?.Value ?? "",
+                IntermediateOutputPath = propertyGroupElement?.XPathSelectElement(namespaceSelector + "IntermediateOutputPath", NamespaceManager)?.Value ?? "",
+                UseVsHostingProcess = propertyGroupElement?.XPathSelectElement(namespaceSelector + "UseVSHostingProcess", NamespaceManager)?.Value ?? "",
+                GenerateBuildInfoConfigFile = propertyGroupElement?.XPathSelectElement(namespaceSelector + "GenerateBuildInfoConfigFile", NamespaceManager)?.Value ?? "",
+                Condition = propertyGroupElement?.Attribute("Condition")?.Value ?? "",
+                AppendTargetFrameworkToOutputPath = propertyGroupElement?.XPathSelectElement(namespaceSelector + "AppendTargetFrameworkToOutputPath", NamespaceManager)?.Value ?? "",
+                AllowUnsafeBlocks = propertyGroupElement?.XPathSelectElement(namespaceSelector + "AllowUnsafeBlocks", NamespaceManager)?.Value ?? "",
+                NuspecFile = propertyGroupElement?.XPathSelectElement(namespaceSelector + "NuspecFile", NamespaceManager)?.Value ?? "",
             };
             return propertyGroup;
         }

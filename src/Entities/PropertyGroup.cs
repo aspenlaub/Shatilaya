@@ -11,5 +11,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         public string OutputPath { get; set; }
         public string UseVsHostingProcess { get; set; }
         public string GenerateBuildInfoConfigFile { get; set; }
+        public string AppendTargetFrameworkToOutputPath { get; set; }
+        public string AllowUnsafeBlocks { get; set; }
+        public string NuspecFile { get; set; }
     }
 }

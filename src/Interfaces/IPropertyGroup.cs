@@ -7,5 +7,8 @@
         string OutputPath { get; set; }
         string UseVsHostingProcess { get; set; }
         string GenerateBuildInfoConfigFile { get; set; }
+        string AppendTargetFrameworkToOutputPath { get; set; }
+        string AllowUnsafeBlocks { get; set; }
+        string NuspecFile { get; set; }
     }
 }
