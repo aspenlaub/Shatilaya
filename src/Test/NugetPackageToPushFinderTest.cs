@@ -14,6 +14,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetPackageToPushFinderTest {
         protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "Pakled");
+        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "ChabStandard");
+
         protected IComponentProvider ComponentProvider;
 
         public NugetPackageToPushFinderTest() {
@@ -31,31 +33,36 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public static void ClassInitialize(TestContext context) {
             PakledTarget.DeleteCakeFolder();
             PakledTarget.CreateCakeFolder();
+            ChabStandardTarget.DeleteCakeFolder();
+            ChabStandardTarget.CreateCakeFolder();
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
             PakledTarget.DeleteCakeFolder();
+            ChabStandardTarget.DeleteCakeFolder();
         }
 
         [TestInitialize]
         public void Initialize() {
             PakledTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
             PakledTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestMethod]
-        public void CanFindNugetPackagesToPush() {
+        public void CanFindNugetPackagesToPushForPakled() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = DeveloperSettings(errorsAndInfos);
 
-            CloneTarget(errorsAndInfos);
+            CloneTarget(PakledTarget, errorsAndInfos);
 
-            ChangeCakeScriptAndRunIt(true, errorsAndInfos);
+            ChangeCakeScriptAndRunIt(PakledTarget, true, errorsAndInfos);
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
@@ -80,7 +87,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var developerSettings = DeveloperSettings(errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-            CloneTarget(errorsAndInfos);
+            CloneTarget(PakledTarget, errorsAndInfos);
 
             var packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             if (!packages.Any()) { return; }
@@ -91,28 +98,49 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledTarget.Folder());
             Assert.IsTrue(latestPackage.Tags.Contains(headTipIdSha), $"No package has been pushed for {headTipIdSha} and {PakledTarget.SolutionId}, please run build.cake for this solution");
 
-            ChangeCakeScriptAndRunIt(false, errorsAndInfos);
+            ChangeCakeScriptAndRunIt(PakledTarget, false, errorsAndInfos);
 
             packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Version));
         }
 
-        private static void CloneTarget(IErrorsAndInfos errorsAndInfos) {
+        private static void CloneTarget(TestTargetFolder testTargetFolder, IErrorsAndInfos errorsAndInfos) {
             var gitUtilities = new GitUtilities();
-            var url = "https://github.com/aspenlaub/" + PakledTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions {BranchName = "master"}, true, errorsAndInfos);
+            var url = "https://github.com/aspenlaub/" + testTargetFolder.SolutionId + ".git";
+            gitUtilities.Clone(url, testTargetFolder.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 
-        private void ChangeCakeScriptAndRunIt(bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
-            var cakeScriptFileFullName = PakledTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
-            cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
-            File.WriteAllText(cakeScriptFileFullName, cakeScript);
+        private void ChangeCakeScriptAndRunIt(TestTargetFolder testTargetFolder, bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(testTargetFolder);
+
+            var projectLogic = new ProjectLogic();
+            var projectFactory = new ProjectFactory();
+            var solutionFileFullName = testTargetFolder.Folder().SubFolder("src").FullName + '\\' + testTargetFolder.SolutionId + ".sln";
+            var projectErrorsAndInfos = new ErrorsAndInfos();
+            Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos)));
 
             var target = disableNugetPush ? "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush" : "IgnoreOutdatedBuildCakePendingChanges";
-            PakledTarget.RunBuildCakeScript(ComponentProvider, target, errorsAndInfos);
+            testTargetFolder.RunBuildCakeScript(ComponentProvider, target, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+        }
+
+        [TestMethod]
+        public void CanFindNugetPackagesToPushForChabStandard() {
+            var errorsAndInfos = new ErrorsAndInfos();
+            var developerSettings = DeveloperSettings(errorsAndInfos);
+
+            CloneTarget(ChabStandardTarget, errorsAndInfos);
+
+            ChangeCakeScriptAndRunIt(ChabStandardTarget, true, errorsAndInfos);
+
+            errorsAndInfos = new ErrorsAndInfos();
+            var sut = new NugetPackageToPushFinder(ComponentProvider);
+            string packageFileFullName, feedUrl, apiKey;
+            sut.FindPackageToPush(ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.AreEqual(developerSettings.NugetFeedUrl, feedUrl);
+            Assert.IsTrue(apiKey.Length > 256);
         }
     }
 }

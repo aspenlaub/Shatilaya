@@ -269,23 +269,23 @@ Task("CreateNuGetPackage")
     var projectErrorsAndInfos = new ErrorsAndInfos();
     var projectLogic = componentProvider.ProjectLogic;
     var projectFactory = componentProvider.ProjectFactory;
-    var solutionFileFullName = solution.Replace('/', '\\');
+    var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
     if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos))) {
-        throw new Exception("The release configuration needs a NuspecFile entry");
+        throw new Exception("The release configuration needs a NuspecFile entry" + "\r\n" + solutionFileFullName + "\r\n" + solutionFileFullName.Replace(".sln", ".csproj"));
     }
     if (projectErrorsAndInfos.Errors.Any()) {
         throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
     }
     var folder = new Folder(masterReleaseBinFolder);
     if (!FolderExtensions.LastWrittenFileFullName(folder).EndsWith("nupkg")) {
-      var nuGetPackSettings = new NuGetPackSettings {
-        BasePath = "./src/", 
-        OutputDirectory = masterReleaseBinFolder, 
-        IncludeReferencedProjects = true,
-        Properties = new Dictionary<string, string> { { "Configuration", "Release" } }
+      var settings = new DotNetCorePackSettings {
+          Configuration = "Release",
+          NoBuild = true, NoRestore = true,
+          IncludeSymbols = false,
+          OutputDirectory = masterReleaseBinFolder,
       };
 
-      NuGetPack("./src/" + solutionId + ".csproj", nuGetPackSettings);
+      DotNetCorePack("./src/" + solutionId + ".csproj", settings);
     }
   });
 
