@@ -92,6 +92,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
                     Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
                     Assert.AreEqual("", propertyGroup.NuspecFile);
+                    Assert.AreEqual("", propertyGroup.Deterministic);
+                    Assert.AreEqual("", propertyGroup.GenerateAssemblyInfo);
                 } else {
                     Assert.AreEqual("", propertyGroup.AssemblyName);
                     if (propertyGroup.Condition.Contains("Debug|")) {
@@ -107,6 +109,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
                     Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
                     Assert.AreEqual("", propertyGroup.NuspecFile);
+                    Assert.AreEqual("", propertyGroup.Deterministic);
+                    Assert.AreEqual("", propertyGroup.GenerateAssemblyInfo);
                 }
             }
 
@@ -167,6 +171,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                     Assert.AreEqual("", propertyGroup.AppendTargetFrameworkToOutputPath);
                     Assert.AreEqual("", propertyGroup.AllowUnsafeBlocks);
                     Assert.AreEqual("", propertyGroup.NuspecFile);
+                    Assert.AreEqual("false", propertyGroup.Deterministic);
+                    Assert.AreEqual("false", propertyGroup.GenerateAssemblyInfo);
                 } else {
                     Assert.AreEqual("", propertyGroup.AssemblyName);
                     if (propertyGroup.Condition.Contains("Debug|")) {
@@ -185,6 +191,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                         Assert.AreEqual("ChabStandard.nuspec", propertyGroup.NuspecFile);
                     }
                     Assert.AreEqual("false", propertyGroup.GenerateBuildInfoConfigFile);
+                    Assert.AreEqual("", propertyGroup.Deterministic);
+                    Assert.AreEqual("", propertyGroup.GenerateAssemblyInfo);
                 }
             }
 

@@ -106,6 +106,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 AppendTargetFrameworkToOutputPath = propertyGroupElement?.XPathSelectElement(namespaceSelector + "AppendTargetFrameworkToOutputPath", NamespaceManager)?.Value ?? "",
                 AllowUnsafeBlocks = propertyGroupElement?.XPathSelectElement(namespaceSelector + "AllowUnsafeBlocks", NamespaceManager)?.Value ?? "",
                 NuspecFile = propertyGroupElement?.XPathSelectElement(namespaceSelector + "NuspecFile", NamespaceManager)?.Value ?? "",
+                Deterministic = propertyGroupElement?.XPathSelectElement(namespaceSelector + "Deterministic", NamespaceManager)?.Value ?? "",
+                GenerateAssemblyInfo = propertyGroupElement?.XPathSelectElement(namespaceSelector + "GenerateAssemblyInfo", NamespaceManager)?.Value ?? "",
             };
             return propertyGroup;
         }

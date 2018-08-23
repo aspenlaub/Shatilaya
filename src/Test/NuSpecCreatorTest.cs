@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -145,7 +146,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
-            VerifyTextElement(@"/package/metadata/version", @"1.0.0.0");
+            VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string>());
             VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe", @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe" });
@@ -163,6 +164,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(element, $"Element not found using {xpath}, expected {expectedContents}");
             Assert.AreEqual(element.Value, expectedContents, $"Element {xpath} should be {expectedContents}, got: {element.Value}");
+        }
+
+        protected void VerifyTextElementPattern(string xpath, string expectedPattern) {
+            xpath = xpath.Replace("/", "/nu:");
+            var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
+            Assert.IsNotNull(element, $"Element not found using {xpath}, expected {expectedPattern}");
+            var regEx = new Regex(expectedPattern, RegexOptions.IgnoreCase);
+            var versionMatch = regEx.Match(element.Value);
+            Assert.IsTrue(versionMatch.Success, $"Element {xpath} should be {expectedPattern}, got: {element.Value}");
         }
 
         protected void VerifyElements(string xpath, string attributeName, IList<string> attributeValues) {

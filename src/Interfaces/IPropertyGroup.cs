@@ -10,5 +10,7 @@
         string AppendTargetFrameworkToOutputPath { get; set; }
         string AllowUnsafeBlocks { get; set; }
         string NuspecFile { get; set; }
+        string Deterministic { get; set; }
+        string GenerateAssemblyInfo { get; set; }
     }
 }

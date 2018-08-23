@@ -14,5 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
         public string AppendTargetFrameworkToOutputPath { get; set; }
         public string AllowUnsafeBlocks { get; set; }
         public string NuspecFile { get; set; }
+        public string Deterministic { get; set; }
+        public string GenerateAssemblyInfo { get; set; }
     }
 }
