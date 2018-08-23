@@ -29,6 +29,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             NamespaceManager.AddNamespace("nu", XmlNamespaces.NuSpecNamespaceUri);
         }
 
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context) {
+            ChabStandardTarget.DeleteCakeFolder();
+            ChabStandardTarget.CreateCakeFolder();
+        }
+
         [TestInitialize]
         public void Initialize() {
             PakledTarget.Delete();
@@ -97,10 +103,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
             gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
+            componentProviderMock.SetupGet(c => c.ProjectFactory).Returns(new ProjectFactory());
+            componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             var peghComponentProvider = new PeghComponentProvider();
             componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
+
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(ChabStandardTarget);
+
+            ChabStandardTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
             var sut = new NuSpecCreator(componentProviderMock.Object);
             var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";
             var projectFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".csproj";
@@ -115,7 +131,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.AreEqual(0, errorsAndInfos.Infos.Count);
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
@@ -130,7 +145,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/requireLicenseAcceptance", @"false");
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
-            VerifyTextElement(@"/package/metadata/version", @"$version$");
+            VerifyTextElement(@"/package/metadata/version", @"1.0.0.0");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string>());
             VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe", @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe" });
@@ -147,6 +162,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             xpath = xpath.Replace("/", "/nu:");
             var element = Document.XPathSelectElements(xpath, NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(element, $"Element not found using {xpath}, expected {expectedContents}");
+            Assert.AreEqual(element.Value, expectedContents, $"Element {xpath} should be {expectedContents}, got: {element.Value}");
         }
 
         protected void VerifyElements(string xpath, string attributeName, IList<string> attributeValues) {

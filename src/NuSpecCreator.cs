@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
@@ -41,10 +43,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return document;
             }
 
+            var version = @"$version$";
+            if (namespaceSelector == "") {
+                var project = ComponentProvider.ProjectFactory.Load(solutionFileFullName, projectFile, errorsAndInfos);
+                var releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
+                if (releasePropertyGroup != null) {
+                    var solutionFolder = new Folder(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\')));
+                    var fullOutputFolder = new Folder(Path.Combine(solutionFolder.FullName, releasePropertyGroup.OutputPath));
+                    var assemblyFileName = fullOutputFolder.FullName + '\\' + project.RootNamespace + ".dll";
+                    if (File.Exists(assemblyFileName)) {
+                        version = FileVersionInfo.GetVersionInfo(assemblyFileName).FileVersion;
+                    }
+                }
+            }
+
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
             var element = new XElement(NugetNamespace + "package");
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, errorsAndInfos);
+            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, errorsAndInfos);
             if (metaData == null) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.MissingElementInProjectFile, projectFile));
                 return document;
@@ -62,7 +78,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return document;
         }
 
-        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, IErrorsAndInfos errorsAndInfos) {
+        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
@@ -95,7 +111,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             element.Add(new XElement(NugetNamespace + @"requireLicenseAcceptance", @"false"));
             var year = DateTime.Now.Year;
             element.Add(new XElement(NugetNamespace + @"copyright", $"Copyright {year}"));
-            element.Add(new XElement(NugetNamespace + @"version", @"$version$"));
+            element.Add(new XElement(NugetNamespace + @"version", version));
             tags = tags.Where(t => !t.Contains('<') && !t.Contains('>') && !t.Contains('&') && !t.Contains(' ')).ToList();
             if (tags.Any()) {
                 element.Add(new XElement(NugetNamespace + @"tags", string.Join(" ", tags)));
