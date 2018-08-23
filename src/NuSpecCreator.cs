@@ -34,10 +34,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             }
 
             XDocument projectDocument;
-            string namespaceSelector;
+            string namespaceSelector, targetFramework;
             try {
                 projectDocument = XDocument.Load(projectFile);
-                namespaceSelector = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault() != null ? "" : "cp:";
+                var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
+                namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
+                targetFramework = targetFrameworkElement != null ? targetFrameworkElement.Value : "";
             } catch {
                 errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, projectFile));
                 return document;
@@ -60,7 +62,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
             var element = new XElement(NugetNamespace + "package");
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, errorsAndInfos);
+            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
             if (metaData == null) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.MissingElementInProjectFile, projectFile));
                 return document;
@@ -78,7 +80,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return document;
         }
 
-        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, IErrorsAndInfos errorsAndInfos) {
+        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
@@ -118,13 +120,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             }
 
             var dependenciesElement = new XElement(NugetNamespace + @"dependencies");
+            element.Add(dependenciesElement);
+
+            if (namespaceSelector == "") {
+                var groupElement = new XElement(NugetNamespace + "group", new XAttribute("targetFramework", targetFramework));
+                dependenciesElement.Add(groupElement);
+                dependenciesElement = groupElement;
+            }
+
             foreach (var dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion
                 => new XElement(NugetNamespace + @"dependency",
                     new XAttribute("id", dependencyIdAndVersion.Key), new XAttribute("version", dependencyIdAndVersion.Value)))) {
                 dependenciesElement.Add(dependencyElement);
             }
 
-            element.Add(dependenciesElement);
             return element;
         }
 
