@@ -270,7 +270,8 @@ Task("CreateNuGetPackage")
     var projectLogic = componentProvider.ProjectLogic;
     var projectFactory = componentProvider.ProjectFactory;
     var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
-    if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos))) {
+    var project = projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos);
+    if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project)) {
         throw new Exception("The release configuration needs a NuspecFile entry" + "\r\n" + solutionFileFullName + "\r\n" + solutionFileFullName.Replace(".sln", ".csproj"));
     }
     if (projectErrorsAndInfos.Errors.Any()) {
@@ -278,14 +279,25 @@ Task("CreateNuGetPackage")
     }
     var folder = new Folder(masterReleaseBinFolder);
     if (!FolderExtensions.LastWrittenFileFullName(folder).EndsWith("nupkg")) {
-      var settings = new DotNetCorePackSettings {
-          Configuration = "Release",
-          NoBuild = true, NoRestore = true,
-          IncludeSymbols = false,
-          OutputDirectory = masterReleaseBinFolder,
-      };
+      if (projectLogic.IsANetStandardOrCoreProject(project)) {
+          var settings = new DotNetCorePackSettings {
+              Configuration = "Release",
+              NoBuild = true, NoRestore = true,
+              IncludeSymbols = false,
+              OutputDirectory = masterReleaseBinFolder,
+          };
 
-      DotNetCorePack("./src/" + solutionId + ".csproj", settings);
+          DotNetCorePack("./src/" + solutionId + ".csproj", settings);
+      } else {
+          var nuGetPackSettings = new NuGetPackSettings {
+            BasePath = "./src/", 
+            OutputDirectory = masterReleaseBinFolder, 
+            IncludeReferencedProjects = true,
+            Properties = new Dictionary<string, string> { { "Configuration", "Release" } }
+          };
+
+          NuGetPack("./src/" + solutionId + ".csproj", nuGetPackSettings);
+      }
     }
   });
 
