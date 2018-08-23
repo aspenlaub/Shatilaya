@@ -80,7 +80,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             solutionCakeContents = solutionCakeContents.Replace(@"./src", @"../../" + nameof(GitPullTest) + @"/" + ChabTargetOne.SolutionId + @"/src");
             File.WriteAllText(solutionCakeFileFullName, solutionCakeContents);
 
-            ChabTargetTwo.RunBuildCakeScript(ComponentProvider, "CleanRestorePullUpdateNuspec", errorsAndInfos);
+            ChabTargetTwo.RunBuildCakeScript(ComponentProvider, "CleanRestorePull", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(File.ReadAllText(projectFile).Contains("<RunOctoPack>false</RunOctoPack>"));
             Assert.IsFalse(File.ReadAllText(projectFile).Contains("<RunOctoPack>true</RunOctoPack>"));

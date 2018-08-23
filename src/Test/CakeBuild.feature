@@ -14,7 +14,7 @@ Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 	And I get an error message saying that I need to rerun my cake script
 
 Scenario: Output folders are cleaned up
-	When I run the build.cake script with target "CleanRestorePullUpdateNuspec"
+	When I run the build.cake script with target "CleanRestorePull"
 	Then no cake errors were reported
 	And build step "DebugBuild" was not a target
 	And build step "UpdateBuildCake" was not a target

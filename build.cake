@@ -296,9 +296,9 @@ Task("PushNuGetPackage")
     }
   });
 
-Task("CleanRestorePullUpdateNuspec")
+Task("CleanRestorePull")
   .Description("Clean, restore packages, pull changes, update nuspec")
-  .IsDependentOn("Clean").IsDependentOn("Pull").IsDependentOn("Restore").IsDependentOn("UpdateNuspec").Does(() => {
+  .IsDependentOn("Clean").IsDependentOn("Pull").IsDependentOn("Restore").Does(() => {
   });
 
 Task("BuildAndTestDebugAndRelease")
@@ -309,7 +309,8 @@ Task("BuildAndTestDebugAndRelease")
 
 Task("IgnoreOutdatedBuildCakePendingChangesAndDoNotPush")
   .Description("Default except check for outdated build.cake, except check for pending changes and except nuget push")
-  .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage").Does(() => {
+  .IsDependentOn("CleanRestorePull").IsDependentOn("BuildAndTestDebugAndRelease")
+  .IsDependentOn("UpdateNuspec").IsDependentOn("CreateNuGetPackage").Does(() => {
   });
 
 Task("IgnoreOutdatedBuildCakePendingChanges")
@@ -319,22 +320,23 @@ Task("IgnoreOutdatedBuildCakePendingChanges")
 
 Task("IgnoreOutdatedBuildCakeAndDoNotPush")
   .Description("Default except check for outdated build.cake and except nuget push")
-  .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
+  .IsDependentOn("CleanRestorePull").IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
   .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
-  .IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage")
+  .IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("UpdateNuspec").IsDependentOn("CreateNuGetPackage")
   .Does(() => {
   });
 
 Task("LittleThings")
   .Description("Default but do not build or test in debug or release, and do not create or push nuget package")
-  .IsDependentOn("CleanRestorePullUpdateNuspec").IsDependentOn("UpdateBuildCake")
+  .IsDependentOn("CleanRestorePull").IsDependentOn("UpdateBuildCake")
   .IsDependentOn("VerifyThatThereAreNoUncommittedChanges").IsDependentOn("VerifyThatDevelopmentBranchIsAheadOfMaster")
   .IsDependentOn("VerifyThatMasterBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests").IsDependentOn("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
   .Does(() => {
   });
 
 Task("Default")
-  .IsDependentOn("LittleThings").IsDependentOn("BuildAndTestDebugAndRelease").IsDependentOn("CreateNuGetPackage").IsDependentOn("PushNuGetPackage").Does(() => {
+  .IsDependentOn("LittleThings").IsDependentOn("BuildAndTestDebugAndRelease")
+  .IsDependentOn("UpdateNuspec").IsDependentOn("CreateNuGetPackage").IsDependentOn("PushNuGetPackage").Does(() => {
   });
 
 RunTarget(target);
