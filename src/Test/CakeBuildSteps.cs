@@ -279,7 +279,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"a failed test case was reported")]
         public void ThenAFailedTestCaseWasReported() {
             Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"VSTest: Process returned an error")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
-            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"OvenTest.CanBakeACake")));
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"CanBakeACake")));
         }
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
