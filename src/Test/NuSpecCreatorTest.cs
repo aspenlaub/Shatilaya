@@ -148,6 +148,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
             VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" });
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "LibGit2Sharp", "Newtonsoft.Json" });
             VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
             VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe", @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe" });
             var target = @"lib\" + targetFrameworkElement.Value;

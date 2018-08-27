@@ -39,6 +39,33 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
             }
 
+            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test\"))) {
+                try {
+                    var document = XDocument.Load(fileName);
+                    foreach (var element in document.XPathSelectElements("/Project/ItemGroup/PackageReference")) {
+                        var id = element.Attribute("Include")?.Value;
+                        var version = element.Attribute("Version")?.Value;
+                        if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
+                            errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, fileName));
+                            continue;
+                        }
+
+                        if (dependencyIdsAndVersions.ContainsKey(id) && dependencyIdsAndVersions[id] == version) { continue; }
+
+                        if (dependencyIdsAndVersions.ContainsKey(id)) {
+                            errorsAndInfos.Errors.Add(string.Format(Texts.PackageVersionClashDueToFile, fileName, id, version, dependencyIdsAndVersions[id]));
+                            continue;
+                        }
+
+                        dependencyIdsAndVersions[id] = version;
+                    }
+                } catch {
+                    if (!errorsAndInfos.Errors.Any()) {
+                        errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, fileName));
+                    }
+                }
+            }
+
             return dependencyIdsAndVersions;
         }
     }
