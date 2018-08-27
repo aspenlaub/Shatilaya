@@ -8,9 +8,7 @@ Shatilaya is the vulcan word for automation
 
 ## Can it be useful to you?
 
-Yes, if you are working with Visual Studio 2015 (i.e. tools version 14.0) and .Net 4.6. How you get started is illustrated in the [Roxann](https://github.com/aspenlaub/Roxann) repository's readme file
-
-If you are wondering why I use these versions: these are the versions my company works with
+Yes, if you are working with Visual Studio 2017 (Visual Studio 2015 projects probably still work, but I am moving away from them). How you get started is illustrated in the [Roxann](https://github.com/aspenlaub/Roxann) repository's readme file
 
 ## Built around build.cake
 
