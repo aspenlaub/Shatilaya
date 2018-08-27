@@ -67,12 +67,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Infos.Any());
             var obsoleteFolder = solutionFolder.SubFolder(@"packages\ObsoPack");
             Directory.CreateDirectory(obsoleteFolder.FullName);
-            foreach(var extension in new[] { "cs", "dll", "json", "_", "cake", "php", "txt", "docx", "exe", "js", "css", "bat", "cmd", "xlsx", "csv", "csproj", "sln" }) {
+            foreach(var extension in new[] { "cs", "dll", "json", "_", "cake", "php", "txt", "docx", "exe", "js", "css", "bat", "cmd", "xlsx", "csv", "sln" }) {
                 File.WriteAllText(obsoleteFolder.FullName + "\\somefile." + extension, "Delete me");
             }
+            File.WriteAllText(obsoleteFolder.FullName + "\\somefile.csproj", "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"></Project>");
 
             sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any());
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains(obsoleteFolder.FullName) && i.Contains("has been deleted")));
         }
     }
