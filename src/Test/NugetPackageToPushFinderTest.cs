@@ -136,6 +136,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             ChangeCakeScriptAndRunIt(ChabStandardTarget, true, errorsAndInfos);
 
+            Assert.IsFalse(errorsAndInfos.Infos.Any(i => i.Contains("No test")));
+
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
             string packageFileFullName, feedUrl, apiKey;
