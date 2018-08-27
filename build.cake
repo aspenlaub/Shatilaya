@@ -3,7 +3,6 @@
 #addin nuget:?package=Cake.Git
 #addin nuget:?package=Nuget.Core
 #addin nuget:?package=DotNetZip&version=1.11.0
-#addin nuget:?package=LibGit2Sharp&version=0.24.0
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
 
 using Folder = Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.Folder;
