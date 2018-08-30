@@ -259,8 +259,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var folder = ChabTarget.MasterDebugBinFolder();
             Assert.IsTrue(folder.Exists());
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
-            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
-            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
+            Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
+            Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
         }
 
         [Then(@"the contents of the master debug folder has not changed")]
@@ -299,8 +300,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var folder = ChabTarget.MasterReleaseBinFolder();
             Assert.IsTrue(folder.Exists());
             Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
-            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
-            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
+            Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
+            Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
+            Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
         }
 
         [Then(@"the contents of the master release folder has not changed")]
@@ -380,6 +382,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(package);
             var unwantedReferences = package.AssemblyReferences.Where(a => a.Name.Contains("Test")).ToList();
             Assert.IsFalse(unwantedReferences.Any());
+        }
+
+        [Then(@"there is no obj folder in the src folder")]
+        public void ThenThereIsNoObjFolderInTheSrcFolder() {
+            var folder = ChabTarget.Folder().SubFolder("src").FullName;
+            var objFolders = Directory.GetDirectories(folder, "obj", SearchOption.AllDirectories).ToList();
+            Assert.AreEqual(0, objFolders.Count, $"There is {objFolders.FirstOrDefault()}");
         }
 
         #endregion

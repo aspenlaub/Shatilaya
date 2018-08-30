@@ -38,6 +38,7 @@ Scenario: Debug artifacts are copied to the master debug folder, but only if cha
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	And I find the artifacts in the master debug folder
+	And there is no obj folder in the src folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
