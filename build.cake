@@ -1,6 +1,6 @@
 #load "solution.cake"
 #addin nuget:?package=Newtonsoft.Json
-#addin nuget:?package=Cake.Git
+#addin nuget:?package=Cake.Git&version=0.18.0
 #addin nuget:?package=Nuget.Core
 #addin nuget:?package=DotNetZip&version=1.11.0
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
