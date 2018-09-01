@@ -13,7 +13,10 @@
         public const string IncompleteDeveloperSettings = "Incomplete 'DeveloperSettings'. Please update \"{0}\" in your SecretRepository";
         public const string InvalidXmlFile = "There is no valid XML in \"{0}\"";
         public const string MissingDeveloperSettings = "Missing 'DeveloperSettings' secret. Open \"{0}\" in SecretSamples, modify it and save it in SecretRepository";
+        public const string MissingMetaDataElementInProjectFile = "At least one meta data element was not found in '{0}'";
         public const string MissingElementInProjectFile = "At least one element was not found in '{0}'";
+        public const string MissingTargetFramework = "Missing target framework";
+        public const string MissingRootNamespace = "Missing root namespace";
         public const string NoApiKeyFound = "No apikey was found for this source";
         public const string NoPackageFilesFound = "Folder \"{0}\" does not contain any packages";
         public const string NoRemotePackageFilesFound = "Feed \"{0}\" does not provide package \"{1}\"";

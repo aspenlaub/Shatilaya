@@ -25,7 +25,7 @@ Scenario: Nuget packages are restored and debug artifacts are built
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
 	Then the Nuget packages are restored
-    And 2 "Debug" artifact/-s was/were produced
+    And 3 "Debug" artifact/-s was/were produced
 	And 0 "Debug" nupkg file/-s was/were produced
 
 Scenario: Debug build failure
@@ -62,7 +62,7 @@ Scenario: Debug artifacts are not copied to the master debug folder when a test 
 Scenario: Release artifacts are built
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
-    And 2 "Release" artifact/-s was/were produced
+    And 3 "Release" artifact/-s was/were produced
 	And 0 "Release" nupkg file/-s was/were produced
 
 Scenario: Release artifacts are copied to the master release folder, but only if changed

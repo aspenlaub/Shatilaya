@@ -39,14 +39,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             RoxannTarget.Delete();
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void CanBuildProjectForDocumentation() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Roxann.git";
             gitUtilities.Clone(url, RoxannTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            RoxannTarget.RunBuildCakeScript(ComponentProvider, errorsAndInfos);
+
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(RoxannTarget);
+
+            RoxannTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
         }
     }

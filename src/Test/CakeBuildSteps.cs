@@ -69,7 +69,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"Nuget packages are not restored yet")]
         public void GivenNugetPackagesAreNotRestoredYet() {
-            Assert.IsFalse(OctoPackFolder().Exists());
+            var folder = ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
+            Assert.IsFalse(folder.Exists());
         }
 
         [Given(@"I change a source file so that it cannot be compiled")]
@@ -213,19 +214,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"no artifact exists")]
         public void ThenNoArtifactExists() {
-            var files = Directory.GetFiles(ArtifactsFolder().FullName, "*.*", SearchOption.AllDirectories);
+            var folder = ChabTarget.Folder().SubFolder("src");
+            var files = Directory.GetFiles(folder.FullName, "*.*", SearchOption.AllDirectories).Where(f => f.Contains(@"\bin\"));
             Assert.IsFalse(files.Any());
         }
 
         [Then(@"no intermediate build output exists")]
         public void ThenNoIntermediateBuildOutputExists() {
-            var files = Directory.GetFiles(IntermediateOutputFolder().FullName, "*.*", SearchOption.AllDirectories);
+            var folder = ChabTarget.Folder().SubFolder("src");
+            var files = Directory.GetFiles(folder.FullName, "*.*", SearchOption.AllDirectories).Where(f => f.Contains(@"\obj\"));
             Assert.IsFalse(files.Any());
         }
 
         [Then(@"the Nuget packages are restored")]
         public void ThenTheNugetPackagesAreRestored() {
-            Assert.IsTrue(OctoPackFolder().Exists());
+            var folder = ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
+            Assert.IsTrue(folder.Exists());
         }
 
         [Then(@"no cake errors were reported")]
@@ -285,13 +289,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
         public void ThenArtifactsWasWereProduced(int p0, string p1) {
-            var folder = ChabTarget.Folder().SubFolder(@"artifacts\" + p1);
-            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.TopDirectoryOnly).Length);
+            var folder = ChabTarget.Folder().SubFolder(@"src");
+            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.AllDirectories).Count(f => f.Contains(@"\bin\" + p1 + @"\")));
         }
 
         [Then(@"(.*) ""(.*)"" nupkg file/-s was/were produced")]
         public void ThenNupkgFileWasWereProduced(int p0, string p1) {
-            var folder = ChabTarget.Folder().SubFolder(@"artifacts\" + p1);
+            var folder = ChabTarget.Folder().SubFolder(@"src\bin\" + p1);
             Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
         }
 
@@ -392,17 +396,5 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         #endregion
-
-        protected static IFolder OctoPackFolder() {
-            return ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
-        }
-
-        protected static IFolder ArtifactsFolder() {
-            return ChabTarget.Folder().SubFolder(@"artifacts");
-        }
-
-        protected static IFolder IntermediateOutputFolder() {
-            return ChabTarget.Folder().SubFolder(@"temp/obj");
-        }
     }
 }

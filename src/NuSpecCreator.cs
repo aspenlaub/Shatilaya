@@ -51,7 +51,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 var releasePropertyGroup = project.PropertyGroups.FirstOrDefault(p => p.Condition.Contains("Release"));
                 if (releasePropertyGroup != null) {
                     var solutionFolder = new Folder(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\')));
-                    var fullOutputFolder = new Folder(Path.Combine(solutionFolder.FullName, releasePropertyGroup.OutputPath));
+                    var fullOutputFolder = new Folder(Path.Combine(solutionFolder.FullName, releasePropertyGroup.OutputPath == "" ? @"bin\Release\" : releasePropertyGroup.OutputPath));
                     var assemblyFileName = fullOutputFolder.FullName + '\\' + project.RootNamespace + ".dll";
                     if (File.Exists(assemblyFileName)) {
                         version = FileVersionInfo.GetVersionInfo(assemblyFileName).FileVersion;
@@ -64,7 +64,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
             var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
             if (metaData == null) {
-                errorsAndInfos.Errors.Add(string.Format(Texts.MissingElementInProjectFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.MissingMetaDataElementInProjectFile, projectFile));
                 return document;
             }
 
@@ -143,14 +143,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         protected XElement Files(XDocument projectDocument, string namespaceSelector, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
-            if (rootNamespaceElement == null) { return null; }
+            if (rootNamespaceElement == null) {
+                errorsAndInfos.Errors.Add(Texts.MissingRootNamespace);
+                return null;
+            }
 
             var outputPathElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
-            if (outputPathElement == null) { return null; }
+            var outputPath = outputPathElement == null ? @"bin\Release\" : outputPathElement.Value;
 
             var targetFrameworkElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager).FirstOrDefault()
                 ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager).FirstOrDefault();
-            if (targetFrameworkElement == null) { return null; }
+            if (targetFrameworkElement == null) {
+                errorsAndInfos.Errors.Add(Texts.MissingTargetFramework);
+                return null;
+            }
 
             var filesElement = new XElement(NugetNamespace + @"files");
             var topLevelNamespace = rootNamespaceElement.Value;
@@ -162,8 +168,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             topLevelNamespace = topLevelNamespace.Substring(0, topLevelNamespace.IndexOf('.'));
             foreach (var fileElement in new[] { @"dll", @"pdb" }.Select(extension
                   => new XElement(NugetNamespace + @"file",
-                      new XAttribute(@"src", outputPathElement.Value + topLevelNamespace + ".*." + extension),
-                      new XAttribute(@"exclude", string.Join(";", outputPathElement.Value + @"*.Test*.*", outputPathElement.Value + @"*.exe")),
+                      new XAttribute(@"src", outputPath + topLevelNamespace + ".*." + extension),
+                      new XAttribute(@"exclude", string.Join(";", outputPath + @"*.Test*.*", outputPath + @"*.exe")),
                       new XAttribute(@"target", @"lib\net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement))))) {
                 filesElement.Add(fileElement);
             }

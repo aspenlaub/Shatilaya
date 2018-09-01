@@ -90,8 +90,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElement(@"/package/metadata/version", @"$version$");
             VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string> { "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\PakledBin\Release\Aspenlaub.*.dll", @"..\..\PakledBin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\PakledBin\Release\*.Test*.*;..\..\PakledBin\Release\*.exe", @"..\..\PakledBin\Release\*.Test*.*;..\..\PakledBin\Release\*.exe" });
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" });
             var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
@@ -127,8 +127,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(targetFrameworkElement);
             var rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(rootNamespaceElement);
-            var outputPathElement = Document.XPathSelectElements("./Project/PropertyGroup/OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
-            Assert.IsNotNull(outputPathElement);
             Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
@@ -149,8 +147,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
             VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" });
             VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "LibGit2Sharp", "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"..\..\ChabStandardBin\Release\Aspenlaub.*.dll", @"..\..\ChabStandardBin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe", @"..\..\ChabStandardBin\Release\*.Test*.*;..\..\ChabStandardBin\Release\*.exe" });
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" });
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" });
             var target = @"lib\" + targetFrameworkElement.Value;
             VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");

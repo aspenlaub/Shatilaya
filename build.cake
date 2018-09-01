@@ -36,6 +36,15 @@ var componentProvider = new ComponentProvider();
 var toolsVersion = componentProvider.ToolsVersionFinder.LatestAvailableToolsVersion();
 var toolsVersionEnum = toolsVersion >= 15 ? MSBuildToolVersion.VS2017 : MSBuildToolVersion.NET46;
 
+var projectErrorsAndInfos = new ErrorsAndInfos();
+var projectLogic = componentProvider.ProjectLogic;
+var projectFactory = componentProvider.ProjectFactory;
+var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
+var mainProject = projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos);
+if (projectErrorsAndInfos.Errors.Any()) {
+    throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
+}
+
 Setup(ctx => { 
   Information("Repository folder is: " + repositoryFolder);
   Information("Solution is: " + solution);
@@ -105,7 +114,6 @@ Task("Pull")
 Task("UpdateNuspec")
   .Description("Update nuspec if necessary")
   .Does(() => {
-    var solutionFileFullName = solution.Replace('/', '\\');
     var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
     var nuSpecErrorsAndInfos = new ErrorsAndInfos();
     var headTipIdSha = componentProvider.GitUtilities.HeadTipIdSha(new Folder(repositoryFolder));
@@ -184,7 +192,7 @@ Task("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
   });
   
  Task("DebugBuild")
-  .Description("Build solution in Debug and clean up intermediate output folder")
+  .Description("Build solution in Debug")
   .Does(() => {
     MSBuild(solution, settings 
       => settings
@@ -193,27 +201,35 @@ Task("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")
         .UseToolVersion(toolsVersionEnum)
         .WithProperty("Platform", "Any CPU")
     );
-    foreach(var objFolder in System.IO.Directory.GetDirectories(MakeAbsolute(DirectoryPath.FromString("./src")).FullPath, "obj", SearchOption.AllDirectories).ToList()) {
-        CleanDirectory(objFolder); 
-        DeleteDirectory(objFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
-    }
   });
 
 Task("RunTestsOnDebugArtifacts")
   .Description("Run unit tests on Debug artifacts")
   .Does(() => {
-    var projectErrorsAndInfos = new ErrorsAndInfos();
-    var projectLogic = componentProvider.ProjectLogic;
-    var projectFactory = componentProvider.ProjectFactory;
-    var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
-    var project = projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos);
-    var vsTestExe = componentProvider.ExecutableFinder.FindVsTestExe(toolsVersion);
-    if (vsTestExe == "") {
-      MSTest(debugBinFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
-    } else if (projectLogic.IsANetStandardOrCoreProject(project)) {
-      VSTest(debugBinFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true, TestAdapterPath = "." });
-    } else {
-      VSTest(debugBinFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
+      var projectFiles = GetFiles("./src/**/*Test.csproj");
+      foreach(var projectFile in projectFiles) {
+        if (projectLogic.IsANetStandardOrCoreProject(mainProject)) {
+          var dotNetCoreTestSettings = new DotNetCoreTestSettings { Configuration = "Debug" };
+          DotNetCoreTest(projectFile.FullPath, dotNetCoreTestSettings);
+        } else {
+           Information("Running tests in " + projectFile.FullPath);
+           var project = projectFactory.Load(solutionFileFullName, projectFile.FullPath, projectErrorsAndInfos);
+           if (projectErrorsAndInfos.Errors.Any()) {
+              throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
+          }
+          var outputPath = project.PropertyGroups.Where(g => g.Condition.Contains("Debug")).Select(g => g.OutputPath).Where(p => p != "").First();
+          outputPath = (outputPath.Contains(':') ? "" : projectFile.FullPath.Substring(0, projectFile.FullPath.LastIndexOf('/') + 1)) + outputPath.Replace('\\', '/');
+          if (!outputPath.EndsWith("/")) { outputPath = outputPath + '/'; }
+          Information("Output path is " + outputPath);
+          var vsTestExe = componentProvider.ExecutableFinder.FindVsTestExe(toolsVersion);
+          if (vsTestExe == "") {
+            MSTest(outputPath + "*.Test.dll", new MSTestSettings() { NoIsolation = false });
+          } else if (projectLogic.IsANetStandardOrCoreProject(mainProject)) {
+            VSTest(outputPath + "*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true, TestAdapterPath = "." });
+          } else {
+            VSTest(outputPath + "*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
+          }
+      }
     }
     CleanDirectory(testResultsFolder); 
     DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
@@ -251,18 +267,30 @@ Task("ReleaseBuild")
 Task("RunTestsOnReleaseArtifacts")
   .Description("Run unit tests on Release artifacts")
   .Does(() => {
-    var projectErrorsAndInfos = new ErrorsAndInfos();
-    var projectLogic = componentProvider.ProjectLogic;
-    var projectFactory = componentProvider.ProjectFactory;
-    var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
-    var project = projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos);
-    var vsTestExe = componentProvider.ExecutableFinder.FindVsTestExe(toolsVersion);
-    if (vsTestExe == "") {
-      MSTest(releaseBinFolder + "/*.Test.dll", new MSTestSettings() { NoIsolation = false });
-    } else if (projectLogic.IsANetStandardOrCoreProject(project)) {
-      VSTest(releaseBinFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true, TestAdapterPath = "." });
-    } else {
-      VSTest(releaseBinFolder + "/*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
+      var projectFiles = GetFiles("./src/**/*Test.csproj");
+      foreach(var projectFile in projectFiles) {
+        if (projectLogic.IsANetStandardOrCoreProject(mainProject)) {
+          var dotNetCoreTestSettings = new DotNetCoreTestSettings { Configuration = "Release" };
+          DotNetCoreTest(projectFile.FullPath, dotNetCoreTestSettings);
+        } else {
+           Information("Running tests in " + projectFile.FullPath);
+           var project = projectFactory.Load(solutionFileFullName, projectFile.FullPath, projectErrorsAndInfos);
+           if (projectErrorsAndInfos.Errors.Any()) {
+              throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
+          }
+          var outputPath = project.PropertyGroups.Where(g => g.Condition.Contains("Release")).Select(g => g.OutputPath).Where(p => p != "").First();
+          outputPath = (outputPath.Contains(':') ? "" : projectFile.FullPath.Substring(0, projectFile.FullPath.LastIndexOf('/') + 1)) + outputPath.Replace('\\', '/');
+          if (!outputPath.EndsWith("/")) { outputPath = outputPath + '/'; }
+          Information("Output path is " + outputPath);
+          var vsTestExe = componentProvider.ExecutableFinder.FindVsTestExe(toolsVersion);
+          if (vsTestExe == "") {
+            MSTest(outputPath + "*.Test.dll", new MSTestSettings() { NoIsolation = false });
+          } else if (projectLogic.IsANetStandardOrCoreProject(mainProject)) {
+            VSTest(outputPath + "*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true, TestAdapterPath = "." });
+          } else {
+            VSTest(outputPath + "*.Test.dll", new VSTestSettings() { Logger = "trx", InIsolation = true });
+          }
+      }
     }
     CleanDirectory(testResultsFolder); 
     DeleteDirectory(testResultsFolder, new DeleteDirectorySettings { Recursive = false, Force = false });
@@ -285,23 +313,15 @@ Task("CreateNuGetPackage")
   .WithCriteria(() => currentGitBranch.FriendlyName == "master")
   .Description("Create nuget package in the master Release binaries folder")
   .Does(() => {
-        var projectErrorsAndInfos = new ErrorsAndInfos();
-        var projectLogic = componentProvider.ProjectLogic;
-        var projectFactory = componentProvider.ProjectFactory;
-        var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
-        var project = projectFactory.Load(solutionFileFullName, solutionFileFullName.Replace(".sln", ".csproj"), projectErrorsAndInfos);
-        if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project)) {
+        if (!projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(mainProject)) {
             throw new Exception("The release configuration needs a NuspecFile entry" + "\r\n" + solutionFileFullName + "\r\n" + solutionFileFullName.Replace(".sln", ".csproj"));
-        }
-        if (projectErrorsAndInfos.Errors.Any()) {
-            throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
         }
         var folder = new Folder(masterReleaseBinFolder);
         var lastWrittenFileFullName = FolderExtensions.LastWrittenFileFullName(folder);
         if (lastWrittenFileFullName == null) {
           Error("Could not find last written file in " + masterReleaseBinFolder);
         } else if (!lastWrittenFileFullName.EndsWith("nupkg")) {
-          if (projectLogic.IsANetStandardOrCoreProject(project)) {
+          if (projectLogic.IsANetStandardOrCoreProject(mainProject)) {
               var netCorePackSettings = new DotNetCorePackSettings {
                   Configuration = "Release",
                   NoBuild = true, NoRestore = true,
