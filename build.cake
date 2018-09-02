@@ -34,7 +34,7 @@ var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
 var tempCakeBuildFileName = tempFolder + "/build.cake.new";
 
 var currentGitBranch = GitBranchCurrent(DirectoryPath.FromString("."));
-var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/ShatilayaStandard/master/build.cake?g=" + System.Guid.NewGuid();
+var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake?g=" + System.Guid.NewGuid();
 var componentProvider = new ComponentProvider();
 var toolsVersion = componentProvider.ToolsVersionFinder.LatestAvailableToolsVersion();
 var toolsVersionEnum = toolsVersion >= 15 ? MSBuildToolVersion.VS2017 : MSBuildToolVersion.NET46;
