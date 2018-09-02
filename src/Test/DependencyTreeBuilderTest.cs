@@ -47,6 +47,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             const string url = "https://github.com/aspenlaub/Shatilaya.git";
             gitUtilities.Clone(url, ShatilayaTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            gitUtilities.Reset(ShatilayaTarget.Folder(), "c895d6d9efc93b71a061d580cec2d88f0d78ea9b", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             INugetPackageRestorer restorer = new NugetPackageRestorer(ComponentProvider);
             var sourceFolder = ShatilayaTarget.Folder().SubFolder("src").FullName;
             Directory.CreateDirectory(sourceFolder + @"\packages\");
