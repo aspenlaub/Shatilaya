@@ -1,11 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Configuration;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -22,7 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
-            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(new Pegh.Components.ComponentProvider());
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(new PeghStandard.Components.ComponentProvider());
             ComponentProvider = componentProviderMock.Object;
         }
 
@@ -61,84 +61,91 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanCheckIfPullRequestsExist() {
+        public async Task CanCheckIfPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
-            bool inconclusive;
-            var hasOpenPullRequest = HasOpenPullRequest(sut, "", errorsAndInfos, out inconclusive);
-            if (inconclusive) { return; }
+            var hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "", errorsAndInfos);
+            if (hasOpenPullRequest.Inconclusive) { return; }
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.IsTrue(hasOpenPullRequest);
+            Assert.IsTrue(hasOpenPullRequest.YesNo);
 
-            hasOpenPullRequest = HasOpenPullRequest(sut, "2", errorsAndInfos, out inconclusive);
-            if (inconclusive) { return; }
-
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.IsFalse(hasOpenPullRequest);
-
-            hasOpenPullRequest = HasOpenPullRequestForThisBranch(sut, true, errorsAndInfos, out inconclusive);
-            if (inconclusive) { return; }
+            hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "2", errorsAndInfos);
+            if (hasOpenPullRequest.Inconclusive) { return; }
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.IsFalse(hasOpenPullRequest);
+            Assert.IsFalse(hasOpenPullRequest.YesNo);
 
-            hasOpenPullRequest = HasOpenPullRequestForThisBranch(sut, false, errorsAndInfos, out inconclusive);
-            if (inconclusive) { return; }
-
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.IsTrue(hasOpenPullRequest);
-
-            var hasPullRequest = HasPullRequestForThisBranchAndItsHeadTip(sut, errorsAndInfos, out inconclusive);
-            if (inconclusive) { return; }
+            hasOpenPullRequest = await HasOpenPullRequestForThisBranchAsync(sut, true, errorsAndInfos);
+            if (hasOpenPullRequest.Inconclusive) { return; }
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.IsTrue(hasPullRequest);
+            Assert.IsFalse(hasOpenPullRequest.YesNo);
+
+            hasOpenPullRequest = await HasOpenPullRequestForThisBranchAsync(sut, false, errorsAndInfos);
+            if (hasOpenPullRequest.Inconclusive) { return; }
+
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(hasOpenPullRequest.YesNo);
+
+            var hasPullRequest = await HasPullRequestForThisBranchAndItsHeadTipAsync(sut, errorsAndInfos);
+            if (hasOpenPullRequest.Inconclusive) { return; }
+
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsTrue(hasPullRequest.YesNo);
         }
 
-        protected bool HasOpenPullRequest(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
-            inconclusive = false;
+        protected async Task<YesNoInconclusive> HasOpenPullRequestAsync(GitHubUtilities sut, string semicolonSeparatedListOfPullRequestNumbersToIgnore, ErrorsAndInfos errorsAndInfos) {
+            var inconclusive = false;
             var hasOpenPullRequest = false;
             try {
-                hasOpenPullRequest = sut.HasOpenPullRequest(MasterFolder, semicolonSeparatedListOfPullRequestNumbersToIgnore, errorsAndInfos);
+                hasOpenPullRequest = await sut.HasOpenPullRequestAsync(MasterFolder, semicolonSeparatedListOfPullRequestNumbersToIgnore, errorsAndInfos);
             } catch (WebException) {
                 inconclusive = true; // ToDo: use Assert.Inconclusive
             }
-            return hasOpenPullRequest;
+
+            return new YesNoInconclusive { YesNo = hasOpenPullRequest, Inconclusive = inconclusive };
         }
 
-        protected bool HasOpenPullRequestForThisBranch(GitHubUtilities sut, bool master, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
-            inconclusive = false;
+        protected async Task<YesNoInconclusive> HasOpenPullRequestForThisBranchAsync(GitHubUtilities sut, bool master, ErrorsAndInfos errorsAndInfos) {
+            var inconclusive = false;
             var hasOpenPullRequest = false;
             try {
-                hasOpenPullRequest = sut.HasOpenPullRequestForThisBranch(master ? MasterFolder : DevelopmentFolder, errorsAndInfos);
+                hasOpenPullRequest = await sut.HasOpenPullRequestForThisBranchAsync(master ? MasterFolder : DevelopmentFolder, errorsAndInfos);
             } catch (WebException) {
                 inconclusive = true; // ToDo: use Assert.Inconclusive
             }
-            return hasOpenPullRequest;
+
+            return new YesNoInconclusive { YesNo = hasOpenPullRequest, Inconclusive = inconclusive };
         }
 
-        protected bool HasPullRequestForThisBranchAndItsHeadTip(GitHubUtilities sut, ErrorsAndInfos errorsAndInfos, out bool inconclusive) {
-            inconclusive = false;
+        protected async Task<YesNoInconclusive> HasPullRequestForThisBranchAndItsHeadTipAsync(GitHubUtilities sut, ErrorsAndInfos errorsAndInfos) {
+            var inconclusive = false;
             var hasOpenPullRequest = false;
             try {
-                hasOpenPullRequest = sut.HasPullRequestForThisBranchAndItsHeadTip(DevelopmentFolder, errorsAndInfos);
+                hasOpenPullRequest = await sut.HasPullRequestForThisBranchAndItsHeadTipAsync(DevelopmentFolder, errorsAndInfos);
             } catch (WebException) {
                 inconclusive = true; // ToDo: use Assert.Inconclusive
             }
-            return hasOpenPullRequest;
+
+            return new YesNoInconclusive { YesNo = hasOpenPullRequest, Inconclusive = inconclusive };
         }
 
         [TestMethod]
-        public void CanCheckHowManyPullRequestsExist() {
+        public async Task CanCheckHowManyPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
             try {
-                var numberOfPullRequests = sut.NumberOfPullRequests(MasterFolder, errorsAndInfos);
+                var numberOfPullRequests = await sut.GetNumberOfPullRequestsAsync(MasterFolder, errorsAndInfos);
                 Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
                 Assert.IsTrue(numberOfPullRequests > 1);
             } catch (WebException) { // ToDo: use Assert.Inconclusive
             }
         }
+    }
+
+    public class YesNoInconclusive {
+        public bool YesNo { get; set; }
+        public bool Inconclusive { get; set; }
     }
 }

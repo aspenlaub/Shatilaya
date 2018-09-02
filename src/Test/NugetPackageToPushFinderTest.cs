@@ -1,14 +1,15 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
-using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
+using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -56,44 +57,43 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanFindNugetPackagesToPushForPakled() {
+        public async Task CanFindNugetPackagesToPushForPakled() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = DeveloperSettings(errorsAndInfos);
+            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
 
             CloneTarget(PakledTarget, errorsAndInfos);
 
             ChangeCakeScriptAndRunIt(PakledTarget, true, errorsAndInfos);
 
             errorsAndInfos = new ErrorsAndInfos();
-            var sut = new NugetPackageToPushFinder(ComponentProvider);
-            string packageFileFullName, feedUrl, apiKey;
-            sut.FindPackageToPush(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
+            INugetPackageToPushFinder sut = new NugetPackageToPushFinder(ComponentProvider);
+            var packageToPush = await sut.FindPackageToPushAsync(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.AreEqual(developerSettings.NugetFeedUrl, feedUrl);
-            Assert.IsTrue(apiKey.Length > 256);
+            Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
+            Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
 
-        private DeveloperSettings DeveloperSettings(IErrorsAndInfos errorsAndInfos) {
+        private async Task<DeveloperSettings> GetDeveloperSettingsAsync(IErrorsAndInfos errorsAndInfos) {
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            var developerSettings = await ComponentProvider.PeghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.IsNotNull(developerSettings);
             return developerSettings;
         }
 
         [TestMethod]
-        public void PackageForTheSameCommitIsNotPushed() {
+        public async Task PackageForTheSameCommitIsNotPushed() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = DeveloperSettings(errorsAndInfos);
+            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
             CloneTarget(PakledTarget, errorsAndInfos);
 
-            var packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            var packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             if (!packages.Any()) { return; }
 
-            var latestPackageVersion = packages.Max(p => p.Version);
-            var latestPackage = packages.First(p => p.Version == latestPackageVersion);
+            var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
+            var latestPackage = packages.First(p => p.Identity.Version.Version == latestPackageVersion);
 
             var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledTarget.Folder());
             if (!latestPackage.Tags.Contains(headTipIdSha)) {
@@ -102,8 +102,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             ChangeCakeScriptAndRunIt(PakledTarget, false, errorsAndInfos);
 
-            packages = ComponentProvider.NugetFeedLister.ListReleasedPackages(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
-            Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Version));
+            packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Identity.Version.Version));
         }
 
         private static void CloneTarget(TestTargetFolder testTargetFolder, IErrorsAndInfos errorsAndInfos) {
@@ -128,9 +128,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanFindNugetPackagesToPushForChabStandard() {
+        public async Task CanFindNugetPackagesToPushForChabStandard() {
             var errorsAndInfos = new ErrorsAndInfos();
-            var developerSettings = DeveloperSettings(errorsAndInfos);
+            var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
 
             CloneTarget(ChabStandardTarget, errorsAndInfos);
 
@@ -140,11 +140,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
-            string packageFileFullName, feedUrl, apiKey;
-            sut.FindPackageToPush(ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", out packageFileFullName, out feedUrl, out apiKey, errorsAndInfos);
+            var packageToPush = await sut.FindPackageToPushAsync(ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.AreEqual(developerSettings.NugetFeedUrl, feedUrl);
-            Assert.IsTrue(apiKey.Length > 256);
+            Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
+            Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
     }
 }

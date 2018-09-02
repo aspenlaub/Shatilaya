@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface INuSpecCreator {
-        void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos);
+        // ReSharper disable once UnusedMember.Global
+        Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos);
 
-        XDocument CreateNuSpec(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos);
+        Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos);
     }
 }

@@ -1,45 +1,46 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
-using NuGet;
+using NuGet.Common;
+using NuGet.Protocol;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class DependencyTreeBuilder : IDependencyTreeBuilder {
         public IDependencyNode BuildDependencyTree(string packagesFolder) {
-            var repository = new LocalPackageRepository(packagesFolder);
-            var packages = repository.GetPackages();
+            var logger = new NullLogger();
+            var repository = new FindLocalPackagesResourceV2(packagesFolder);
+            var packages = repository.GetPackages(logger, CancellationToken.None);
             return BuildDependencyTree(repository, packages, new List<DependencyNode>());
         }
 
-        protected IDependencyNode BuildDependencyTree(LocalPackageRepository repository, IEnumerable<IPackage> packages, IList<DependencyNode> ignoreNodes) {
+        protected IDependencyNode BuildDependencyTree(FindLocalPackagesResource repository, IEnumerable<LocalPackageInfo> packages, IList<DependencyNode> ignoreNodes) {
+            var logger = new NullLogger();
             var tree = new DependencyNode();
             foreach (var package in packages) {
-                tree.Id = package.Id;
-                tree.Version = package.Version.ToString();
+                tree.Id = package.Identity.Id;
+                tree.Version = package.Identity.Version.ToString();
                 if (ignoreNodes.Any(n => EqualNodes(n, tree))) {
                     continue;
                 }
 
-                IList<IPackage> dependentPackages = new List<IPackage>();
+                IList<LocalPackageInfo> dependentPackages = new List<LocalPackageInfo>();
                 // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (var dependencySet in package.DependencySets) {
+                foreach (var dependencySet in package.Nuspec.GetDependencyGroups()) {
                     // ReSharper disable once LoopCanBePartlyConvertedToQuery
-                    foreach (var dependency in dependencySet.Dependencies) {
-                        var dependentPackage = repository.FindPackage(dependency.Id, new SemanticVersion(dependency.VersionSpec.ToString().Replace("[", "").Replace("]", "")));
-                        var dependencyNode = new DependencyNode { Id = dependency.Id, Version = dependency.VersionSpec.ToString() };
+                    foreach (var dependentPackage in dependencySet.Packages.SelectMany(d => repository.FindPackagesById(d.Id, logger, CancellationToken.None))) {
+                        var dependencyNode = new DependencyNode { Id = dependentPackage.Identity.Id, Version = dependentPackage.Identity.Version.Version.ToString() };
                         if (ignoreNodes.Any(n => EqualNodes(n, dependencyNode))) {
                             continue;
                         }
 
                         ignoreNodes.Add(dependencyNode);
-                        if (dependentPackage == null) {
-                            tree.ChildNodes.Add(dependencyNode);
-                        } else {
-                            dependentPackages.Add(dependentPackage);
-                        }
+                        dependentPackages.Add(dependentPackage);
                     }
                 }
+
+                if (!dependentPackages.Any()) { continue; }
 
                 tree.ChildNodes.Add(BuildDependencyTree(repository, dependentPackages, ignoreNodes));
             }

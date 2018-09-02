@@ -1,14 +1,10 @@
 ﻿using System;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
     public class DeveloperSettingsSecret : ISecret<DeveloperSettings> {
         private DeveloperSettings vDeveloperSettings;
-        public DeveloperSettings DefaultValue {
-            get {
-                return vDeveloperSettings ?? (vDeveloperSettings = Sample());
-            }
-        }
+        public DeveloperSettings DefaultValue => vDeveloperSettings ?? (vDeveloperSettings = Sample());
 
         private DeveloperSettings Sample() {
             return new DeveloperSettings {
@@ -19,6 +15,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
                 NugetFeedUrl = "https://www." + Guid + "nuget" };
         }
 
-        public string Guid { get { return "C9CA6C10-7409-487F-B406-A9EF9AD835A5"; } }
+        public string Guid => "C9CA6C10-7409-487F-B406-A9EF9AD835A5";
     }
 }

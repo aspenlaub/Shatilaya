@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using NuGet;
+using System.Threading.Tasks;
+using NuGet.Protocol.Core.Types;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface INugetFeedLister {
@@ -10,6 +11,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="feedUrl">e.g. https://packages.nuget.org/api/v2</param>
         /// <param name="packageId">e.g. Aspenlaub.Net.GitHub.CSharp.Shatilaya</param>
         /// <returns></returns>
-        IList<IPackage> ListReleasedPackages(string feedUrl, string packageId);
+        Task<IList<IPackageSearchMetadata>> ListReleasedPackagesAsync(string feedUrl, string packageId);
     }
 }

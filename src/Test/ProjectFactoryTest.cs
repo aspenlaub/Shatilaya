@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Moq;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -56,9 +56,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             gitUtilities.Clone(url, PakledConsumerTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-            var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
+            var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
+            var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.standard.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
@@ -136,9 +137,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-            var cakeScriptFileFullName = ChabStandardTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
+            var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
+            var cakeScriptFileFullName = ChabStandardTarget.Folder().FullName + @"\build.standard.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";

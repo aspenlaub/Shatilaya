@@ -1,7 +1,8 @@
-﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
+﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {
+        // ReSharper disable once UnusedMember.Global
         ICakeInstaller CakeInstaller { get; }
         ICakeRunner CakeRunner { get; }
         IDependencyTreeBuilder DependencyTreeBuilder { get; }

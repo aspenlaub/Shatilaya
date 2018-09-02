@@ -2,7 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Net;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Newtonsoft.Json;
@@ -17,43 +18,42 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             ComponentProvider = componentProvider;
         }
 
-        public bool HasOpenPullRequest(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
-            var pullRequests = PullRequests(repositoryFolder, "open", errorsAndInfos);
+        public async Task<bool> HasOpenPullRequestAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = await GetPullRequestsAsync(repositoryFolder, "open", errorsAndInfos);
             return pullRequests.Any();
         }
 
-        public bool HasOpenPullRequest(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos) {
-            var pullRequests = PullRequests(repositoryFolder, "open", errorsAndInfos);
+        public async Task<bool> HasOpenPullRequestAsync(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = await GetPullRequestsAsync(repositoryFolder, "open", errorsAndInfos);
             return pullRequests.Any(p => !semicolonSeparatedListOfPullRequestNumbersToIgnore.Split(';').Contains(p.Number));
         }
 
-        public bool HasOpenPullRequestForThisBranch(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
-            var pullRequests = PullRequests(repositoryFolder, "open", errorsAndInfos);
+        public async Task<bool> HasOpenPullRequestForThisBranchAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = await GetPullRequestsAsync(repositoryFolder, "open", errorsAndInfos);
             var checkedOutBranch = ComponentProvider.GitUtilities.CheckedOutBranch(repositoryFolder);
             return pullRequests.Any(p => p.Branch == checkedOutBranch);
         }
 
-        public int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
-            return PullRequests(repositoryFolder, "all", errorsAndInfos).Count;
+        public async Task<int> GetNumberOfPullRequestsAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            return (await GetPullRequestsAsync(repositoryFolder, "all", errorsAndInfos)).Count;
         }
 
 
-        public bool HasPullRequestForThisBranchAndItsHeadTip(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
-            var pullRequests = PullRequests(repositoryFolder, "all", errorsAndInfos);
+        public async Task<bool> HasPullRequestForThisBranchAndItsHeadTipAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos) {
+            var pullRequests = await GetPullRequestsAsync(repositoryFolder, "all", errorsAndInfos);
             var checkedOutBranch = ComponentProvider.GitUtilities.CheckedOutBranch(repositoryFolder);
             var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(repositoryFolder);
             return pullRequests.Any(p => p.Branch == checkedOutBranch && p.Sha == headTipIdSha);
         }
 
-        protected IList<PullRequest> PullRequests(IFolder repositoryFolder, string state, IErrorsAndInfos errorsAndInfos) {
+        protected async Task<IList<PullRequest>> GetPullRequestsAsync(IFolder repositoryFolder, string state, IErrorsAndInfos errorsAndInfos) {
             var pullRequests = new List<PullRequest>();
-            string owner, name;
-            ComponentProvider.GitUtilities.IdentifyOwnerAndName(repositoryFolder, out owner, out name, errorsAndInfos);
+            ComponentProvider.GitUtilities.IdentifyOwnerAndName(repositoryFolder, out var owner, out var name, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return pullRequests; }
 
 
             var url = $"https://api.github.com/repos/{owner}/{name}/pulls?state=" + state;
-            var result = RunJsonWebRequest(url, owner, errorsAndInfos) as JArray;
+            var result = await RunJsonWebRequestAsync(url, owner, errorsAndInfos) as JArray;
             if (errorsAndInfos.AnyErrors()) { return pullRequests; }
 
             if (result == null) {
@@ -66,11 +66,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return pullRequests;
         }
 
-        protected object RunJsonWebRequest(string url, string owner, IErrorsAndInfos errorsAndInfos) {
+        protected async Task<object> RunJsonWebRequestAsync(string url, string owner, IErrorsAndInfos errorsAndInfos) {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = WebRequestMethods.Http.Get;
             request.UserAgent = GetType().Namespace;
-            var personalAccessTokens = PersonalAccessTokens(errorsAndInfos);
+            var personalAccessTokens = await GetPersonalAccessTokensAsync(errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) {
                 return null;
             }
@@ -99,9 +99,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return new PullRequest { Id = jToken["id"].Value<string>(), Number = jToken["number"].Value<string>(), State = jToken["state"].Value<string>(), Branch = jToken["head"]["ref"].Value<string>(), Sha = jToken["head"]["sha"].Value<string>() };
         }
 
-        private PersonalAccessTokens PersonalAccessTokens(IErrorsAndInfos errorsAndInfos) {
+        private async Task<PersonalAccessTokens> GetPersonalAccessTokensAsync(IErrorsAndInfos errorsAndInfos) {
             var personalAccessTokensSecret = new PersonalAccessTokensSecret();
-            var personalAccessTokens = ComponentProvider.PeghComponentProvider.SecretRepository.Get(personalAccessTokensSecret, errorsAndInfos);
+            var personalAccessTokens = await ComponentProvider.PeghComponentProvider.SecretRepository.GetAsync(personalAccessTokensSecret, errorsAndInfos);
             return personalAccessTokens;
         }
     }

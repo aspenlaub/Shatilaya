@@ -5,16 +5,17 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NuGet.Common;
+using NuGet.Protocol;
 using TechTalk.SpecFlow;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using NuGet;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
+// ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
@@ -193,12 +194,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region Then
         [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
         public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
-            const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake";
+            const string url = @"https://raw.githubusercontent.com/aspenlaub/ShatilayaStandard/master/build.standard.cake";
             var request = WebRequest.Create(url) as HttpWebRequest;
             Assert.IsNotNull(request);
             using (var response = (HttpWebResponse)request.GetResponse()) {
                 Assert.IsNotNull(response);
-                var scriptFileFullName = ChabTarget.FullName() + @"\build.cake";
+                var scriptFileFullName = ChabTarget.FullName() + @"\build.standard.cake";
                 var stream = response.GetResponseStream();
                 Assert.IsNotNull(stream);
                 string expectedContents;
@@ -255,7 +256,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]
         public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.standard.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Then(@"I find the artifacts in the master debug folder")]
@@ -367,25 +368,32 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void ThenTheNewestNugetPackageInTheMasterFolderIsTaggedWithTheHeadTipIdSha(string p0) {
             var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(ChabTarget.Folder());
             var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
-            var repository = new LocalPackageRepository(packagesFolder);
-            var packages = repository.GetPackages();
-            var latestPackageVersion = packages.Max(p => p.Version);
-            var package = packages.FirstOrDefault(p => p.Version == latestPackageVersion);
+            var repository = new FindLocalPackagesResourceV2(packagesFolder);
+            var logger = new NullLogger();
+            var packages = repository.GetPackages(logger, CancellationToken.None).ToList();
+            var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
+            var package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
             Assert.IsNotNull(package);
-            var tags = package.Tags.Split(' ').Where(s => s != "").ToList();
+            var tags = package.Nuspec.GetTags().Split(' ').Where(s => s != "").ToList();
             Assert.IsTrue(tags.Contains(headTipIdSha));
         }
 
         [Then(@"the newest nuget package in the master ""(.*)"" folder does not contain a test assembly")]
         public void ThenTheNewestNugetPackageInTheMasterFolderDoesNotContainATestAssembly(string p0) {
             var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
-            var repository = new LocalPackageRepository(packagesFolder);
-            var packages = repository.GetPackages();
-            var latestPackageVersion = packages.Max(p => p.Version);
-            var package = packages.FirstOrDefault(p => p.Version == latestPackageVersion);
+            var repository = new FindLocalPackagesResourceV2(packagesFolder);
+            var logger = new NullLogger();
+            var packages = repository.GetPackages(logger, CancellationToken.None).ToList();
+            var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
+            var package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
             Assert.IsNotNull(package);
-            var unwantedReferences = package.AssemblyReferences.Where(a => a.Name.Contains("Test")).ToList();
-            Assert.IsFalse(unwantedReferences.Any());
+            using (var reader = package.GetReader()) {
+                var filesInPackage = reader.GetFiles().ToList();
+                var wantedFiles = filesInPackage.Where(f => f.EndsWith("Chab.dll") && !f.Contains("Test")).ToList();
+                Assert.IsTrue(wantedFiles.Any());
+                var unwantedFiles = filesInPackage.Where(f => f.Contains("Test")).ToList();
+                Assert.IsFalse(unwantedFiles.Any());
+            }
         }
 
         [Then(@"there is no obj folder in the src folder")]

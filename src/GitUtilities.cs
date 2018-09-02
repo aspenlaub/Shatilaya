@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using ICSharpCode.SharpZipLib.Zip;
 using LibGit2Sharp;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class GitUtilities : IGitUtilities {
@@ -191,6 +191,24 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
 
                 name = name.Substring(0, name.Length - 4);
+            }
+        }
+
+        public void DownloadReadyToCake(IFolder folder, IErrorsAndInfos errorsAndInfos) {
+            DeleteOldDownloadFiles("cake.0.28.0.zip");
+            var downloadFolder = DownloadFolder();
+            var downloadedZipFileFullName = downloadFolder + @"\cake.0.28.0.zip";
+            if (!File.Exists(downloadedZipFileFullName)) {
+                using (var client = new WebClient()) {
+                    client.DownloadFile("https://www.aspenlaub.net/Github/cake.0.28.0.zip", downloadedZipFileFullName);
+                }
+            }
+            using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+                var fastZip = new FastZip();
+                fastZip.ExtractZip(zipStream, folder.FullName, FastZip.Overwrite.Never, s => { return true; }, null, null, true, true);
+                if (Directory.Exists(folder.FullName + @"\Cake")) { return; }
+
+                errorsAndInfos.Errors.Add(string.Format(Texts.FolderCouldNotBeCreated, folder));
             }
         }
     }

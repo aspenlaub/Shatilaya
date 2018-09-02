@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -64,16 +65,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var runner = componentProvider.CakeRunner;
             var cakeExeFileFullName = CakeFolder().FullName + @"\tools\Cake\cake.exe";
             Assert.IsTrue(File.Exists(cakeExeFileFullName));
-            var scriptFileFullName = FullName() + @"\build.cake";
+            var scriptFileFullName = FullName() + @"\build.standard.cake";
             runner.CallCake(cakeExeFileFullName, scriptFileFullName, target, errorsAndInfos);
         }
 
         public void CreateCakeFolder() {
             if (CakeFolder().Exists()) { return; }
 
-            var cakeInstaller = new CakeInstaller();
-            IErrorsAndInfos errorsAndInfos;
-            cakeInstaller.InstallCake(CakeFolder(), out errorsAndInfos);
+            ICakeInstaller cakeInstaller = new CakeInstaller();
+            cakeInstaller.InstallCake(CakeFolder(), out var errorsAndInfos);
+
+            var gitUtilities = new GitUtilities();
+            gitUtilities.DownloadReadyToCake(CakeFolder().SubFolder(@"tools"), errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
         }
 

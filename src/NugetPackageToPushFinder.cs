@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using NuGet;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using NuGet.Common;
+using NuGet.Protocol;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
@@ -15,75 +18,74 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             ComponentProvider = componentProvider;
         }
 
-        public void FindPackageToPush(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos) {
-            packageFileFullName = "";
-            feedUrl = "";
-            apiKey = "";
+        public async Task<IPackageToPush> FindPackageToPushAsync(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
+            IPackageToPush packageToPush = new PackageToPush();
             var projectFileFullName = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFileFullName)) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.ProjectFileNotFound, projectFileFullName));
-                return;
+                return packageToPush;
             }
 
             var factory = new ProjectFactory();
             var project = factory.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
-            if (errorsAndInfos.Errors.Any()) { return; }
+            if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
-            if (errorsAndInfos.Errors.Any()) { return; }
+            var developerSettings = await ComponentProvider.PeghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
+            if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 
             if (developerSettings == null) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
-                return;
+                return packageToPush;
             }
 
             var feedId = developerSettings.NugetFeedId;
             if (string.IsNullOrEmpty(feedId)) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
-                return;
+                return packageToPush;
             }
 
             var nugetConfigFileFullName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\nuget.config";
-            apiKey = ComponentProvider.NugetConfigReader.GetApiKey(nugetConfigFileFullName, feedId, errorsAndInfos);
-            if (errorsAndInfos.Errors.Any()) { return; }
+            packageToPush.ApiKey = ComponentProvider.NugetConfigReader.GetApiKey(nugetConfigFileFullName, feedId, errorsAndInfos);
+            if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 
-            feedUrl = developerSettings.NugetFeedUrl;
-            if (string.IsNullOrEmpty(feedUrl)) {
+            packageToPush.FeedUrl = developerSettings.NugetFeedUrl;
+            if (string.IsNullOrEmpty(packageToPush.FeedUrl)) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.IncompleteDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
-                return;
+                return packageToPush;
             }
 
-            var localPackageRepository = new LocalPackageRepository(packageFolderWithBinaries.FullName);
-            var localPackages = localPackageRepository.GetPackages().Where(p => p.IsReleaseVersion()).ToList();
+            var localPackageRepository = new FindLocalPackagesResourceV2(packageFolderWithBinaries.FullName);
+            var localPackages = localPackageRepository.GetPackages(new NullLogger(), CancellationToken.None).Where(p => !p.Identity.Version.IsPrerelease).ToList();
             if (!localPackages.Any()) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.NoPackageFilesFound, packageFolderWithBinaries.FullName));
-                return;
+                return packageToPush;
             }
 
-            var latestLocalPackageVersion = localPackages.Max(p => p.Version);
+            var latestLocalPackageVersion = localPackages.Max(p => p.Identity.Version.Version);
 
             var packageId = project.RootNamespace;
-            var remotePackages = ComponentProvider.NugetFeedLister.ListReleasedPackages(feedUrl, packageId);
+            var remotePackages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(packageToPush.FeedUrl, packageId);
             if (!remotePackages.Any()) {
-                errorsAndInfos.Errors.Add(string.Format(Texts.NoRemotePackageFilesFound, feedUrl, packageId));
-                return;
+                errorsAndInfos.Errors.Add(string.Format(Texts.NoRemotePackageFilesFound, packageToPush.FeedUrl, packageId));
+                return packageToPush;
             }
 
-            var latestRemotePackageVersion = remotePackages.Max(p => p.Version);
-            if (latestRemotePackageVersion >= latestLocalPackageVersion) { return; }
+            var latestRemotePackageVersion = remotePackages.Max(p => p.Identity.Version.Version);
+            if (latestRemotePackageVersion >= latestLocalPackageVersion) { return packageToPush; }
 
-            var remotePackage = remotePackages.First(p => p.Version == latestRemotePackageVersion);
+            var remotePackage = remotePackages.First(p => p.Identity.Version.Version == latestRemotePackageVersion);
             if (!string.IsNullOrEmpty(remotePackage.Tags) && repositoryFolder != null) {
                 var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(repositoryFolder);
                 var tags = remotePackage.Tags.Split(' ');
-                if (tags.Contains(headTipIdSha)) { return; }
+                if (tags.Contains(headTipIdSha)) { return packageToPush; }
             }
 
-            packageFileFullName = packageFolderWithBinaries.FullName + @"\" + packageId + "." + latestLocalPackageVersion + ".nupkg";
-            if (File.Exists(packageFileFullName)) { return; }
+            packageToPush.PackageFileFullName = packageFolderWithBinaries.FullName + @"\" + packageId + "." + latestLocalPackageVersion + ".nupkg";
+            if (File.Exists(packageToPush.PackageFileFullName)) { return packageToPush; }
 
-            errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, packageFileFullName));
+            errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, packageToPush.PackageFileFullName));
+            return packageToPush;
         }
     }
 }

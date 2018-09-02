@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Net;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using LibGit2Sharp;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
@@ -86,19 +85,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.AreEqual("", sut.CheckedOutBranch(NoGitFolder));
         }
 
-        protected static void CheckThatWeAreOnline() {
-            bool online;
-            try {
-                Dns.GetHostEntry("www.google.com");
-                online = true;
-            }
-            catch {
-                online = false;
-            }
-
-            Assert.IsTrue(online, "You are not connected to the internet");
-        }
-
         [TestMethod]
         public void CanGetHeadTipIdSha() {
             var sut = new GitUtilities();
@@ -133,9 +119,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [TestMethod]
         public void CanIdentifyUrlOwnerAndName() {
             var sut = new GitUtilities();
-            string owner, name;
             var errorsAndInfos = new ErrorsAndInfos();
-            sut.IdentifyOwnerAndName(MasterFolder, out owner, out name, errorsAndInfos);
+            sut.IdentifyOwnerAndName(MasterFolder, out var owner, out var name, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual("aspenlaub", owner);
             Assert.AreEqual("Pakled", name);

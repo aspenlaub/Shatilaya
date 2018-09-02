@@ -1,11 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -49,9 +49,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
 
-            var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
-            var cakeScript = File.ReadAllText(cakeScriptFileFullName);
+            var latestBuildScriptProvider = new LatestBuildCakeScriptProvider();
+            var cakeScript = latestBuildScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
+            var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.standard.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             ChabTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
@@ -60,7 +61,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             errorsAndInfos = new ErrorsAndInfos();
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.Setup(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
-            var sut = new ObsoletePackageFinder(componentProviderMock.Object);
+            IObsoletePackageFinder sut = new ObsoletePackageFinder(componentProviderMock.Object);
             var solutionFolder = ChabTarget.Folder().SubFolder("src");
             sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());

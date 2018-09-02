@@ -1,4 +1,5 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+﻿using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IGitHubUtilities {
@@ -8,7 +9,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="repositoryFolder"></param>
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
-        bool HasOpenPullRequest(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+        Task<bool> HasOpenPullRequestAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Check if there is an open pull request (not necessarily for the checked out branch)
@@ -17,7 +18,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="semicolonSeparatedListOfPullRequestNumbersToIgnore"></param>
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
-        bool HasOpenPullRequest(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos);
+        Task<bool> HasOpenPullRequestAsync(IFolder repositoryFolder, string semicolonSeparatedListOfPullRequestNumbersToIgnore, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Return number of pull requests (open or closed)
@@ -25,7 +26,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="repositoryFolder"></param>
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
-        int NumberOfPullRequests(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+        Task<int> GetNumberOfPullRequestsAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Check if there is an open pull request for the checked out branch
@@ -33,7 +34,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="repositoryFolder"></param>
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
-        bool HasOpenPullRequestForThisBranch(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+        Task<bool> HasOpenPullRequestForThisBranchAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
         /// Check if there is a pull request for the checked out branch with matching head tip id sha (not necessarily open)
@@ -41,6 +42,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         /// <param name="repositoryFolder"></param>
         /// <param name="errorsAndInfos"></param>
         /// <returns></returns>
-        bool HasPullRequestForThisBranchAndItsHeadTip(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
+        Task<bool> HasPullRequestForThisBranchAndItsHeadTipAsync(IFolder repositoryFolder, IErrorsAndInfos errorsAndInfos);
     }
 }

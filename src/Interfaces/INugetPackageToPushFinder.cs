@@ -1,7 +1,8 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+﻿using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface INugetPackageToPushFinder {
-        void FindPackageToPush(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, out string packageFileFullName, out string feedUrl, out string apiKey, IErrorsAndInfos errorsAndInfos);
+        Task<IPackageToPush> FindPackageToPushAsync(IFolder packageFolderWithBinaries, IFolder repositoryFolder, string solutionFileFullName, IErrorsAndInfos errorsAndInfos);
     }
 }

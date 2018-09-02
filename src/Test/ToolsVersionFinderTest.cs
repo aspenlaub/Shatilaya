@@ -5,8 +5,6 @@ using Moq;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class ToolsVersionFinderTest {
-        protected const string Vs7RegistryKey = @"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7";
-
         [TestMethod]
         public void CanGetLatestAvailableToolsVersion() {
             var componentProviderMock = new Mock<IComponentProvider>();

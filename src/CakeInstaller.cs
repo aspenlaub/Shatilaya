@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
-using NuGet;
+using NuGet.Packaging;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class CakeInstaller : ICakeInstaller {
@@ -18,11 +16,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/cake-build/example";
             var fixCakeErrorsAndInfos = new ErrorsAndInfos();
-            gitUtilities.Clone(url, cakeFolder, new CloneOptions { BranchName = "master" }, true, () => File.Exists(CakeExeFileFullName(cakeFolder)), () => FixCakeVersionAndRunBuildPs1(cakeFolder, fixCakeErrorsAndInfos), errorsAndInfos);
+            gitUtilities.Clone(url, cakeFolder, new CloneOptions { BranchName = "master" }, true, () => File.Exists(CakeExeFileFullName(cakeFolder)), () => FixCakeVersionAndDownloadReadyToCake(cakeFolder, gitUtilities, fixCakeErrorsAndInfos), errorsAndInfos);
             errorsAndInfos.Errors.AddRange(fixCakeErrorsAndInfos.Errors);
         }
 
-        private void FixCakeVersionAndRunBuildPs1(IFolder cakeFolder, IErrorsAndInfos errorsAndInfos) {
+        private void FixCakeVersionAndDownloadReadyToCake(IFolder cakeFolder, IGitUtilities gitUtilities, IErrorsAndInfos errorsAndInfos) {
             var packagesConfigFileFullName = cakeFolder.SubFolder("tools").FullName + @"\packages.config";
             var document = XDocument.Load(packagesConfigFileFullName);
             var element = document.XPathSelectElements("/packages/package").FirstOrDefault(e => e.Attribute("id")?.Value == "Cake");
@@ -38,15 +36,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             attribute.SetValue(CakeRunner.PinnedCakeVersion);
             document.Save(packagesConfigFileFullName);
 
-            var powershellExecuter = new PowershellExecuter();
-            IList<string> errors;
-            powershellExecuter.ExecutePowershellScriptFile(cakeFolder.FullName + @"\build.ps1", out errors);
-            errorsAndInfos.Errors.AddRange(errors);
-            if (File.Exists(CakeExeFileFullName(cakeFolder))) {
-                return;
-            }
-
-            errorsAndInfos.Errors.Add("Cake.exe not found");
+            gitUtilities.DownloadReadyToCake(cakeFolder.SubFolder(@"tools"), errorsAndInfos);
         }
 
         public string CakeExeFileFullName(IFolder cakeFolder) {

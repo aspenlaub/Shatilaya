@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
@@ -25,7 +26,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             NamespaceManager.AddNamespace("cp", XmlNamespaces.CsProjNamespaceUri);
         }
 
-        public XDocument CreateNuSpec(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
+        public async Task<XDocument> CreateNuSpecAsync(string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var document = new XDocument();
             var projectFile = solutionFileFullName.Replace(".sln", ".csproj");
             if (!File.Exists(projectFile)) {
@@ -62,7 +63,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\') + 1), false, errorsAndInfos);
             var element = new XElement(NugetNamespace + "package");
             var solutionId = solutionFileFullName.Substring(solutionFileFullName.LastIndexOf('\\') + 1).Replace(".sln", "");
-            var metaData = MetaData(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
+            var metaData = await ReadMetaDataAsync(solutionId, projectDocument, dependencyIdsAndVersions, tags, namespaceSelector, version, targetFramework, errorsAndInfos);
             if (metaData == null) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.MissingMetaDataElementInProjectFile, projectFile));
                 return document;
@@ -80,12 +81,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return document;
         }
 
-        protected XElement MetaData(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
+        protected async Task<XElement> ReadMetaDataAsync(string solutionId, XDocument projectDocument, IDictionary<string, string> dependencyIdsAndVersions, IList<string> tags, string namespaceSelector, string version, string targetFramework, IErrorsAndInfos errorsAndInfos) {
             var rootNamespaceElement = projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "RootNamespace", NamespaceManager).FirstOrDefault();
             if (rootNamespaceElement == null) { return null; }
 
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = ComponentProvider.PeghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            var developerSettings = await ComponentProvider.PeghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             if (developerSettings == null) {
                 errorsAndInfos.Errors.Add(string.Format(Texts.MissingDeveloperSettings, developerSettingsSecret.Guid + ".xml"));
                 return null;
@@ -182,11 +183,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return targetFramework.StartsWith("v") ? targetFramework.Replace("v", "").Replace(".", "") : targetFramework.StartsWith("net") ? targetFramework.Substring(3) : targetFramework;
         }
 
-        public void CreateNuSpecFileIfRequiredOrPresent(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
+        public async Task CreateNuSpecFileIfRequiredOrPresentAsync(bool required, string solutionFileFullName, IList<string> tags, IErrorsAndInfos errorsAndInfos) {
             var nuSpecFile = solutionFileFullName.Replace(".sln", ".nuspec");
             if (!required && !File.Exists(nuSpecFile)) { return; }
 
-            var document = CreateNuSpec(solutionFileFullName, tags, errorsAndInfos);
+            var document = await CreateNuSpecAsync(solutionFileFullName, tags, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return; }
 
             var tempFileName = Path.GetTempPath() + @"\temp.nuspec";

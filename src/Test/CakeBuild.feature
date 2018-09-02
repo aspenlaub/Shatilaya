@@ -35,13 +35,13 @@ Scenario: Debug build failure
 
 Scenario: Debug artifacts are copied to the master debug folder, but only if changed
 	Given I clean up the master debug folder
-	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then no cake errors were reported
 	And I find the artifacts in the master debug folder
 	And there is no obj folder in the src folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
-	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then no cake errors were reported
 	And the contents of the master debug folder has not changed
 
@@ -87,7 +87,7 @@ Scenario: Release artifacts are not copied to the master release folder when a t
 	Given I clean up the master debug folder
 	And I clean up the master release folder
 	And I change a test case so that it will fail in release
-	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
+	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then a failed test case was reported
 	And I find the artifacts in the master debug folder
 	And I do not find any artifacts in the master release folder

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
-using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
+using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components.ComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -49,7 +50,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanCreateNuSpecForPakled() {
+        public async Task CanCreateNuSpecForPakled() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Pakled.git";
@@ -59,7 +60,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
             var peghComponentProvider = new PeghComponentProvider();
             componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
-            var sut = new NuSpecCreator(componentProviderMock.Object);
+            INuSpecCreator sut = new NuSpecCreator(componentProviderMock.Object);
             var solutionFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln";
             var projectFileFullName = PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
@@ -70,12 +71,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(rootNamespaceElement);
             var outputPathElement = Document.XPathSelectElements("./cp:Project/cp:PropertyGroup/cp:OutputPath", NamespaceManager).SingleOrDefault(ParentIsReleasePropertyGroup);
             Assert.IsNotNull(outputPathElement);
-            Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             Assert.AreEqual(0, errorsAndInfos.Infos.Count);
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            var developerSettings = await peghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
             VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
@@ -98,7 +99,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         }
 
         [TestMethod]
-        public void CanCreateNuSpecForChabStandard() {
+        public async Task CanCreateNuSpecForChabStandard() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
@@ -127,11 +128,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(targetFrameworkElement);
             var rootNamespaceElement = Document.XPathSelectElements("./Project/PropertyGroup/RootNamespace", NamespaceManager).FirstOrDefault();
             Assert.IsNotNull(rootNamespaceElement);
-            Document = sut.CreateNuSpec(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
+            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
             var developerSettingsSecret = new DeveloperSettingsSecret();
-            var developerSettings = peghComponentProvider.SecretRepository.Get(developerSettingsSecret, errorsAndInfos);
+            var developerSettings = await peghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
             VerifyTextElement(@"/package/metadata/id", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);
             VerifyTextElement(@"/package/metadata/title", @"Aspenlaub.Net.GitHub.CSharp." + ChabStandardTarget.SolutionId);

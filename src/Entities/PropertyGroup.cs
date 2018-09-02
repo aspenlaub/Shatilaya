@@ -3,6 +3,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
     public class PropertyGroup : IPropertyGroup {
+        // ReSharper disable once UnusedMember.Global
         public XmlNode XmlNode { get; set; }
         public string AssemblyName { get; set; }
         public string Condition { get; set; }

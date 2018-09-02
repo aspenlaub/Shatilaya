@@ -1,12 +1,12 @@
 ﻿using System.IO;
 using System.Linq;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Aspenlaub.Net.GitHub.CSharp.Pegh;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -22,9 +22,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [ClassInitialize]
         public static void Initialize(TestContext context) {
             DeleteFolder(CakeFolder());
-            var cakeInstaller = new CakeInstaller();
-            IErrorsAndInfos errorsAndInfos;
-            cakeInstaller.InstallCake(CakeFolder(), out errorsAndInfos);
+            ICakeInstaller cakeInstaller = new CakeInstaller();
+            cakeInstaller.InstallCake(CakeFolder(), out var errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
             CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 

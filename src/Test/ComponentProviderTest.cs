@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
@@ -6,7 +7,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [TestMethod]
         public void CanProvideComponents() {
-            var sut = new ComponentProvider();
+            IComponentProvider sut = new ComponentProvider();
             Assert.IsNotNull(sut);
             Assert.IsNotNull(sut.CakeRunner);
             Assert.IsNotNull(sut.DependencyTreeBuilder);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
@@ -65,8 +65,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         protected string ProjectName(string solutionFileFullName, FileInfo projectFileInfo) {
             var solutionFolder = solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\'));
             foreach (var s in File.ReadAllLines(solutionFileFullName).ToList().Where(x => x.StartsWith("Project("))) {
-                string projectName, projectFile;
-                if (!ExtractProject(s, out projectName, out projectFile)) { continue; }
+                if (!ExtractProject(s, out var projectName, out var projectFile)) { continue; }
 
                 var projectFullFileName = solutionFolder + '\\' + projectFile;
                 if (!File.Exists(projectFullFileName)) { continue; }
