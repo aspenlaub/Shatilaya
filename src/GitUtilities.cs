@@ -88,13 +88,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 if (Directory.Exists(folder + @"\lib")) {
 
-                    /* Folder exists => make sure the file names are consistent with the zip file provided on aspenlaub.net, otherwise the lib.zip needs to be updated there */
                     var zipFile = new ZipFile(zipStream);
                     // ReSharper disable once LoopCanBePartlyConvertedToQuery
                     foreach (var zipEntry in zipFile.Cast<ZipEntry>().Where(zipEntry => zipEntry.IsFile)) {
                         if (File.Exists(folder + @"\" + zipEntry.Name.Replace('/', '\\'))) { continue; }
 
-                        errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, zipEntry.Name));
+                        errorsAndInfos.Infos.Add(string.Format(Texts.FileNotFound, zipEntry.Name));
                     }
                 } else {
 
