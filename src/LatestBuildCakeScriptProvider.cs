@@ -6,7 +6,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class LatestBuildCakeScriptProvider : ILatestBuildCakeScriptProvider {
         public string GetLatestBuildCakeScript() {
             var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream("Aspenlaub.Net.GitHub.CSharp.Shatilaya.build.standard.cake");
+            var stream = assembly.GetManifestResourceStream("Aspenlaub.Net.GitHub.CSharp.Shatilaya.build.cake");
             if (stream == null) { return ""; }
 
             var reader = new StreamReader(stream);

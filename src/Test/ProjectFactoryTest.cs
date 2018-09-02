@@ -59,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
-            var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.standard.cake";
+            var cakeScriptFileFullName = PakledConsumerTarget.Folder().FullName + @"\build.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
@@ -140,7 +140,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
-            var cakeScriptFileFullName = ChabStandardTarget.Folder().FullName + @"\build.standard.cake";
+            var cakeScriptFileFullName = ChabStandardTarget.Folder().FullName + @"\build.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";

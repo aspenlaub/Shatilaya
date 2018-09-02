@@ -194,12 +194,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region Then
         [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
         public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
-            const string url = @"https://raw.githubusercontent.com/aspenlaub/ShatilayaStandard/master/build.standard.cake";
+            const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake";
             var request = WebRequest.Create(url) as HttpWebRequest;
             Assert.IsNotNull(request);
             using (var response = (HttpWebResponse)request.GetResponse()) {
                 Assert.IsNotNull(response);
-                var scriptFileFullName = ChabTarget.FullName() + @"\build.standard.cake";
+                var scriptFileFullName = ChabTarget.FullName() + @"\build.cake";
                 var stream = response.GetResponseStream();
                 Assert.IsNotNull(stream);
                 string expectedContents;
@@ -256,7 +256,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]
         public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.standard.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
         }
 
         [Then(@"I find the artifacts in the master debug folder")]

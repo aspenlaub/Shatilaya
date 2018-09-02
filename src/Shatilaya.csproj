@@ -22,7 +22,7 @@
     <EmbeddedResource Include="..\build.standard.cake" Link="build.standard.cake" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\build.cake" Link="build.cake" />
+    <EmbeddedResource Include="..\build.cake" Link="build.cake" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.PeghStandard" Version="1.0.6818.27801" />
