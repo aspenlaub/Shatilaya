@@ -19,9 +19,6 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\build.standard.cake" Link="build.standard.cake" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="..\build.cake" Link="build.cake" />
   </ItemGroup>
   <ItemGroup>
