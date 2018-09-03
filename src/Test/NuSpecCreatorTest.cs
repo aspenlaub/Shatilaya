@@ -74,7 +74,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
-            Assert.AreEqual(0, errorsAndInfos.Infos.Count);
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await peghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
