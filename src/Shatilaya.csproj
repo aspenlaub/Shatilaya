@@ -22,7 +22,7 @@
     <EmbeddedResource Include="..\build.cake" Link="build.cake" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.PeghStandard" Version="1.0.6818.27801" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.PeghStandard" Version="1.0.6820.32010" />
     <PackageReference Include="LibGit2Sharp" Version="0.25.2" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.217" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
