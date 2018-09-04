@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shatilaya", "Shatilaya.csproj", "{773DC0BE-EDD3-43AE-8D21-228DA74DED31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Shatilaya.Test.csproj", "{4FBEFF3D-0416-4E55-875E-76CC1C24EAAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shatilaya.Test", "Test\Shatilaya.Test.csproj", "{4FBEFF3D-0416-4E55-875E-76CC1C24EAAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
