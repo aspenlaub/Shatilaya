@@ -396,13 +396,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
         }
 
-        [Then(@"there is no obj folder in the src folder")]
-        public void ThenThereIsNoObjFolderInTheSrcFolder() {
-            var folder = ChabTarget.Folder().SubFolder("src").FullName;
-            var objFolders = Directory.GetDirectories(folder, "obj", SearchOption.AllDirectories).ToList();
-            Assert.AreEqual(0, objFolders.Count, $"There is {objFolders.FirstOrDefault()}");
-        }
-
         #endregion
     }
 }

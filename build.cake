@@ -387,12 +387,12 @@ Task("BuildAndTestDebugAndRelease")
 Task("IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage")
   .Description("Default except check for outdated build.cake, except check for pending changes and except nuget create and push")
   .IsDependentOn("CleanRestorePull").IsDependentOn("BuildAndTestDebugAndRelease")
-  .IsDependentOn("UpdateNuspec").IsDependentOn("CleanObjectFolders").Does(() => {
+  .IsDependentOn("UpdateNuspec").Does(() => {
   });
 
 Task("IgnoreOutdatedBuildCakePendingChangesAndDoNotPush")
   .Description("Default except check for outdated build.cake, except check for pending changes and except nuget push")
-  .IsDependentOn("IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage").IsDependentOn("CreateNuGetPackage").IsDependentOn("CleanObjectFolders").Does(() => {
+  .IsDependentOn("IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage").IsDependentOn("CreateNuGetPackage").Does(() => {
   });
 
 Task("IgnoreOutdatedBuildCakePendingChanges")
