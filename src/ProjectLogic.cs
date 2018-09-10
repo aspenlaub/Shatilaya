@@ -7,6 +7,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             return project.TargetFramework.Contains("netstandard") || project.TargetFramework.Contains("netcore");
         }
 
+        public bool TargetsOldFramework(IProject project) {
+            return project.TargetFramework.Contains("4.5") || project.TargetFramework.Contains("4.6");
+        }
+
         public bool DoAllNetStandardOrCoreConfigurationsHaveNuspecs(IProject project) {
             return !IsANetStandardOrCoreProject(project)
                    || project.PropertyGroups.Where(propertyGroup
