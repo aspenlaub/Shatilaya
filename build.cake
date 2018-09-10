@@ -213,7 +213,7 @@ Task("RunTestsOnDebugArtifacts")
             throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
         }
         Information("Running tests in " + projectFile.FullPath);
-        if (projectLogic.TargetsOldFramework(project)) {
+        if (project.TargetFramework.Contains("4.5") || project.TargetFramework.Contains("4.6")) {
           var outputPath = project.PropertyGroups.Where(g => g.Condition.Contains("Debug")).Select(g => g.OutputPath).Where(p => p != "").First();
           outputPath = (outputPath.Contains(':') ? "" : projectFile.FullPath.Substring(0, projectFile.FullPath.LastIndexOf('/') + 1)) + outputPath.Replace('\\', '/');
           if (!outputPath.EndsWith("/")) { outputPath = outputPath + '/'; }
@@ -268,7 +268,7 @@ Task("RunTestsOnReleaseArtifacts")
             throw new Exception(string.Join("\r\n", projectErrorsAndInfos.Errors));
         }
         Information("Running tests in " + projectFile.FullPath);
-        if (projectLogic.TargetsOldFramework(project)) {
+        if (project.TargetFramework.Contains("4.5") || project.TargetFramework.Contains("4.6")) {
           var outputPath = project.PropertyGroups.Where(g => g.Condition.Contains("Release")).Select(g => g.OutputPath).Where(p => p != "").First();
           outputPath = (outputPath.Contains(':') ? "" : projectFile.FullPath.Substring(0, projectFile.FullPath.LastIndexOf('/') + 1)) + outputPath.Replace('\\', '/');
           if (!outputPath.EndsWith("/")) { outputPath = outputPath + '/'; }
