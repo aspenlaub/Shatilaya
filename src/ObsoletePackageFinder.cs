@@ -19,7 +19,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             var dependencyIdsAndVersions = ComponentProvider.PackageConfigsScanner.DependencyIdsAndVersions(solutionFolder, true, errorsAndInfos);
             if (!Directory.Exists(solutionFolder + @"\packages\")) { return; }
 
-            var folders = Directory.GetDirectories(solutionFolder + @"\packages\").ToList().Where(f => !f.Contains("OctoPack")).ToList();
+            var folders = Directory.GetDirectories(solutionFolder + @"\packages\").ToList().Where(f => !f.Contains("OctoPack") && !f.Contains("CodeAnalysis")).ToList();
             var okayFolders = new List<string>();
             foreach (var dependencyIdAndVersion in dependencyIdsAndVersions) {
                 okayFolders.AddRange(folders.Where(f => f.Contains(dependencyIdAndVersion.Key) && f.Contains(dependencyIdAndVersion.Value)));
