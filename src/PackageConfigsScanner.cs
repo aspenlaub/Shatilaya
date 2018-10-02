@@ -10,7 +10,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class PackageConfigsScanner : IPackageConfigsScanner {
         public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
             var dependencyIdsAndVersions = new Dictionary<string, string>();
-            foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test\"))) {
+            foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test"))) {
                 try {
                     var document = XDocument.Load(fileName);
                     foreach (var element in document.XPathSelectElements("/packages/package")) {
