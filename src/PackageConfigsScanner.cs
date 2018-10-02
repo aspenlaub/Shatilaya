@@ -39,7 +39,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
             }
 
-            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test\"))) {
+            foreach (var fileName in Directory.GetFiles(projectFolder, "*.csproj", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test"))) {
                 try {
                     var document = XDocument.Load(fileName);
                     foreach (var element in document.XPathSelectElements("/Project/ItemGroup/PackageReference")) {

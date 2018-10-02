@@ -11,6 +11,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Castle.Core.Internal;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -21,6 +22,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     public class NuSpecCreatorTest {
         protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NuSpecCreator), "Pakled");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NuSpecCreator), "ChabStandard");
+        protected static TestTargetFolder DvinTarget = new TestTargetFolder(nameof(NuSpecCreator), "Dvin");
 
         protected XDocument Document;
         protected XmlNamespaceManager NamespaceManager;
@@ -41,12 +43,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void Initialize() {
             PakledTarget.Delete();
             ChabStandardTarget.Delete();
+            DvinTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
             PakledTarget.Delete();
             ChabStandardTarget.Delete();
+            DvinTarget.Delete();
         }
 
         [TestMethod]
@@ -154,6 +158,35 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
+        [TestMethod]
+        public async Task CanCreateNuSpecForDvin() {
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
+            const string url = "https://github.com/aspenlaub/Dvin.git";
+            gitUtilities.Clone(url, DvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
+            componentProviderMock.SetupGet(c => c.ProjectFactory).Returns(new ProjectFactory());
+            componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
+            var peghComponentProvider = new PeghComponentProvider();
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
+
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(DvinTarget);
+
+            DvinTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+
+            var sut = new NuSpecCreator(componentProviderMock.Object);
+            var solutionFileFullName = DvinTarget.Folder().SubFolder("src").FullName + @"\" + DvinTarget.SolutionId + ".sln";
+            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+            Assert.IsNotNull(Document);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
+        }
+
         private static bool ParentIsReleasePropertyGroup(XElement e) {
             return e.Parent?.Attributes("Condition").Any(v => v.Value.Contains("Release")) == true;
         }
@@ -183,6 +216,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 var attributeValue = attributeValues[i];
                 var actualValue = element.Attribute(attributeName)?.Value;
                 Assert.AreEqual(attributeValue, actualValue, $"Expected {attributeValue} for {attributeName} using {xpath}, got {actualValue}");
+            }
+        }
+
+        protected void VerifyElementsInverse(string xpath, string attributeName, IList<string> unexpectedAttributeValueComponents) {
+            xpath = xpath.Replace("/", "/nu:");
+            var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
+            for (var i = 0; i < elements.Count; i++) {
+                var element = elements[i];
+                var actualValue = element.Attribute(attributeName)?.Value;
+                Assert.IsFalse(unexpectedAttributeValueComponents.Any(c => actualValue != null && actualValue.Contains(c)));
             }
         }
     }
