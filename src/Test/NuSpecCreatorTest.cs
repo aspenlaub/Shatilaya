@@ -121,6 +121,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             ChabStandardTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
             var sut = new NuSpecCreator(componentProviderMock.Object);
             var solutionFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln";
