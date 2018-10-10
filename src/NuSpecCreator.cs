@@ -38,11 +38,16 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
             string namespaceSelector, targetFramework;
             try {
                 projectDocument = XDocument.Load(projectFile);
+            } catch {
+                errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, projectFile));
+                return document;
+            }
+            try {
                 var targetFrameworkElement = projectDocument.XPathSelectElements("./Project/PropertyGroup/TargetFramework", NamespaceManager).FirstOrDefault();
                 namespaceSelector = targetFrameworkElement != null ? "" : "cp:";
                 targetFramework = targetFrameworkElement != null ? targetFrameworkElement.Value : "";
             } catch {
-                errorsAndInfos.Errors.Add(string.Format(Texts.InvalidXmlFile, projectFile));
+                errorsAndInfos.Errors.Add(string.Format(Texts.ErrorReadingTargetFramework, projectFile));
                 return document;
             }
 

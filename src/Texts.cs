@@ -4,9 +4,8 @@
         public const string CommitNotFound = "Commit '{0}' not found";
         public const string CouldNotGetListOfPullRequests = "Could not get list of pull requests";
         public const string CouldNotReadCakeVersion = "Could not read cake version from {0}";
+        public const string ErrorReadingTargetFramework = "Could not read target framework from \"{0}\"";
         public const string ExactlyOneRemoteExpected = "The checked out repository must have exactly one remote";
-        public const string FailedToCopy = "Failed to copy \"{0}\" to \"{1}\"";
-        public const string FailedToRename = "Failed to rename \"{0}\" into \"{1}\"";
         public const string FileNotFound = "File \"{0}\" not found";
         public const string FolderCouldNotBeCreated = "Folder \"{0}\" could not be created";
         public const string FolderIsObsolete = "Folder \"{0}\" is obsolete";
@@ -23,6 +22,8 @@
         public const string NuSpecFileUpdated = "{0} has been updated";
         public const string ObsoleteFolderDeleted = "Folder \"{0}\" is obsolete and has been deleted";
         public const string PackageVersionClashDueToFile = "File \"{0}\" requests package '{1}' with version {2}, but another one version {3}";
+        public const string PackageWithoutId = "File \"{0}\" refers to a package without an ID";
+        public const string PackageWithoutVersion = "File \"{0}\" refers to package '{1}' without a version number";
         public const string ProjectFileNotFound = "There is no project file \"{0}\"";
         public const string TopLevelNamespaceLacksADot = "Top level namespace '{0}' does not contain any dot ('.')";
         public const string UncommittedChangeTo = "There is an uncommitted change to \"{0}\"";

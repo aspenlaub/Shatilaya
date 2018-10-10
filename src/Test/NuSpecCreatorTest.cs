@@ -11,7 +11,6 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
-using Castle.Core.Internal;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -223,10 +222,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected void VerifyElementsInverse(string xpath, string attributeName, IList<string> unexpectedAttributeValueComponents) {
             xpath = xpath.Replace("/", "/nu:");
             var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
-            for (var i = 0; i < elements.Count; i++) {
-                var element = elements[i];
+            foreach (var element in elements) {
                 var actualValue = element.Attribute(attributeName)?.Value;
-                Assert.IsFalse(unexpectedAttributeValueComponents.Any(c => actualValue != null && actualValue.Contains(c)));
+                Assert.IsFalse(unexpectedAttributeValueComponents.Any(c => actualValue?.Contains(c) == true));
             }
         }
     }
