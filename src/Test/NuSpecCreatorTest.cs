@@ -177,7 +177,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(DvinTarget);
 
-            DvinTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
+            DvinTarget.RunBuildCakeScript(componentProviderMock.Object, "CleanRestorePull", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var sut = new NuSpecCreator(componentProviderMock.Object);
