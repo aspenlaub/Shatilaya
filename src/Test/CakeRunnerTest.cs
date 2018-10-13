@@ -4,6 +4,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -24,7 +25,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             DeleteFolder(CakeFolder());
             ICakeInstaller cakeInstaller = new CakeInstaller();
             cakeInstaller.InstallCake(CakeFolder(), out var errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             CakeExeFileFullName = cakeInstaller.CakeExeFileFullName(CakeFolder());
 
             ScriptsFolder = CakeScriptsFolder();

@@ -2,6 +2,7 @@
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,7 +48,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
             gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var latestBuildScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildScriptProvider.GetLatestBuildCakeScript();
@@ -56,7 +57,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             ChabTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();
             var componentProviderMock = new Mock<IComponentProvider>();
@@ -74,7 +75,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(obsoleteFolder.FullName + "\\somefile.csproj", "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<Project ToolsVersion=\"14.0\" DefaultTargets=\"Build\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\"></Project>");
 
             sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(errorsAndInfos.Infos.Any(i => i.Contains(obsoleteFolder.FullName) && i.Contains("has been deleted")));
         }
     }

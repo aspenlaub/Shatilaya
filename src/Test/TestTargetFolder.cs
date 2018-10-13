@@ -4,6 +4,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
@@ -77,7 +78,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             var gitUtilities = new GitUtilities();
             gitUtilities.DownloadReadyToCake(CakeFolder().SubFolder(@"tools"), errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
         public IFolder CakeFolder() {

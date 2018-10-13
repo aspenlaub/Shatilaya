@@ -2,6 +2,7 @@
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -54,7 +55,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/PakledConsumer.git";
             gitUtilities.Clone(url, PakledConsumerTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
@@ -63,7 +64,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
             PakledConsumerTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var solutionFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\" + PakledConsumerTarget.SolutionId + ".sln";
             var projectFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\" + PakledConsumerTarget.SolutionId + ".csproj";
@@ -73,7 +74,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var projectLogic = new ProjectLogic();
             Assert.IsFalse(projectLogic.IsANetStandardOrCoreProject(project));
             Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project));
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
             Assert.AreEqual(PakledConsumerTarget.SolutionId, project.ProjectName);
@@ -123,7 +124,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             projectFileFullName = PakledConsumerTarget.Folder().SubFolder("src").FullName + @"\Test\" + PakledConsumerTarget.SolutionId + ".Test.csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
             project = sut.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
             Assert.AreEqual(PakledConsumerTarget.SolutionId + ".Test", project.ProjectName);
@@ -135,7 +136,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
             gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var latestBuildCakeScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildCakeScriptProvider.GetLatestBuildCakeScript();
@@ -151,7 +152,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var projectLogic = new ProjectLogic();
             Assert.IsTrue(projectLogic.IsANetStandardOrCoreProject(project));
             Assert.IsTrue(projectLogic.DoAllNetStandardOrCoreConfigurationsHaveNuspecs(project));
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
             Assert.AreEqual(ChabStandardTarget.SolutionId, project.ProjectName);
@@ -201,7 +202,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             projectFileFullName = ChabStandardTarget.Folder().SubFolder("src").FullName + @"\Test\" + ChabStandardTarget.SolutionId + ".Test.csproj";
             Assert.IsTrue(File.Exists(projectFileFullName));
             project = sut.Load(solutionFileFullName, projectFileFullName, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(project);
             Assert.AreEqual(projectFileFullName, project.ProjectFileFullName);
             Assert.AreEqual(ChabStandardTarget.SolutionId + ".Test", project.ProjectName);

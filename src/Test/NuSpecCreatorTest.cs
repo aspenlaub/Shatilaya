@@ -10,6 +10,7 @@ using System.Xml.XPath;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -58,7 +59,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Pakled.git";
             gitUtilities.Clone(url, PakledTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
             var peghComponentProvider = new PeghComponentProvider();
@@ -76,7 +77,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(outputPathElement);
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await peghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
@@ -106,7 +107,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
             gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
@@ -119,7 +120,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(ChabStandardTarget);
 
             ChabStandardTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(2, errorsAndInfos.Infos.Count(i => i.Contains("Results File:")));
 
             var sut = new NuSpecCreator(componentProviderMock.Object);
@@ -133,7 +134,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(rootNamespaceElement);
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "Red", "White", "Blue", "Green<", "Orange&", "Violet>" }, errorsAndInfos);
             Assert.IsNotNull(Document);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await peghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
             Assert.IsNotNull(developerSettings);
@@ -164,7 +165,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Dvin.git";
             gitUtilities.Clone(url, DvinTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
@@ -177,13 +178,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(DvinTarget);
 
             DvinTarget.RunBuildCakeScript(componentProviderMock.Object, "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var sut = new NuSpecCreator(componentProviderMock.Object);
             var solutionFileFullName = DvinTarget.Folder().SubFolder("src").FullName + @"\" + DvinTarget.SolutionId + ".sln";
             Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
             Assert.IsNotNull(Document);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
         }
 

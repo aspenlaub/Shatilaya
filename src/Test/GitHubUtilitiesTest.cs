@@ -6,6 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -67,31 +68,31 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "", errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(hasOpenPullRequest.YesNo);
 
             hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "2", errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsFalse(hasOpenPullRequest.YesNo);
 
             hasOpenPullRequest = await HasOpenPullRequestForThisBranchAsync(sut, true, errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsFalse(hasOpenPullRequest.YesNo);
 
             hasOpenPullRequest = await HasOpenPullRequestForThisBranchAsync(sut, false, errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(hasOpenPullRequest.YesNo);
 
             var hasPullRequest = await HasPullRequestForThisBranchAndItsHeadTipAsync(sut, errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(hasPullRequest.YesNo);
         }
 
@@ -137,7 +138,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             try {
                 var numberOfPullRequests = await sut.GetNumberOfPullRequestsAsync(MasterFolder, errorsAndInfos);
-                Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+                Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
                 Assert.IsTrue(numberOfPullRequests > 1);
             } catch (WebException) { // ToDo: use Assert.Inconclusive
             }

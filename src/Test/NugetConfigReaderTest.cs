@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
@@ -24,7 +25,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var sut = new NugetConfigReader();
             var errorsAndInfos = new ErrorsAndInfos();
             Assert.AreEqual(ApiKey, sut.GetApiKey(NugetConfigFileName, Source, errorsAndInfos));
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual("", sut.GetApiKey(NugetConfigFileName, Source + "t", errorsAndInfos));
             Assert.IsTrue(errorsAndInfos.Errors.Any(e => e.Contains("No apikey was found for this source")));
         }

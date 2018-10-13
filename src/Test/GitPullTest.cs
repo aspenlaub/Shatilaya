@@ -3,6 +3,7 @@ using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -51,7 +52,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             foreach (var target in new[] { ChabTargetOne, ChabTargetTwo }) {
                 gitUtilities.Clone(url, target.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
                 ComponentProvider.CakeRunner.VerifyCakeVersion(target.Folder().SubFolder("tools"), errorsAndInfos);
-                Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+                Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
                 var addinsFolder = target.Folder().SubFolder("tools").SubFolder("Addins");
                 if (!addinsFolder.Exists()) { continue; }
@@ -63,7 +64,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             // https://github.com/aspenlaub/Chab/commit/12fb5504d9380aabfc8d4c4ef2cf21117c810290 came before
             // https://github.com/aspenlaub/Chab/commit/480ac569f4fc1ce88d30cb990f670217a16f1f6f where OctoPack was disabled
             gitUtilities.Reset(ChabTargetOne.Folder(), "12fb5504d9380aabfc8d4c4ef2cf21117c810290", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var projectFile = ChabTargetOne.Folder().SubFolder("src").FullName + '\\' + ChabTargetOne.SolutionId + @".csproj";
             Assert.IsFalse(File.ReadAllText(projectFile).Contains("<RunOctoPack>false</RunOctoPack>"));
@@ -81,7 +82,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             File.WriteAllText(solutionCakeFileFullName, solutionCakeContents);
 
             ChabTargetTwo.RunBuildCakeScript(ComponentProvider, "CleanRestorePull", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsFalse(File.ReadAllText(projectFile).Contains("RunOctoPack"));
         }
     }

@@ -8,6 +8,7 @@ using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -60,7 +61,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             const string url = "https://github.com/aspenlaub/Chab.git";
             var errorsAndInfos = new ErrorsAndInfos();
             ComponentProvider.GitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution and reference the local assemblies")]

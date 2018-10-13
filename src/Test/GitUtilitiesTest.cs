@@ -4,6 +4,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -98,7 +99,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var sut = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             sut.VerifyThatThereAreNoUncommittedChanges(MasterFolder, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             File.WriteAllText(MasterFolder.FullName + @"\change.cs", @"This is not a change");
             sut.VerifyThatThereAreNoUncommittedChanges(MasterFolder, errorsAndInfos);
             Assert.IsTrue(errorsAndInfos.Errors.Any(e => e.Contains(@"change.cs")));
@@ -112,7 +113,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(DoNotPullFolder);
             var errorsAndInfos = new ErrorsAndInfos();
             DoNotPullFolder.RunBuildCakeScript(ComponentProvider, "CleanRestorePull", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(sut.IsBranchAheadOfMaster(DoNotPullFolder.Folder()));
         }
 
@@ -121,7 +122,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var sut = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             sut.IdentifyOwnerAndName(MasterFolder, out var owner, out var name, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual("aspenlaub", owner);
             Assert.AreEqual("Pakled", name);
         }

@@ -4,6 +4,7 @@ using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -68,7 +69,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             errorsAndInfos = new ErrorsAndInfos();
             INugetPackageToPushFinder sut = new NugetPackageToPushFinder(ComponentProvider);
             var packageToPush = await sut.FindPackageToPushAsync(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
@@ -76,7 +77,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         private async Task<DeveloperSettings> GetDeveloperSettingsAsync(IErrorsAndInfos errorsAndInfos) {
             var developerSettingsSecret = new DeveloperSettingsSecret();
             var developerSettings = await ComponentProvider.PeghComponentProvider.SecretRepository.GetAsync(developerSettingsSecret, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsNotNull(developerSettings);
             return developerSettings;
         }
@@ -85,7 +86,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public async Task PackageForTheSameCommitIsNotPushed() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             CloneTarget(PakledTarget, errorsAndInfos);
 
@@ -110,7 +111,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var gitUtilities = new GitUtilities();
             var url = "https://github.com/aspenlaub/" + testTargetFolder.SolutionId + ".git";
             gitUtilities.Clone(url, testTargetFolder.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
         private void ChangeCakeScriptAndRunIt(TestTargetFolder testTargetFolder, bool disableNugetPush, IErrorsAndInfos errorsAndInfos) {
@@ -124,7 +125,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
             var target = disableNugetPush ? "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush" : "IgnoreOutdatedBuildCakePendingChanges";
             testTargetFolder.RunBuildCakeScript(ComponentProvider, target, errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
         [TestMethod]
@@ -141,7 +142,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             errorsAndInfos = new ErrorsAndInfos();
             var sut = new NugetPackageToPushFinder(ComponentProvider);
             var packageToPush = await sut.FindPackageToPushAsync(ChabStandardTarget.Folder().ParentFolder().SubFolder(ChabStandardTarget.SolutionId + @"Bin\Release"), ChabStandardTarget.Folder(), ChabStandardTarget.Folder().SubFolder("src").FullName + @"\" + ChabStandardTarget.SolutionId + ".sln", errorsAndInfos);
-            Assert.IsFalse(errorsAndInfos.Errors.Any(), string.Join("\r\n", errorsAndInfos.Errors));
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
         }
