@@ -195,22 +195,36 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region Then
         [Then(@"the build\.cake file is identical to the latest found on the GitHub Shatilaya master branch")]
         public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
+            string expectedContents;
+            do {
+                expectedContents = LatestCakeFileOnTheGitHubShatilayaMasterBranch();
+                if (expectedContents == "") {
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                }
+            } while (expectedContents == "");
+
+            var scriptFileFullName = ChabTarget.FullName() + @"\build.cake";
+            var actualContents = File.ReadAllText(scriptFileFullName).Replace("\r\n", "\n");
+
+            /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
+            Assert.AreEqual(expectedContents, actualContents);
+        }
+
+        private string LatestCakeFileOnTheGitHubShatilayaMasterBranch() {
             const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake";
             var request = WebRequest.Create(url) as HttpWebRequest;
             Assert.IsNotNull(request);
-            using (var response = (HttpWebResponse)request.GetResponse()) {
-                Assert.IsNotNull(response);
-                var scriptFileFullName = ChabTarget.FullName() + @"\build.cake";
-                var stream = response.GetResponseStream();
-                Assert.IsNotNull(stream);
-                string expectedContents;
-                using (var reader = new StreamReader(stream, Encoding.Default)) {
-                    expectedContents = reader.ReadToEnd().Replace("\r\n", "\n");
+            try {
+                using (var response = (HttpWebResponse) request.GetResponse()) {
+                    Assert.IsNotNull(response);
+                    var stream = response.GetResponseStream();
+                    Assert.IsNotNull(stream);
+                    using (var reader = new StreamReader(stream, Encoding.Default)) {
+                        return reader.ReadToEnd().Replace("\r\n", "\n");
+                    }
                 }
-                var actualContents = File.ReadAllText(scriptFileFullName).Replace("\r\n", "\n");
-
-                /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
-                Assert.AreEqual(expectedContents, actualContents);
+            } catch {
+                return "";
             }
         }
 
