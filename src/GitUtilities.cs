@@ -194,12 +194,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void DownloadReadyToCake(IFolder folder, IErrorsAndInfos errorsAndInfos) {
-            DeleteOldDownloadFiles("cake.0.28.0.zip");
+            DeleteOldDownloadFiles($"cake.{CakeRunner.PinnedCakeVersion}.zip");
             var downloadFolder = DownloadFolder();
-            var downloadedZipFileFullName = downloadFolder + @"\cake.0.28.0.zip";
+            var downloadedZipFileFullName = downloadFolder + $"\\cake.{CakeRunner.PinnedCakeVersion}.zip";
             if (!File.Exists(downloadedZipFileFullName)) {
                 using (var client = new WebClient()) {
-                    client.DownloadFile("https://www.aspenlaub.net/Github/cake.0.28.0.zip", downloadedZipFileFullName);
+                    client.DownloadFile($"https://www.aspenlaub.net/Github/cake.{CakeRunner.PinnedCakeVersion}.zip", downloadedZipFileFullName);
                 }
             }
             using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {

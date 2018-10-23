@@ -65,7 +65,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
         void IdentifyOwnerAndName(IFolder repositoryFolder, out string owner, out string name, IErrorsAndInfos errorsAndInfos);
 
         /// <summary>
-        /// Download and unpack cake 0.28.0 so that we do not need to install it using a powershell script
+        /// Download and unpack PinnedCakeVersion (see CakeRunner) so that we do not need to install it using a powershell script
         /// </summary>
         /// <param name="folder"></param>
         /// <param name="errorsAndInfos"></param>

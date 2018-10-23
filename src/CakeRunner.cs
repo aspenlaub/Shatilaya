@@ -10,7 +10,7 @@ using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ICom
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class CakeRunner : ICakeRunner {
-        public const string PinnedCakeVersion = "0.28.0";
+        public const string PinnedCakeVersion = "0.30.0", PreviousPinnedCakeVersion = "0.28.0";
 
         protected IComponentProvider ComponentProvider;
 
@@ -61,7 +61,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return;
             }
 
-            if (attribute.Value == PinnedCakeVersion) { return; }
+            if (attribute.Value == PinnedCakeVersion || attribute.Value == PreviousPinnedCakeVersion) { return; }
 
             errorsAndInfos.Errors.Add(string.Format(Texts.WrongCakeVersion, attribute.Value, packagesConfigFileFullName));
         }
