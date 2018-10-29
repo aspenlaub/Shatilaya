@@ -9,11 +9,11 @@
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Pegh
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
 
-using Folder = Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.Folder;
-using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.FolderUpdater;
-using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.FolderUpdateMethod;
-using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.ErrorsAndInfos;
-using FolderExtensions = Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions.FolderExtensions;
+using Folder = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities.Folder;
+using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components.FolderUpdater;
+using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces.FolderUpdateMethod;
+using ErrorsAndInfos = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities.ErrorsAndInfos;
+using FolderExtensions = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions.FolderExtensions;
 using Regex = System.Text.RegularExpressions.Regex;
 using ComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.ComponentProvider;
 using DeveloperSettingsSecret = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities.DeveloperSettingsSecret;
