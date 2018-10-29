@@ -42,7 +42,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             ChabTarget.Delete();
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void CanFindObsoletePackages() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();

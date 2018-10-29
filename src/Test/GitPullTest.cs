@@ -44,7 +44,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             ChabTargetOne.Delete();
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public void LatestChangesArePulled() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
