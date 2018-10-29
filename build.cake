@@ -5,7 +5,7 @@
 #addin nuget:?package=Nuget.Protocol.Core.v3&loaddependencies=true
 #addin nuget:?package=Microsoft.Win32.Registry
 #addin nuget:?package=SharpZipLib.NETStandard
-#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Pegh
+#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.PeghStandard
 #addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Shatilaya
 
 using Folder = Aspenlaub.Net.GitHub.CSharp.Pegh.Entities.Folder;
