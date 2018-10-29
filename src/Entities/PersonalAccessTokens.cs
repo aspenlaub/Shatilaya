@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Entities {
     [XmlRoot("PersonalAccessTokens", Namespace = "http://www.aspenlaub.net")]

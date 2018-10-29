@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using LibGit2Sharp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
             componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
             componentProviderMock.SetupGet(c => c.GitUtilities).Returns(new GitUtilities());
-            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(new PeghStandard.Components.ComponentProvider());
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(new Pegh.Components.ComponentProvider());
             ComponentProvider = componentProviderMock.Object;
         }
 

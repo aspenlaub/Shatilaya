@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using LibGit2Sharp;

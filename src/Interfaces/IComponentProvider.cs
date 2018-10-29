@@ -1,4 +1,4 @@
-﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces.IComponentProvider;
+﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {

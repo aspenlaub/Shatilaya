@@ -1,5 +1,5 @@
 ﻿using System;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using LibGit2Sharp;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {

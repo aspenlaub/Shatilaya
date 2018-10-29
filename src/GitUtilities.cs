@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Components;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Extensions;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using ICSharpCode.SharpZipLib.Zip;
 using LibGit2Sharp;

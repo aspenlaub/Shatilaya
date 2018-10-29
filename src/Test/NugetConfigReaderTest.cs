@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.PeghStandard.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
