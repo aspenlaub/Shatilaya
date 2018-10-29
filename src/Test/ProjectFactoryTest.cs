@@ -49,7 +49,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             ChabStandardTarget.Delete();
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CanLoadPakledConsumerProject() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
