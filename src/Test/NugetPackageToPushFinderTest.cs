@@ -57,7 +57,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             ChabStandardTarget.Delete();
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanFindNugetPackagesToPushForPakled() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
@@ -82,7 +82,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             return developerSettings;
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task PackageForTheSameCommitIsNotPushed() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
@@ -128,7 +128,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanFindNugetPackagesToPushForChabStandard() {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);

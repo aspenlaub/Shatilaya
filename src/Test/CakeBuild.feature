@@ -1,4 +1,5 @@
 ﻿@CakeBuild
+@ignore
 Feature: CakeBuild
 	In order to replace the little things
 	I want to move the compile and test part to build.cake
