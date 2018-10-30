@@ -132,6 +132,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 var groupElement = new XElement(NugetNamespace + "group", new XAttribute("targetFramework", targetFramework));
                 dependenciesElement.Add(groupElement);
                 dependenciesElement = groupElement;
+            } else {
+                var targetFrameworkElement =
+                    projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFrameworkVersion", NamespaceManager)
+                        .FirstOrDefault()
+                    ?? projectDocument.XPathSelectElements("./" + namespaceSelector + "Project/" + namespaceSelector + "PropertyGroup/" + namespaceSelector + "TargetFramework", NamespaceManager)
+                        .FirstOrDefault();
+                if (targetFrameworkElement != null) {
+                    var groupElement = new XElement(NugetNamespace + "group", new XAttribute("targetFramework", "net" + TargetFrameworkElementToLibNetSuffix(targetFrameworkElement)));
+                    dependenciesElement.Add(groupElement);
+                    dependenciesElement = groupElement;
+                }
             }
 
             foreach (var dependencyElement in dependencyIdsAndVersions.Select(dependencyIdAndVersion

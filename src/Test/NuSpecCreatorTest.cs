@@ -23,6 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NuSpecCreator), "Pakled");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NuSpecCreator), "ChabStandard");
         protected static TestTargetFolder DvinTarget = new TestTargetFolder(nameof(NuSpecCreator), "Dvin");
+        protected static TestTargetFolder VishizhukelTarget = new TestTargetFolder(nameof(NuSpecCreator), "Vishizhukel");
 
         protected XDocument Document;
         protected XmlNamespaceManager NamespaceManager;
@@ -44,6 +45,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             PakledTarget.Delete();
             ChabStandardTarget.Delete();
             DvinTarget.Delete();
+            VishizhukelTarget.Delete();
         }
 
         [TestCleanup]
@@ -51,6 +53,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             PakledTarget.Delete();
             ChabStandardTarget.Delete();
             DvinTarget.Delete();
+            VishizhukelTarget.Delete();
         }
 
         [TestMethod]
@@ -93,11 +96,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElement(@"/package/metadata/version", @"$version$");
-            VerifyElements(@"/package/metadata/dependencies/dependency", "id", new List<string> { "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" });
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Newtonsoft.Json" }, false);
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" }, false);
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" }, false);
             var target = @"lib\net" + targetFrameworkElement.Value.Replace("v", "").Replace(".", "");
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
+            VerifyElements(@"/package/files/file", "target", new List<string> { target, target }, false);
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
@@ -150,12 +153,12 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var year = DateTime.Now.Year;
             VerifyTextElement(@"/package/metadata/copyright", $"Copyright {year}");
             VerifyTextElementPattern(@"/package/metadata/version", @"\d+.\d+.\d+.\d+");
-            VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" });
-            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "LibGit2Sharp", "Newtonsoft.Json" });
-            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" });
-            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" });
+            VerifyElements(@"/package/metadata/dependencies/group", "targetFramework", new List<string> { @"netstandard2.0" }, false);
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "LibGit2Sharp", "Newtonsoft.Json" }, false);
+            VerifyElements(@"/package/files/file", "src", new List<string> { @"bin\Release\Aspenlaub.*.dll", @"bin\Release\Aspenlaub.*.pdb" }, false);
+            VerifyElements(@"/package/files/file", "exclude", new List<string> { @"bin\Release\*.Test*.*;bin\Release\*.exe", @"bin\Release\*.Test*.*;bin\Release\*.exe" }, false);
             var target = @"lib\" + targetFrameworkElement.Value;
-            VerifyElements(@"/package/files/file", "target", new List<string> { target, target });
+            VerifyElements(@"/package/files/file", "target", new List<string> { target, target }, false);
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
@@ -188,6 +191,35 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
         }
 
+        [TestMethod]
+        public async Task CanCreateNuSpecForVishizhukel() {
+            var gitUtilities = new GitUtilities();
+            var errorsAndInfos = new ErrorsAndInfos();
+            const string url = "https://github.com/aspenlaub/Vishizhukel.git";
+            gitUtilities.Clone(url, VishizhukelTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+            var componentProviderMock = new Mock<IComponentProvider>();
+            componentProviderMock.SetupGet(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
+            componentProviderMock.SetupGet(c => c.ProjectFactory).Returns(new ProjectFactory());
+            componentProviderMock.SetupGet(c => c.CakeRunner).Returns(new CakeRunner(componentProviderMock.Object));
+            componentProviderMock.SetupGet(c => c.ProcessRunner).Returns(new ProcessRunner());
+            var peghComponentProvider = new PeghComponentProvider();
+            componentProviderMock.SetupGet(c => c.PeghComponentProvider).Returns(peghComponentProvider);
+
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(VishizhukelTarget);
+
+            VishizhukelTarget.RunBuildCakeScript(componentProviderMock.Object, "CleanRestorePull", errorsAndInfos);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+
+            var sut = new NuSpecCreator(componentProviderMock.Object);
+            var solutionFileFullName = VishizhukelTarget.Folder().SubFolder("src").FullName + @"\" + VishizhukelTarget.SolutionId + ".sln";
+            Document = await sut.CreateNuSpecAsync(solutionFileFullName, new List<string> { "The", "Little", "Things" }, errorsAndInfos);
+            Assert.IsNotNull(Document);
+            Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+            VerifyElements(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Aspenlaub.Net.GitHub.CSharp.Pegh" }, true);
+        }
+
         private static bool ParentIsReleasePropertyGroup(XElement e) {
             return e.Parent?.Attributes("Condition").Any(v => v.Value.Contains("Release")) == true;
         }
@@ -208,10 +240,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(versionMatch.Success, $"Element {xpath} should be {expectedPattern}, got: {element.Value}");
         }
 
-        protected void VerifyElements(string xpath, string attributeName, IList<string> attributeValues) {
+        protected void VerifyElements(string xpath, string attributeName, IList<string> attributeValues, bool couldBeMore) {
             xpath = xpath.Replace("/", "/nu:");
             var elements = Document.XPathSelectElements(xpath, NamespaceManager).ToList();
-            Assert.AreEqual(attributeValues.Count, elements.Count, $"Expected {attributeValues.Count} elements using {xpath}, got {elements.Count}");
+            if (couldBeMore) {
+                Assert.IsTrue(attributeValues.Count <= elements.Count, $"Expected at least {attributeValues.Count} elements using {xpath}, got {elements.Count}");
+            } else {
+                Assert.AreEqual(attributeValues.Count, elements.Count, $"Expected {attributeValues.Count} elements using {xpath}, got {elements.Count}");
+            }
             for (var i = 0; i < attributeValues.Count; i ++) {
                 var element = elements[i];
                 var attributeValue = attributeValues[i];
