@@ -43,7 +43,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
                 File.Delete(zipFileName);
             }
-            MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
+            // MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             if (canCloneBeUsed) { return; }
 
             Repository.Clone(url, folder.FullName, cloneOptions);
@@ -69,42 +69,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         private static string CloneZipFileName(string url) {
             return DownloadFolder() + '\\' + url.Replace(':', '-').Replace('/', '-').Replace('.', '-') + ".zip";
-        }
-
-        /// <summary>
-        /// When tests are executed using cake, the lib sub folder does not make it to the working directory,
-        /// so the execution fails and reports that a git2 assembly cannot be found
-        /// </summary>
-        private static void MakeSureGit2AssembliesAreInPlace(IErrorsAndInfos errorsAndInfos) {
-            DeleteOldDownloadFiles("lib.zip");
-            var folder = Directory.GetCurrentDirectory();
-            var downloadFolder = DownloadFolder();
-            var downloadedZipFileFullName = downloadFolder + @"\lib.zip";
-            if (!File.Exists(downloadedZipFileFullName)) {
-                using (var client = new WebClient()) {
-                    client.DownloadFile("https://www.aspenlaub.net/Github/lib.zip", downloadedZipFileFullName);
-                }
-            }
-            using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-                if (Directory.Exists(folder + @"\lib")) {
-
-                    var zipFile = new ZipFile(zipStream);
-                    // ReSharper disable once LoopCanBePartlyConvertedToQuery
-                    foreach (var zipEntry in zipFile.Cast<ZipEntry>().Where(zipEntry => zipEntry.IsFile)) {
-                        if (File.Exists(folder + @"\" + zipEntry.Name.Replace('/', '\\'))) { continue; }
-
-                        errorsAndInfos.Infos.Add(string.Format(Texts.FileNotFound, zipEntry.Name));
-                    }
-                } else {
-
-                    /* Folder exists => create it from the downloaded zip file */
-                    var fastZip = new FastZip();
-                    fastZip.ExtractZip(zipStream, folder, FastZip.Overwrite.Never, s => { return true; }, null, null, true, true);
-                    if (Directory.Exists(folder + @"\lib")) { return; }
-
-                    errorsAndInfos.Errors.Add(string.Format(Texts.FolderCouldNotBeCreated, folder));
-                }
-            }
         }
 
         private static string DownloadFolder() {
