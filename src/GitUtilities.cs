@@ -43,7 +43,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 }
                 File.Delete(zipFileName);
             }
-            // MakeSureGit2AssembliesAreInPlace(errorsAndInfos);
             if (canCloneBeUsed) { return; }
 
             Repository.Clone(url, folder.FullName, cloneOptions);

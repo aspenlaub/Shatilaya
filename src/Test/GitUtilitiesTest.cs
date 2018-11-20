@@ -94,7 +94,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(headTipIdSha.Length >= 40);
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CanDetermineUncommittedChanges() {
             var sut = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();

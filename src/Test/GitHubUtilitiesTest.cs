@@ -61,7 +61,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Repository.Clone(url, folder.FullName, new CloneOptions { BranchName = branch });
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public async Task CanCheckIfPullRequestsExist() {
             var sut = new GitHubUtilities(ComponentProvider);
             var errorsAndInfos = new ErrorsAndInfos();
