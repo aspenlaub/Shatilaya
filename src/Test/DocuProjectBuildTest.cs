@@ -40,7 +40,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             RoxannTarget.Delete();
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CanBuildProjectForDocumentation() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();

@@ -105,7 +105,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(errorsAndInfos.Errors.Any(e => e.Contains(@"change.cs")));
         }
 
-        [TestMethod]
+        [TestMethod, Ignore]
         public void CanCheckIfIsBranchAheadOfMaster() {
             CloneRepository(DoNotPullFolder.Folder(), "do-not-pull-from-me");
             var sut = new GitUtilities();
