@@ -38,7 +38,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [BeforeFeature("CakeBuild")]
         public static void RecreateCakeFolder() {
-            Assert.Inconclusive("Migration to .net core");
             ChabTarget.DeleteCakeFolder();
             ChabTarget.CreateCakeFolder();
         }

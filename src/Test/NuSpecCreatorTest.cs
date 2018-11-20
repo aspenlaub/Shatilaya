@@ -104,7 +104,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public async Task CanCreateNuSpecForChabStandard() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
@@ -162,7 +162,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyTextElement(@"/package/metadata/tags", @"Red White Blue");
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public async Task CanCreateNuSpecForDvin() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
@@ -191,7 +191,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             VerifyElementsInverse(@"/package/metadata/dependencies/group/dependency", "id", new List<string> { "Dvin" });
         }
 
-        [TestMethod, Ignore]
+        [TestMethod]
         public async Task CanCreateNuSpecForVishizhukel() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
