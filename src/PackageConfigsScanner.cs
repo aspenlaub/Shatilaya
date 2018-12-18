@@ -9,18 +9,30 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class PackageConfigsScanner : IPackageConfigsScanner {
+        public readonly IList<string> PackageIdsWithoutVersion = new List<string> {
+            "Microsoft.AspNetCore.App", "Microsoft.NETCore.App"
+        };
+
         public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
             var dependencyIdsAndVersions = new Dictionary<string, string>();
             foreach (var fileName in Directory.GetFiles(projectFolder, "packages.config", SearchOption.AllDirectories).Where(f => includeTest || !f.Contains(@"Test"))) {
                 var document = XDocument.Load(fileName);
                 foreach (var element in document.XPathSelectElements("/packages/package")) {
                     var id = element.Attribute("id")?.Value;
-                    var version = element.Attribute("version")?.Value;
                     if (string.IsNullOrEmpty(id)) {
                         errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithoutId, fileName));
                         continue;
                     }
-                    if (string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
+
+                    var version = element.Attribute("version")?.Value;
+                    if (PackageIdsWithoutVersion.Contains(id)) {
+                        if (!string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
+                            errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithVersion, fileName, id));
+                            continue;
+                        }
+
+                        version = "";
+                    } else if (string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
                         errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithoutVersion, fileName, id));
                         continue;
                     }
@@ -59,15 +71,23 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
                 foreach (var element in document.XPathSelectElements("/" + namespaceSelector + "Project/" + namespaceSelector + "ItemGroup/" + namespaceSelector + "PackageReference", namespaceManager)) {
                     var id = element.Attribute("Include")?.Value;
-                    var version = element.Attribute("Version")?.Value;
-                    if (string.IsNullOrEmpty(version)) {
-                        version = element.XPathSelectElement("./" + namespaceSelector + "Version", namespaceManager)?.Value;
-                    }
                     if (string.IsNullOrEmpty(id)) {
                         errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithoutId, fileName));
                         continue;
                     }
-                    if (string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
+
+                    var version = element.Attribute("Version")?.Value;
+                    if (string.IsNullOrEmpty(version)) {
+                        version = element.XPathSelectElement("./" + namespaceSelector + "Version", namespaceManager)?.Value;
+                    }
+                    if (PackageIdsWithoutVersion.Contains(id)) {
+                        if (!string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
+                            errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithVersion, fileName, id));
+                            continue;
+                        }
+
+                        version = "";
+                    } else if (string.IsNullOrEmpty(version) && !errorsAndInfos.Errors.Any()) {
                         errorsAndInfos.Errors.Add(string.Format(Texts.PackageWithoutVersion, fileName, id));
                         continue;
                     }
