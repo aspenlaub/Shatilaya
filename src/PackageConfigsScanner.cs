@@ -10,7 +10,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class PackageConfigsScanner : IPackageConfigsScanner {
         public readonly IList<string> PackageIdsWithoutVersion = new List<string> {
-            "Microsoft.AspNetCore.App", "Microsoft.NETCore.App"
+            "Microsoft.AspNetCore.App", "Microsoft.NETCore.App", "Microsoft.AspNetCore.All"
         };
 
         public IDictionary<string, string> DependencyIdsAndVersions(string projectFolder, bool includeTest, IErrorsAndInfos errorsAndInfos) {
