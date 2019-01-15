@@ -28,7 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="TechTalk.SpecFlow">
-      <HintPath>..\packages\SpecFlow.2.4.0\lib\net45\TechTalk.SpecFlow.dll</HintPath>
+      <HintPath>..\..\..\..\.nuget\packages\specflow\2.4.1\lib\net45\TechTalk.SpecFlow.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
