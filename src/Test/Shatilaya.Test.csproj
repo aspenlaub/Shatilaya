@@ -24,6 +24,11 @@
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="2.4.1" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="TechTalk.SpecFlow">
+      <HintPath>lib\TechTalk.SpecFlow.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Shatilaya.csproj" />
   </ItemGroup>
   <ItemGroup>
