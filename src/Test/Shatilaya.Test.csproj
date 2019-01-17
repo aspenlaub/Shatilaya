@@ -12,13 +12,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
   <ItemGroup>
-    <Compile Remove="lib\**" />
-    <EmbeddedResource Remove="lib\**" />
-    <None Remove="lib\**" />
-    <SpecFlowFeatureFiles Remove="lib\**" />
-    <SpecFlowObsoleteCodeBehindFiles Remove="lib\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Pegh" Version="1.0.6954.34945" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.0-preview-0062" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.245" />
@@ -32,11 +25,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shatilaya.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="TechTalk.SpecFlow">
-      <HintPath>..\..\..\..\.nuget\packages\specflow\2.4.1\lib\net45\TechTalk.SpecFlow.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="CakeBuild.feature.cs">
