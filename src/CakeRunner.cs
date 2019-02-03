@@ -10,7 +10,7 @@ using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.ICom
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class CakeRunner : ICakeRunner {
-        public const string PinnedCakeVersion = "0.30.0", PreviousPinnedCakeVersion = "0.30.0";
+        public const string PinnedCakeVersion = "0.32.1", PreviousPinnedCakeVersion = "0.30.0";
 
         protected IComponentProvider ComponentProvider;
 
