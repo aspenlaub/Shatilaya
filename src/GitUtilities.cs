@@ -165,12 +165,18 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                     client.DownloadFile($"https://www.aspenlaub.net/Github/cake.{CakeRunner.PinnedCakeVersion}.zip", downloadedZipFileFullName);
                 }
             }
+
+            if (!File.Exists(downloadedZipFileFullName)) {
+                errorsAndInfos.Errors.Add(string.Format(Texts.FileNotFound, downloadedZipFileFullName));
+                return;
+            }
+
             using (var zipStream = new FileStream(downloadedZipFileFullName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 var fastZip = new FastZip();
                 fastZip.ExtractZip(zipStream, folder.FullName, FastZip.Overwrite.Never, s => { return true; }, null, null, true, true);
                 if (Directory.Exists(folder.FullName + @"\Cake")) { return; }
 
-                errorsAndInfos.Errors.Add(string.Format(Texts.FolderCouldNotBeCreated, folder));
+                errorsAndInfos.Errors.Add(string.Format(Texts.FolderCouldNotBeCreated, folder.FullName));
             }
         }
     }
