@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using IComponentProvider = Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces.IComponentProvider;
@@ -13,8 +12,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public void InstallNugetPackage(IFolder packagesConfigFolder, string packageId, string version, bool excludeVersion, IErrorsAndInfos errorsAndInfos) {
-            if (!File.Exists(packagesConfigFolder.FullName + @"\packages.config")) { return; }
-
             var arguments = new List<string> { "install", packageId };
             if (version != "") {
                 arguments.Add("-Version \"" + version + "\"");

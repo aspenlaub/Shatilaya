@@ -13,19 +13,10 @@ Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 	Then the build.cake file is identical to the latest found on the GitHub Shatilaya master branch
 	And I get an error message saying that I need to rerun my cake script
 
-Scenario: Output folders are cleaned up
-	When I run the build.cake script with target "CleanRestorePull"
-	Then no cake errors were reported
-	And build step "DebugBuild" was not a target
-	And build step "UpdateBuildCake" was not a target
-	And no artifact exists
-	And no intermediate build output exists
-
 Scenario: Nuget packages are restored and debug artifacts are built
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then no cake errors were reported
-	Then the Nuget packages are restored
-    And 3 "Debug" artifact/-s was/were produced
+	Then 3 "Debug" artifact/-s was/were produced
 	And 0 "Debug" nupkg file/-s was/were produced
 
 Scenario: Debug build failure

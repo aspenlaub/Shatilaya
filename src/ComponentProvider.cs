@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
 using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.ComponentProvider;
+// ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
     public class ComponentProvider : IComponentProvider {

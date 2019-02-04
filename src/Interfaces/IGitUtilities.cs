@@ -1,6 +1,7 @@
 ﻿using System;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using LibGit2Sharp;
+// ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IGitUtilities {

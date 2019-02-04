@@ -79,7 +79,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanCallScriptWithErrors() {
             var errorsAndInfos = new ErrorsAndInfos();
 
-            Sut.CallCake(CakeExeFileFullName, ScriptsFolder.FullName + @"\failure.cake", errorsAndInfos);
+            Sut.CallCake(CakeExeFileFullName, ScriptsFolder.FullName + @"\" + "failure.cake", errorsAndInfos);
             Assert.AreEqual(1, errorsAndInfos.Errors.Count);
             Assert.AreEqual("This is not a cake!", errorsAndInfos.Errors[0]);
             Assert.IsTrue(errorsAndInfos.Infos.Any(m => m.Contains(@"Task")));

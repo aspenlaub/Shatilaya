@@ -30,8 +30,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [TestInitialize]
         public void Initialize() {
             var checkOutFolder = Path.GetTempPath() + nameof(GitUtilitiesTest) + '\\';
-            MasterFolder = new Folder(checkOutFolder + @"Pakled-Master");
-            DevelopmentFolder = new Folder(checkOutFolder + @"Pakled-Development");
+            MasterFolder = new Folder(checkOutFolder + @"PakledCore-Master");
+            DevelopmentFolder = new Folder(checkOutFolder + @"PakledCore-Development");
 
             CleanUp();
             CloneRepository(MasterFolder, "master");
@@ -57,7 +57,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 deleter.DeleteFolder(folder);
             }
 
-            const string url = "https://github.com/aspenlaub/Pakled.git";
+            const string url = "https://github.com/aspenlaub/PakledCore.git";
             Repository.Clone(url, folder.FullName, new CloneOptions { BranchName = branch });
         }
 
@@ -71,7 +71,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(hasOpenPullRequest.YesNo);
 
-            hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "2", errorsAndInfos);
+            hasOpenPullRequest = await HasOpenPullRequestAsync(sut, "1", errorsAndInfos);
             if (hasOpenPullRequest.Inconclusive) { return; }
 
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
@@ -139,8 +139,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             try {
                 var numberOfPullRequests = await sut.GetNumberOfPullRequestsAsync(MasterFolder, errorsAndInfos);
                 Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
-                Assert.IsTrue(numberOfPullRequests > 1);
-            } catch (WebException) { // ToDo: use Assert.Inconclusive
+                Assert.IsTrue(numberOfPullRequests > 0);
+            } catch (WebException) {
             }
         }
     }

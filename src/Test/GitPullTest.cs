@@ -12,8 +12,8 @@ using Moq;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class GitPullTest {
-        protected static TestTargetFolder ChabTargetOne = new TestTargetFolder(nameof(GitPullTest), "Chab");
-        protected static TestTargetFolder ChabTargetTwo = new TestTargetFolder(nameof(GitPullTest) + "Copy", "Chab");
+        protected static TestTargetFolder ChabStandardTargetOne = new TestTargetFolder(nameof(GitPullTest), "ChabStandard");
+        protected static TestTargetFolder ChabStandardTargetTwo = new TestTargetFolder(nameof(GitPullTest) + "Copy", "ChabStandard");
         protected IComponentProvider ComponentProvider;
 
         public GitPullTest() {
@@ -25,31 +25,31 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ChabTargetTwo.DeleteCakeFolder();
-            ChabTargetTwo.CreateCakeFolder();
+            ChabStandardTargetTwo.DeleteCakeFolder();
+            ChabStandardTargetTwo.CreateCakeFolder();
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            ChabTargetTwo.DeleteCakeFolder();
+            ChabStandardTargetTwo.DeleteCakeFolder();
         }
 
         [TestInitialize]
         public void Initialize() {
-            ChabTargetOne.Delete();
+            ChabStandardTargetOne.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabTargetOne.Delete();
+            ChabStandardTargetOne.Delete();
         }
 
         [TestMethod]
         public void LatestChangesArePulled() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + ChabTargetOne.SolutionId + ".git";
-            foreach (var target in new[] { ChabTargetOne, ChabTargetTwo }) {
+            var url = "https://github.com/aspenlaub/" + ChabStandardTargetOne.SolutionId + ".git";
+            foreach (var target in new[] { ChabStandardTargetOne, ChabStandardTargetTwo }) {
                 gitUtilities.Clone(url, target.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
                 ComponentProvider.CakeRunner.VerifyCakeVersion(target.Folder().SubFolder("tools"), errorsAndInfos);
                 Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
@@ -61,29 +61,28 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 deleter.DeleteFolder(addinsFolder);
             }
 
-            // https://github.com/aspenlaub/Chab/commit/12fb5504d9380aabfc8d4c4ef2cf21117c810290 came before
-            // https://github.com/aspenlaub/Chab/commit/480ac569f4fc1ce88d30cb990f670217a16f1f6f where OctoPack was disabled
-            gitUtilities.Reset(ChabTargetOne.Folder(), "12fb5504d9380aabfc8d4c4ef2cf21117c810290", errorsAndInfos);
+            // https://github.com/aspenlaub/ChabStandard/commit/b8c4dee904e5748fce9aba8f912c37cf13f87a7c came before
+            // https://github.com/aspenlaub/ChabStandard/commit/c6eb57b5ad242222f3aa95d8a936bd08fcbab299 where package reference to Microsoft.NET.Test.Sdk was added
+            gitUtilities.Reset(ChabStandardTargetOne.Folder(), "b8c4dee904e5748fce9aba8f912c37cf13f87a7c", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            var projectFile = ChabTargetOne.Folder().SubFolder("src").FullName + '\\' + ChabTargetOne.SolutionId + @".csproj";
-            Assert.IsFalse(File.ReadAllText(projectFile).Contains("<RunOctoPack>false</RunOctoPack>"));
-            Assert.IsTrue(File.ReadAllText(projectFile).Contains("<RunOctoPack>true</RunOctoPack>"));
+            var projectFile = ChabStandardTargetOne.Folder().SubFolder("src").SubFolder("Test").FullName + '\\' + ChabStandardTargetOne.SolutionId + @".Test.csproj";
+            Assert.IsFalse(File.ReadAllText(projectFile).Contains("<PackageReference Include=\"Microsoft.NET.Test.Sdk\""));
 
-            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(ChabTargetTwo);
-            var buildCakeScriptFileName = ChabTargetTwo.FullName() + @"\build.cake";
-            var repositoryFolderSetStatement = "var repositoryFolder = MakeAbsolute(DirectoryPath.FromString(\"../../" + nameof(GitPullTest) + "/" + ChabTargetOne.SolutionId + "\")).FullPath;";
+            CakeBuildUtilities.CopyLatestScriptFromShatilayaSolution(ChabStandardTargetTwo);
+            var buildCakeScriptFileName = ChabStandardTargetTwo.FullName() + @"\" + "build.cake";
+            var repositoryFolderSetStatement = "var repositoryFolder = MakeAbsolute(DirectoryPath.FromString(\"../../" + nameof(GitPullTest) + "/" + ChabStandardTargetOne.SolutionId + "\")).FullPath;";
             var buildCakeScript = File.ReadAllLines(buildCakeScriptFileName).Select(s => s.Contains("var repositoryFolder =") ?  repositoryFolderSetStatement : s);
             File.WriteAllLines(buildCakeScriptFileName, buildCakeScript);
 
-            var solutionCakeFileFullName = ChabTargetTwo.Folder().FullName + @"\solution.cake";
+            var solutionCakeFileFullName = ChabStandardTargetTwo.Folder().FullName + @"\solution.cake";
             var solutionCakeContents = File.ReadAllText(solutionCakeFileFullName);
-            solutionCakeContents = solutionCakeContents.Replace(@"./src", @"../../" + nameof(GitPullTest) + @"/" + ChabTargetOne.SolutionId + @"/src");
+            solutionCakeContents = solutionCakeContents.Replace(@"./src", @"../../" + nameof(GitPullTest) + @"/" + ChabStandardTargetOne.SolutionId + @"/src");
             File.WriteAllText(solutionCakeFileFullName, solutionCakeContents);
 
-            ChabTargetTwo.RunBuildCakeScript(ComponentProvider, "CleanRestorePull", errorsAndInfos);
+            ChabStandardTargetTwo.RunBuildCakeScript(ComponentProvider, "CleanRestorePull", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            Assert.IsFalse(File.ReadAllText(projectFile).Contains("RunOctoPack"));
+            Assert.IsTrue(File.ReadAllText(projectFile).Contains("<PackageReference Include=\"Microsoft.NET.Test.Sdk\""));
         }
     }
 }

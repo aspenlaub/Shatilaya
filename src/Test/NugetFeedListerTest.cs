@@ -7,9 +7,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetFeedListerTest {
         [TestMethod]
-        public async Task CanFindPakledPackages() {
+        public async Task CanFindPeghPackages() {
             const string feedUrl = "https://www.aspenlaub.net/nuget";
-            const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pakled";
+            const string packageId = "Aspenlaub.Net.GitHub.CSharp.Pegh";
             INugetFeedLister sut = new NugetFeedLister();
             var packages = (await sut.ListReleasedPackagesAsync(feedUrl, packageId)).ToList();
             Assert.IsTrue(packages.Count > 5);

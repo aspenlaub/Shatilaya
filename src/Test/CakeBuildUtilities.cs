@@ -14,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsTrue(latestScriptWithoutBuildCakeCheck.Contains("#load \"solution.cake\""));
             latestScriptWithoutBuildCakeCheck = UseLocalShatilayaAssemblies(latestScriptWithoutBuildCakeCheck);
 
-            var currentScriptFileName = testTargetFolder.FullName() + @"\build.cake";
+            var currentScriptFileName = testTargetFolder.FullName() + @"\" + "build.cake";
             if (File.Exists(currentScriptFileName)) {
                 var currentScript = File.ReadAllText(currentScriptFileName);
                 if (Regex.Replace(latestScriptWithoutBuildCakeCheck, @"\s", "") == Regex.Replace(currentScript, @"\s", "")) { return; }

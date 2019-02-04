@@ -33,7 +33,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return;
             }
 
-            var toolsFolder = new Folder(cakeExeFullName.Substring(0, 6 + cakeExeFullName.LastIndexOf(@"\tools\", StringComparison.Ordinal)));
+            var toolsFolder = new Folder(cakeExeFullName.Substring(0, 6 + cakeExeFullName.LastIndexOf(@"\" + @"tools\", StringComparison.Ordinal)));
             VerifyCakeVersion(toolsFolder, errorsAndInfos);
             if (errorsAndInfos.AnyErrors()) { return; }
 

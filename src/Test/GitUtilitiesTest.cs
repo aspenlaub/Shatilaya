@@ -14,7 +14,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class GitUtilitiesTest {
         protected IFolder DevelopmentFolder, MasterFolder, NoGitFolder;
-        protected static TestTargetFolder DoNotPullFolder = new TestTargetFolder(nameof(GitUtilitiesTest) + @"DoNotPull", "Pakled");
+        protected static TestTargetFolder DoNotPullFolder = new TestTargetFolder(nameof(GitUtilitiesTest) + @"DoNotPull", "PakledCore");
         protected IComponentProvider ComponentProvider;
 
         public GitUtilitiesTest() {
@@ -38,8 +38,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [TestInitialize]
         public void Initialize() {
             var checkOutFolder = Path.GetTempPath() + nameof(GitUtilitiesTest) + '\\';
-            DevelopmentFolder = new Folder(checkOutFolder + @"Pakled-Development");
-            MasterFolder = new Folder(checkOutFolder + @"Pakled-Master");
+            DevelopmentFolder = new Folder(checkOutFolder + @"PakledCore-Development");
+            MasterFolder = new Folder(checkOutFolder + @"PakledCore-Master");
             NoGitFolder = new Folder(checkOutFolder + @"NoGit");
             DoNotPullFolder.Delete();
 
@@ -72,7 +72,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
                 deleter.DeleteFolder(folder);
             }
 
-            const string url = "https://github.com/aspenlaub/Pakled.git";
+            const string url = "https://github.com/aspenlaub/PakledCore.git";
             Repository.Clone(url, folder.FullName, new CloneOptions {BranchName = branch});
         }
 
@@ -80,7 +80,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         public void CanIdentifyCheckedOutBranch() {
             var sut = new GitUtilities();
             Assert.AreEqual("development", sut.CheckedOutBranch(DevelopmentFolder));
-            var developmentSubFolder = DevelopmentFolder.SubFolder(@"\Test\Properties");
+            var developmentSubFolder = DevelopmentFolder.SubFolder("src").SubFolder("Test");
             Assert.AreEqual("development", sut.CheckedOutBranch(developmentSubFolder));
             Assert.AreEqual("master", sut.CheckedOutBranch(MasterFolder));
             Assert.AreEqual("", sut.CheckedOutBranch(NoGitFolder));
@@ -124,7 +124,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             sut.IdentifyOwnerAndName(MasterFolder, out var owner, out var name, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual("aspenlaub", owner);
-            Assert.AreEqual("Pakled", name);
+            Assert.AreEqual("PakledCore", name);
         }
     }
 }

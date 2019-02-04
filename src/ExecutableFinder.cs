@@ -6,7 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Microsoft.Win32;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
-    public class ExecutableFinder : IExecutableFinder {
+    public class ExecutableFinder : IExecutableFinder { // ToDo: remove if proven obsolete
         protected const string RegistryKeyTemplate = @"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\{0}.0\Setup";
         protected const string ValueName = "Dbghelp_path";
         protected const string PathToMsTest = @"\mstest.exe";

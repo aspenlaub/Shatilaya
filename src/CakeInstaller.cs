@@ -40,7 +40,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         }
 
         public string CakeExeFileFullName(IFolder cakeFolder) {
-            return cakeFolder.FullName + @"\tools\Cake\cake.exe";
+            return cakeFolder.SubFolder("tools").FullName + @"\Cake\cake.exe";
         }
     }
 }

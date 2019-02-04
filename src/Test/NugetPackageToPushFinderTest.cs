@@ -15,7 +15,7 @@ using PeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Components.Compon
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetPackageToPushFinderTest {
-        protected static TestTargetFolder PakledTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "Pakled");
+        protected static TestTargetFolder PakledCoreTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "PakledCore");
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(NugetPackageToPushFinderTest), "ChabStandard");
 
         protected IComponentProvider ComponentProvider;
@@ -33,27 +33,27 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            PakledTarget.DeleteCakeFolder();
-            PakledTarget.CreateCakeFolder();
+            PakledCoreTarget.DeleteCakeFolder();
+            PakledCoreTarget.CreateCakeFolder();
             ChabStandardTarget.DeleteCakeFolder();
             ChabStandardTarget.CreateCakeFolder();
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            PakledTarget.DeleteCakeFolder();
+            PakledCoreTarget.DeleteCakeFolder();
             ChabStandardTarget.DeleteCakeFolder();
         }
 
         [TestInitialize]
         public void Initialize() {
-            PakledTarget.Delete();
+            PakledCoreTarget.Delete();
             ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            PakledTarget.Delete();
+            PakledCoreTarget.Delete();
             ChabStandardTarget.Delete();
         }
 
@@ -62,13 +62,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var errorsAndInfos = new ErrorsAndInfos();
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
 
-            CloneTarget(PakledTarget, errorsAndInfos);
+            CloneTarget(PakledCoreTarget, errorsAndInfos);
 
-            ChangeCakeScriptAndRunIt(PakledTarget, true, errorsAndInfos);
+            ChangeCakeScriptAndRunIt(PakledCoreTarget, true, errorsAndInfos);
 
             errorsAndInfos = new ErrorsAndInfos();
             INugetPackageToPushFinder sut = new NugetPackageToPushFinder(ComponentProvider);
-            var packageToPush = await sut.FindPackageToPushAsync(PakledTarget.Folder().ParentFolder().SubFolder(PakledTarget.SolutionId + @"Bin\Release"), PakledTarget.Folder(), PakledTarget.Folder().SubFolder("src").FullName + @"\" + PakledTarget.SolutionId + ".sln", errorsAndInfos);
+            var packageToPush = await sut.FindPackageToPushAsync(PakledCoreTarget.Folder().ParentFolder().SubFolder(PakledCoreTarget.SolutionId + @"Bin\Release"), PakledCoreTarget.Folder(), PakledCoreTarget.Folder().SubFolder("src").FullName + @"\" + PakledCoreTarget.SolutionId + ".sln", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.AreEqual(developerSettings.NugetFeedUrl, packageToPush.FeedUrl);
             Assert.IsTrue(packageToPush.ApiKey.Length > 256);
@@ -88,22 +88,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var developerSettings = await GetDeveloperSettingsAsync(errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
-            CloneTarget(PakledTarget, errorsAndInfos);
+            CloneTarget(PakledCoreTarget, errorsAndInfos);
 
-            var packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            var packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
             if (!packages.Any()) { return; }
 
             var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
             var latestPackage = packages.First(p => p.Identity.Version.Version == latestPackageVersion);
 
-            var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledTarget.Folder());
+            var headTipIdSha = ComponentProvider.GitUtilities.HeadTipIdSha(PakledCoreTarget.Folder());
             if (!latestPackage.Tags.Contains(headTipIdSha)) {
-                return; // $"No package has been pushed for {headTipIdSha} and {PakledTarget.SolutionId}, please run build.cake for this solution"
+                return; // $"No package has been pushed for {headTipIdSha} and {PakledCoreTarget.SolutionId}, please run build.cake for this solution"
             }
 
-            ChangeCakeScriptAndRunIt(PakledTarget, false, errorsAndInfos);
+            ChangeCakeScriptAndRunIt(PakledCoreTarget, false, errorsAndInfos);
 
-            packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledTarget.SolutionId);
+            packages = await ComponentProvider.NugetFeedLister.ListReleasedPackagesAsync(developerSettings.NugetFeedUrl, @"Aspenlaub.Net.GitHub.CSharp." + PakledCoreTarget.SolutionId);
             Assert.AreEqual(latestPackageVersion, packages.Max(p => p.Identity.Version.Version));
         }
 

@@ -11,7 +11,7 @@ using Moq;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class ObsoletePackageFinderTest {
-        protected static TestTargetFolder ChabTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "Chab");
+        protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(ObsoletePackageFinderTest), "ChabStandard");
         protected IComponentProvider ComponentProvider;
 
         public ObsoletePackageFinderTest() {
@@ -23,47 +23,47 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            ChabTarget.DeleteCakeFolder();
-            ChabTarget.CreateCakeFolder();
+            ChabStandardTarget.DeleteCakeFolder();
+            ChabStandardTarget.CreateCakeFolder();
         }
 
         [ClassCleanup]
         public static void ClassCleanup() {
-            ChabTarget.DeleteCakeFolder();
+            ChabStandardTarget.DeleteCakeFolder();
         }
 
         [TestInitialize]
         public void Initialize() {
-            ChabTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestCleanup]
         public void TestCleanup() {
-            ChabTarget.Delete();
+            ChabStandardTarget.Delete();
         }
 
         [TestMethod]
         public void CanFindObsoletePackages() {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
-            var url = "https://github.com/aspenlaub/" + ChabTarget.SolutionId + ".git";
-            gitUtilities.Clone(url, ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            var url = "https://github.com/aspenlaub/" + ChabStandardTarget.SolutionId + ".git";
+            gitUtilities.Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             var latestBuildScriptProvider = new LatestBuildCakeScriptProvider();
             var cakeScript = latestBuildScriptProvider.GetLatestBuildCakeScript();
             cakeScript = CakeBuildUtilities.UseLocalShatilayaAssemblies(cakeScript);
-            var cakeScriptFileFullName = ChabTarget.Folder().FullName + @"\build.cake";
+            var cakeScriptFileFullName = ChabStandardTarget.Folder().FullName + @"\" + "build.cake";
             File.WriteAllText(cakeScriptFileFullName, cakeScript);
 
-            ChabTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
+            ChabStandardTarget.RunBuildCakeScript(ComponentProvider, "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush", errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             errorsAndInfos = new ErrorsAndInfos();
             var componentProviderMock = new Mock<IComponentProvider>();
             componentProviderMock.Setup(c => c.PackageConfigsScanner).Returns(new PackageConfigsScanner());
             IObsoletePackageFinder sut = new ObsoletePackageFinder(componentProviderMock.Object);
-            var solutionFolder = ChabTarget.Folder().SubFolder("src");
+            var solutionFolder = ChabStandardTarget.Folder().SubFolder("src");
             sut.FindObsoletePackages(solutionFolder.FullName, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any());
             Assert.IsFalse(errorsAndInfos.Infos.Any());

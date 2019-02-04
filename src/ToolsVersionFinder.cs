@@ -1,7 +1,7 @@
 ﻿using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
-    public class ToolsVersionFinder : IToolsVersionFinder {
+    public class ToolsVersionFinder : IToolsVersionFinder { // ToDo: remove if proven obsolete
         protected IComponentProvider ComponentProvider;
 
         public ToolsVersionFinder(IComponentProvider componentProvider) {

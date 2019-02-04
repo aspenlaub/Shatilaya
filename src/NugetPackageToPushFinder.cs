@@ -45,7 +45,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
                 return packageToPush;
             }
 
-            var nugetConfigFileFullName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\nuget.config";
+            var nugetConfigFileFullName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\NuGet\" + "nuget.config";
             packageToPush.ApiKey = ComponentProvider.NugetConfigReader.GetApiKey(nugetConfigFileFullName, feedId, errorsAndInfos);
             if (errorsAndInfos.Errors.Any()) { return packageToPush; }
 

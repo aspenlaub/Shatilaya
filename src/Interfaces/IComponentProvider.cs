@@ -1,4 +1,5 @@
 ﻿using IPeghComponentProvider = Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces.IComponentProvider;
+// ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces {
     public interface IComponentProvider {
