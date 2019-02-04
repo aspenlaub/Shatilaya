@@ -8,7 +8,7 @@ Shatilaya is the vulcan word for automation
 
 ## Can it be useful to you?
 
-Yes, if you are working with Visual Studio 2017 (Visual Studio 2015 projects probably still work, but I am moving away from them). How you get started is illustrated in the [Roxann](https://github.com/aspenlaub/Roxann) repository's readme file
+Yes, if you are working with Visual Studio 2017 and projects targeting .net standard, .net core or .net framework >= 4.7. How you get started is illustrated in the [Roxann](https://github.com/aspenlaub/Roxann) repository's readme file
 
 ## Built around build.cake
 
