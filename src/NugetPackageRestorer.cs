@@ -13,7 +13,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
 
         public void RestoreNugetPackages(string solutionFileFullName, IErrorsAndInfos errorsAndInfos) {
             var directoryName = solutionFileFullName.Substring(0, solutionFileFullName.LastIndexOf('\\'));
-            if (!Directory.Exists(directoryName + @"\packages")) { return; }
 
             ComponentProvider.ProcessRunner.RunProcess("nuget.exe", "restore " + solutionFileFullName, directoryName, errorsAndInfos);
         }
