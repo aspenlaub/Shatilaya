@@ -30,7 +30,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public ICakeInstaller CakeInstaller => DefaultComponent<ICakeInstaller, CakeInstaller>();
         public ICakeRunner CakeRunner { get { return DefaultComponent<ICakeRunner, CakeRunner>(() => new CakeRunner(this)); } }
         public IDependencyTreeBuilder DependencyTreeBuilder => DefaultComponent<IDependencyTreeBuilder, DependencyTreeBuilder>();
-        public IExecutableFinder ExecutableFinder => DefaultComponent<IExecutableFinder, ExecutableFinder>();
         public IGitUtilities GitUtilities => DefaultComponent<IGitUtilities, GitUtilities>();
         public IGitHubUtilities GitHubUtilities { get { return DefaultComponent<IGitHubUtilities, GitHubUtilities>(() => new GitHubUtilities(this)); } }
         public ILatestBuildCakeScriptProvider LatestBuildCakeScriptProvider => DefaultComponent<ILatestBuildCakeScriptProvider, LatestBuildCakeScriptProvider>();
@@ -46,6 +45,5 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya {
         public IProcessRunner ProcessRunner => DefaultComponent<IProcessRunner, ProcessRunner>();
         public IProjectFactory ProjectFactory => DefaultComponent<IProjectFactory, ProjectFactory>();
         public IProjectLogic ProjectLogic => DefaultComponent<IProjectLogic, ProjectLogic>();
-        public IToolsVersionFinder ToolsVersionFinder { get { return DefaultComponent<IToolsVersionFinder, ToolsVersionFinder>(() => new ToolsVersionFinder(this)); } }
     }
 }

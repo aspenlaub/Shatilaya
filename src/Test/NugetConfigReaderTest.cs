@@ -9,7 +9,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NugetConfigReaderTest {
         protected string NugetConfigFileName = Path.GetTempPath() + nameof(NugetConfigReaderTest) + ".config";
-        protected string Source = "hypotheicalsource.net";
+        protected string Source = "hypothetical" + "source.net";
         protected string ApiKey = "thisisnotanapikey";
 
         [TestCleanup]
