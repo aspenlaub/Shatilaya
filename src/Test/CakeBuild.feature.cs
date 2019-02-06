@@ -97,8 +97,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
 #line 8
  testRunner.And("Nuget packages are not restored yet", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 9
- testRunner.And("I copy the latest build.cake script from my Shatilaya solution and reference the " +
-                    "local assemblies", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I copy the latest build.cake script from my Shatilaya solution with a comment add" +
+                    "ed at the top", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         

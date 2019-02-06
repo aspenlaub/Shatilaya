@@ -29,16 +29,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="CakeBuild.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CakeBuild.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="CakeBuild.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>CakeBuild.feature.cs</LastGenOutput>
+      <Generator></Generator>
     </None>
   </ItemGroup>
 </Project>

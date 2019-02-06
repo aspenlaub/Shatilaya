@@ -6,7 +6,7 @@ Feature: CakeBuild
 Background: 
     Given I have a green solution with unit tests in a temp folder
 	And Nuget packages are not restored yet
-	And I copy the latest build.cake script from my Shatilaya solution and reference the local assemblies
+	And I copy the latest build.cake script from my Shatilaya solution with a comment added at the top
 
 Scenario: Latest build.cake is copied from GitHub Shatilaya master branch
 	When I run the build.cake script

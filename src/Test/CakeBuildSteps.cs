@@ -66,11 +66,14 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         }
 
-        [Given(@"I copy the latest build\.cake script from my Shatilaya solution and reference the local assemblies")]
+        [Given(@"I copy the latest build\.cake script from my Shatilaya solution with a comment added at the top")]
         public void GivenIHaveTheLatestBuildCakeScript() {
             var errorsAndInfos = new ErrorsAndInfos();
             vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabStandardTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+            var buildCakeFileName = ChabStandardTarget.FullName() + @"\" + BuildCake.Standard;
+            var buildCake = File.ReadAllText(buildCakeFileName);
+            File.WriteAllText(buildCakeFileName, "// This should make me different from the master build.cake\r\n" + buildCake);
         }
 
         [Given(@"Nuget packages are not restored yet")]
