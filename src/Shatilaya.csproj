@@ -18,15 +18,4 @@
     <EmbeddedResource Remove="Test\**" />
     <None Remove="Test\**" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\build.cake" Link="build.cake" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Pegh" Version="1.0.6961.33473" />
-    <PackageReference Include="LibGit2Sharp" Version="0.26.0-preview-0080" />
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.260" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
-    <PackageReference Include="NuGet.Client" Version="4.2.0" />
-    <PackageReference Include="NuGet.Protocol.Core.v3" Version="4.2.0" />
-  </ItemGroup>
 </Project>
