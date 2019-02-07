@@ -135,7 +135,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"no cake errors were reported")]
         public void GivenNoCakeErrorsWereReported() {
-            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsToString());
         }
 
         [Given(@"I change a test case so that it will fail")]
@@ -244,18 +244,19 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"no cake errors were reported")]
         public void ThenNoCakeErrorsWereReported() {
-            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsPlusRelevantInfos());
+            Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(i => i.StartsWith("Could not load")), string.Join("\r\n", CakeErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
         }
 
         [Then(@"a compilation error was reported for the changed source file")]
         public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")), CakeErrorsAndInfos.ErrorsToString());
             Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS1002") && m.Contains(@"; expected")));
         }
 
         [Then(@"an uncommitted change error was reported for the changed source file")]
         public void ThenAUncommittedChangeErrorWasReportedForTheChangedSourceFile() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase)), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
         }
 
         [Then(@"build step ""(.*)"" was not a target")]
@@ -265,7 +266,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"I get an error message saying that I need to rerun my cake script")]
         public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"build.cake file has been updated")), CakeErrorsAndInfos.ErrorsToString());
         }
 
         [Then(@"I find the artifacts in the master debug folder")]
@@ -293,7 +294,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"a failed test case was reported")]
         public void ThenAFailedTestCaseWasReported() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"test run failed.", StringComparison.InvariantCultureIgnoreCase)), string.Join("\r\n", CakeErrorsAndInfos.Errors));
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"test run failed.", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
             Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"CanBakeACake")));
         }
 
