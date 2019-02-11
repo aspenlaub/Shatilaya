@@ -6,11 +6,11 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
-using Aspenlaub.Net.GitHub.CSharp.Nuclide;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
@@ -38,7 +38,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [BeforeFeature("CakeBuild")]
         public static void RecreateCakeFolder() {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseNuclideProtchAndGitty().Build();
+            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty().Build();
             vContainer.Resolve<TestTargetInstaller>().DeleteCakeFolder(ChabStandardTarget);
             vContainer.Resolve<TestTargetInstaller>().CreateCakeFolder(ChabStandardTarget, out var errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
