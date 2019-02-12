@@ -90,6 +90,7 @@ Task("UpdateBuildCake")
       throw new Exception("Your build.cake file has been updated. Please retry running it.");
     } else {
       System.IO.File.Delete(tempCakeBuildFileName);
+      container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder)).Wait();
     }
     var pinErrorsAndInfos = new ErrorsAndInfos();
     container.Resolve<IPinnedAddInVersionChecker>().CheckPinnedAddInVersions(new Folder(repositoryFolder), pinErrorsAndInfos);
