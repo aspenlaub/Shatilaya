@@ -108,3 +108,9 @@ Scenario: Nuspec file is recreated
 	Given I empty the nuspec file
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
 	Then a non-empty nuspec file is there again
+
+Scenario: Uncommitted changes can be verified
+	Given I change a source file so that it still can be compiled
+	When I run the build.cake script with target "ValidatePackageUpdate"
+	Then no cake errors were reported
+    And 3 "Release" artifact/-s was/were produced
