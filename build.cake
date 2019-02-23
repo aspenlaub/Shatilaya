@@ -1,7 +1,7 @@
 #load "solution.cake"
 #addin nuget:?package=Cake.Git&version=0.19.0
 #addin nuget:?package=System.Runtime.Loader&version=4.0.0.0
-#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Fusion&loaddependencies=true&version=1.0.6993.23684
+#addin nuget:https://www.aspenlaub.net/nuget/?package=Aspenlaub.Net.GitHub.CSharp.Fusion&loaddependencies=true&version=1.0.6989.35390
 
 using Regex = System.Text.RegularExpressions.Regex;
 using Microsoft.Extensions.DependencyInjection;
@@ -86,7 +86,8 @@ Task("UpdateBuildCake")
       System.IO.File.Delete(buildCakeFileName);
       System.IO.File.Move(tempCakeBuildFileName, buildCakeFileName); 
       var autoErrorsAndInfos = new ErrorsAndInfos();
-      container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder), autoErrorsAndInfos).Wait();
+      container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder)).Wait();
+      // container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder), autoErrorsAndInfos).Wait();
       if (autoErrorsAndInfos.Errors.Any()) {
         throw new Exception(autoErrorsAndInfos.ErrorsToString());
       }
@@ -94,7 +95,8 @@ Task("UpdateBuildCake")
     } else {
       System.IO.File.Delete(tempCakeBuildFileName);
       var autoErrorsAndInfos = new ErrorsAndInfos();
-      container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder), autoErrorsAndInfos).Wait();
+      container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder)).Wait();
+      // container.Resolve<IAutoCommitterAndPusher>().AutoCommitAndPushSingleCakeFileAsync(new Folder(repositoryFolder), autoErrorsAndInfos).Wait();
       if (autoErrorsAndInfos.Errors.Any()) {
         throw new Exception(autoErrorsAndInfos.ErrorsToString());
       }
