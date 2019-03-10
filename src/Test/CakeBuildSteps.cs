@@ -62,8 +62,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
             const string url = "https://github.com/aspenlaub/ChabStandard.git";
             var errorsAndInfos = new ErrorsAndInfos();
-            vContainer.Resolve<IGitUtilities>().Clone(url, ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            vContainer.Resolve<IGitUtilities>().Clone(url, "master", ChabStandardTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+            vContainer.Resolve<IGitUtilities>().Pull(ChabStandardTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
         }
 
         [Given(@"I copy the latest build\.cake script from my Shatilaya solution with a comment added at the top")]

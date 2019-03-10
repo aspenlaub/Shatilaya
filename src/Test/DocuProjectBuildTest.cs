@@ -44,7 +44,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             var gitUtilities = new GitUtilities();
             var errorsAndInfos = new ErrorsAndInfos();
             const string url = "https://github.com/aspenlaub/Roxann.git";
-            gitUtilities.Clone(url, RoxannTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            gitUtilities.Clone(url, "master", RoxannTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
 
             vContainer.Resolve<CakeBuildUtilities>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, RoxannTarget, errorsAndInfos);
