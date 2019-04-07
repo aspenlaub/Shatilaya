@@ -12,13 +12,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Fusion" Version="1.0.7026.35875" />
+    <PackageReference Include="Aspenlaub.Net.GitHub.CSharp.Fusion" Version="1.0.7035.38124" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
-    <PackageReference Include="SpecFlow" Version="3.0.188" />
-    <PackageReference Include="SpecFlow.MsTest" Version="3.0.188" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.188" />
+    <PackageReference Include="SpecFlow" Version="3.0.191" />
+    <PackageReference Include="SpecFlow.MsTest" Version="3.0.191" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.191" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\build.cake" Link="build.cake" />
