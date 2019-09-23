@@ -296,7 +296,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [Then(@"a failed test case was reported")]
         public void ThenAFailedTestCaseWasReported() {
             Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"test run failed.", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
-            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed") && m.Contains(@"CanBakeACake")));
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"X CanBakeACake")));
         }
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
