@@ -38,7 +38,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [BeforeFeature("CakeBuild")]
         public static void RecreateCakeFolder() {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty().Build();
+            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
             vContainer.Resolve<TestTargetInstaller>().DeleteCakeFolder(ChabStandardTarget);
             vContainer.Resolve<TestTargetInstaller>().CreateCakeFolder(ChabStandardTarget, out var errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
