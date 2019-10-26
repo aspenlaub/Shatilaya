@@ -267,7 +267,7 @@ Task("CopyDebugArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Debug artifacts to master Debug binaries folder")
   .Does(() => {
-    var updater = new FolderUpdater();
+    var updater = new FolderUpdater(new JsonDepsDifferencer());
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     updater.UpdateFolder(new Folder(debugBinFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
       FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged, "Aspenlaub.Net.GitHub.CSharp." + solutionId, updaterErrorsAndInfos);
@@ -315,7 +315,7 @@ Task("CopyReleaseArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Release artifacts to master Release binaries folder")
   .Does(() => {
-    var updater = new FolderUpdater();
+    var updater = new FolderUpdater(new JsonDepsDifferencer());
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     updater.UpdateFolder(new Folder(releaseBinFolder.Replace('/', '\\')), new Folder(masterReleaseBinFolder.Replace('/', '\\')), 
       FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged, "Aspenlaub.Net.GitHub.CSharp." + solutionId, updaterErrorsAndInfos);
