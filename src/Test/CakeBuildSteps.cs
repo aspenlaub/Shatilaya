@@ -27,7 +27,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [Binding]
     public class CakeBuildSteps {
         protected ErrorsAndInfos CakeErrorsAndInfos = new ErrorsAndInfos();
-        protected IDictionary<string, DateTime> MasterDebugBinFolderSnapshot, MasterReleaseBinFolderSnapshot;
+        protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot, MasterReleaseBinFolderWriteTimeSnapshot;
+        protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot;
         protected static TestTargetFolder ChabStandardTarget = new TestTargetFolder(nameof(CakeBuildSteps), "ChabStandard");
         private static IContainer vContainer;
         protected IDictionary<string, DateTime> LastWriteTimes;
@@ -121,17 +122,25 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I save the master debug folder file names and timestamps")]
         public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
-            MasterDebugBinFolderSnapshot = new Dictionary<string, DateTime>();
+            MasterDebugBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
             var folder = ChabStandardTarget.MasterDebugBinFolder();
             Assert.IsTrue(folder.Exists());
             foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
-                MasterDebugBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
+                MasterDebugBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
             }
         }
 
         [Given(@"I wait two seconds")]
         public void GivenIWaitTwoSeconds() {
             Thread.Sleep(TimeSpan.FromSeconds(2));
+        }
+
+        [Given(@"I wait for a minute change on the clock")]
+        public void GivenIWaitForAMinuteChangeOnTheClock() {
+            var minute = DateTime.Now.Minute;
+            do {
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+            } while (minute == DateTime.Now.Minute);
         }
 
         [Given(@"no cake errors were reported")]
@@ -161,12 +170,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I save the master release folder file names and timestamps")]
         public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
-            MasterReleaseBinFolderSnapshot = new Dictionary<string, DateTime>();
+            MasterReleaseBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
             var folder = ChabStandardTarget.MasterReleaseBinFolder();
             Assert.IsTrue(folder.Exists());
             foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
-                MasterReleaseBinFolderSnapshot[fileName] = File.GetLastWriteTime(fileName);
+                MasterReleaseBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
             }
+        }
+
+        [Given(@"I save the contents of the master release json dependencies file")]
+        public void GivenISaveTheContentsOfTheMasterReleaseJsonDependenciesFile() {
+            MasterReleaseBinFolderContentsSnapshot = new Dictionary<string, string>();
+            var folder = ChabStandardTarget.MasterReleaseBinFolder();
+            Assert.IsTrue(folder.Exists());
+            var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+            Assert.IsNotNull(fileName);
+            MasterReleaseBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
         }
 
         [Given(@"I change a test case so that it will fail in release")]
@@ -282,7 +301,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"the contents of the master debug folder has not changed")]
         public void ThenTheContentsOfTheMasterDebugFolderHasNotChanged() {
-            foreach (var snapShotFile in MasterDebugBinFolderSnapshot) {
+            foreach (var snapShotFile in MasterDebugBinFolderWriteTimeSnapshot) {
                 VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
             }
         }
@@ -323,9 +342,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"the contents of the master release folder has not changed")]
         public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
-            foreach (var snapShotFile in MasterReleaseBinFolderSnapshot) {
+            foreach (var snapShotFile in MasterReleaseBinFolderWriteTimeSnapshot) {
                 VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
             }
+        }
+
+        [Then(@"the contents of the master release json dependencies file has not changed")]
+        public void ThenTheContentsOfTheMasterReleaseJsonDependenciesFileHasNotChanged() {
+            var folder = ChabStandardTarget.MasterReleaseBinFolder();
+            Assert.IsTrue(folder.Exists());
+            var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+            Assert.IsNotNull(fileName);
+            var expectedContents = MasterReleaseBinFolderContentsSnapshot[fileName];
+            var actualContents = File.ReadAllText(fileName);
+            Assert.AreEqual(expectedContents.Length, actualContents.Length);
+            var differences = Enumerable.Range(0, expectedContents.Length).Where(i => expectedContents[i] != actualContents[i]).ToList();
+            Assert.AreEqual(0, differences.Count);
         }
 
         protected void VerifyEqualLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
