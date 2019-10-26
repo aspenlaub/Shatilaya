@@ -23,7 +23,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         [TestMethod]
         public void BuildCakeUsesRightPackageVersion() {
             var version = typeof(INugetPackageUpdater).Assembly.GetName().Version;
-            Assert.IsTrue(version.ToString().StartsWith("1.0."));
+            Assert.IsTrue(version.ToString().StartsWith("2.0."));
             var buildCake = vContainer.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard).Split("\n");
             Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion") & s.Contains($"version={version.ToString()}")),
                 $"Build cake does not use Fusion version {version}");
