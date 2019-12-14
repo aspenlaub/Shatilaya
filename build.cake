@@ -23,6 +23,8 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Fusion.FolderUpdater;
+using JsonDepsDifferencer = Aspenlaub.Net.GitHub.CSharp.Fusion.JsonDepsDifferencer;
+using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces.FolderUpdateMethod;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
 masterReleaseBinFolder = MakeAbsolute(Directory(masterReleaseBinFolder)).FullPath;
