@@ -58,7 +58,3 @@ Create a nuget package in the masterReleaseBinFolder as specified in the ```solu
 
 ### PushNuGetPackage
 Push the nuget package to the nuget feed as specified in your secret repository
-
-## NuGet feed
-
-https://www.aspenlaub.net/nuget
