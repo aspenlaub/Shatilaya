@@ -22,8 +22,6 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
-using FolderUpdater = Aspenlaub.Net.GitHub.CSharp.Fusion.FolderUpdater;
-using JsonDepsDifferencer = Aspenlaub.Net.GitHub.CSharp.Fusion.JsonDepsDifferencer;
 using FolderUpdateMethod = Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces.FolderUpdateMethod;
 
 masterDebugBinFolder = MakeAbsolute(Directory(masterDebugBinFolder)).FullPath;
@@ -275,7 +273,7 @@ Task("CopyDebugArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Debug artifacts to master Debug binaries folder")
   .Does(() => {
-    var updater = new FolderUpdater(new JsonDepsDifferencer());
+    var updater = container.Resovle<IFolderUpdater>();
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     if (!System.IO.File.Exists(releaseBinHeadTipIdShaFile)) {
       updater.UpdateFolder(new Folder(debugBinFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
@@ -329,7 +327,7 @@ Task("CopyReleaseArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Release artifacts to master Release binaries folder")
   .Does(() => {
-    var updater = new FolderUpdater(new JsonDepsDifferencer());
+    var updater = container.Resovle<IFolderUpdater>();
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     var headTipIdSha = container.Resolve<IGitUtilities>().HeadTipIdSha(new Folder(repositoryFolder));
     if (!System.IO.File.Exists(releaseBinHeadTipIdShaFile)) {
