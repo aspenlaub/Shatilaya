@@ -275,6 +275,7 @@ Task("CopyDebugArtifacts")
   .Does(() => {
     var updater = container.Resolve<IFolderUpdater>();
     var updaterErrorsAndInfos = new ErrorsAndInfos();
+    var headTipIdSha = container.Resolve<IGitUtilities>().HeadTipIdSha(new Folder(repositoryFolder));
     if (!System.IO.File.Exists(releaseBinHeadTipIdShaFile)) {
       updater.UpdateFolder(new Folder(debugBinFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
         FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged, "Aspenlaub.Net.GitHub.CSharp." + solutionId, updaterErrorsAndInfos);
