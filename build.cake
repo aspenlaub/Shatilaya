@@ -273,7 +273,7 @@ Task("CopyDebugArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Debug artifacts to master Debug binaries folder")
   .Does(() => {
-    var updater = container.Resovle<IFolderUpdater>();
+    var updater = container.Resolve<IFolderUpdater>();
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     if (!System.IO.File.Exists(releaseBinHeadTipIdShaFile)) {
       updater.UpdateFolder(new Folder(debugBinFolder.Replace('/', '\\')), new Folder(masterDebugBinFolder.Replace('/', '\\')), 
@@ -327,7 +327,7 @@ Task("CopyReleaseArtifacts")
   .WithCriteria(() => currentGitBranch == "master")
   .Description("Copy Release artifacts to master Release binaries folder")
   .Does(() => {
-    var updater = container.Resovle<IFolderUpdater>();
+    var updater = container.Resolve<IFolderUpdater>();
     var updaterErrorsAndInfos = new ErrorsAndInfos();
     var headTipIdSha = container.Resolve<IGitUtilities>().HeadTipIdSha(new Folder(repositoryFolder));
     if (!System.IO.File.Exists(releaseBinHeadTipIdShaFile)) {
