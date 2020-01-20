@@ -52,7 +52,8 @@ var projectLogic = container.Resolve<IProjectLogic>();
 var projectFactory = container.Resolve<IProjectFactory>();
 var solutionFileFullName = (MakeAbsolute(DirectoryPath.FromString("./src")).FullPath + '\\' + solutionId + ".sln").Replace('/', '\\');
 
-var releaseBinHeadTipIdShaFile = binFolder.FullName + '\\' + "Release.HeadTipSha.txt";
+var masterReleaseBinParentFolder = new Folder(masterReleaseBinFolder.Replace('/', '\\')).ParentFolder();
+var releaseBinHeadTipIdShaFile = masterReleaseBinParentFolder.FullName + '\\' + "Release.HeadTipSha.txt";
 
 var createAndPushPackages = true;
 if (solutionSpecialSettingsDictionary.ContainsKey("CreateAndPushPackages")) {
@@ -342,7 +343,6 @@ Task("CopyReleaseArtifacts")
       throw new Exception(updaterErrorsAndInfos.ErrorsToString());
     }
     updaterErrorsAndInfos.Infos.ToList().ForEach(i => Information(i));
-    var binFolder = new Folder(masterReleaseBinFolder.Replace('/', '\\')).ParentFolder();
     System.IO.File.WriteAllText(releaseBinHeadTipIdShaFile, headTipIdSha);
   });
 
