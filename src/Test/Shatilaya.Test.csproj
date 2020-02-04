@@ -14,13 +14,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="Fusion" Version="2.0.190.1262" />
+    <PackageReference Include="Fusion" Version="2.0.194.1366" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
-    <PackageReference Include="SpecFlow" Version="3.1.80" />
-    <PackageReference Include="SpecFlow.MsTest" Version="3.1.80" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.80" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="SpecFlow" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.MsTest" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.82" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\build.cake" Link="build.cake" />
