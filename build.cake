@@ -284,10 +284,10 @@ Task("CopyDebugArtifacts")
         System.IO.File.ReadAllText(releaseBinHeadTipIdShaFile), new Folder(masterDebugBinFolder.Replace('/', '\\')),
         false, createAndPushPackages, mainNugetFeedId, updaterErrorsAndInfos);
     }
+    updaterErrorsAndInfos.Infos.ToList().ForEach(i => Information(i));
     if (updaterErrorsAndInfos.Errors.Any()) {
       throw new Exception(updaterErrorsAndInfos.ErrorsToString());
     }
-    updaterErrorsAndInfos.Infos.ToList().ForEach(i => Information(i));
   });
 
 Task("ReleaseBuild")
@@ -340,10 +340,10 @@ Task("CopyReleaseArtifacts")
         System.IO.File.ReadAllText(releaseBinHeadTipIdShaFile), new Folder(masterReleaseBinFolder.Replace('/', '\\')),
         true, createAndPushPackages, mainNugetFeedId, updaterErrorsAndInfos);
     }
+    updaterErrorsAndInfos.Infos.ToList().ForEach(i => Information(i));
     if (updaterErrorsAndInfos.Errors.Any()) {
       throw new Exception(updaterErrorsAndInfos.ErrorsToString());
     }
-    updaterErrorsAndInfos.Infos.ToList().ForEach(i => Information(i));
     System.IO.File.WriteAllText(releaseBinHeadTipIdShaFile, headTipIdSha);
   });
 
