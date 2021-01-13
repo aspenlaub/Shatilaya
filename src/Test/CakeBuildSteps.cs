@@ -312,16 +312,17 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
         }
 
-        [Then(@"a failed test case was reported")]
-        public void ThenAFailedTestCaseWasReported() {
-            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"test run failed.", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
-            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"X CanBakeACake")));
+        [Then(@"a failed ""(.*)"" test case was reported")]
+        public void ThenAFailedTestCaseWasReported(string p0) {
+            Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
+            Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed CanBakeACake")));
         }
 
         [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
         public void ThenArtifactsWasWereProduced(int p0, string p1) {
             var folder = ChabStandardTarget.Folder().SubFolder(@"src");
-            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*ChabStandard*.dll", SearchOption.AllDirectories).Count(f => f.Contains(@"\bin\" + p1 + @"\")));
+            Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*ChabStandard*.dll", SearchOption.AllDirectories)
+                .Count(f => !f.Contains(@"\ref\") && f.Contains(@"\bin\" + p1 + @"\")));
         }
 
         [Then(@"(.*) ""(.*)"" nupkg file/-s was/were produced")]

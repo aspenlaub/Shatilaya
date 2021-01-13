@@ -46,7 +46,7 @@ Scenario: Debug artifacts are not copied to the master debug folder when a test 
 	Given I clean up the master debug folder
 	And I change a test case so that it will fail
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
-	Then a failed test case was reported
+	Then a failed "Debug" test case was reported
 	And I do not find any artifacts in the master debug folder
 
 Scenario: Release artifacts are built
@@ -81,7 +81,7 @@ Scenario: Release artifacts are not copied to the master release folder when a t
 	And I clean up the master release folder
 	And I change a test case so that it will fail in release
 	When I run the build.cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
-	Then a failed test case was reported
+	Then a failed "Release" test case was reported
 	And I find the artifacts in the master debug folder
 	And I do not find any artifacts in the master release folder
 
