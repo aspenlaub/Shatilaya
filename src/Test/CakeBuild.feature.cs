@@ -50,7 +50,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "", "CakeBuild", "\tIn order to replace the little things\r\n\tI want to move the compile and test part" +
-                    " to build.cake", ProgrammingLanguage.CSharp, new string[] {
+                    " to cake", ProgrammingLanguage.CSharp, new string[] {
                         "CakeBuild"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -105,20 +105,20 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test
  testRunner.And("Nuget packages are not restored yet", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 9
- testRunner.And("I copy the latest build.cake script from my Shatilaya solution with a comment add" +
-                    "ed at the top", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I copy the latest cake script from my Shatilaya solution with a comment added at " +
+                    "the top", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
         
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
-        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Latest build.cake is copied from GitHub Shatilaya master branch")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Latest cake is copied from GitHub Shatilaya master branch")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "CakeBuild")]
         [Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute("CakeBuild")]
-        public virtual void LatestBuild_CakeIsCopiedFromGitHubShatilayaMasterBranch()
+        public virtual void LatestCakeIsCopiedFromGitHubShatilayaMasterBranch()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Latest build.cake is copied from GitHub Shatilaya master branch", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Latest cake is copied from GitHub Shatilaya master branch", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
 #line 11
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -143,11 +143,11 @@ this.ScenarioInitialize(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 12
- testRunner.When("I run the build.cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 13
- testRunner.Then("the build.cake file is identical to the latest found on the GitHub Shatilaya mast" +
-                        "er branch", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("the cake file is identical to the latest found on the GitHub Shatilaya master bra" +
+                        "nch", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 14
  testRunner.And("I get an error message saying that I need to rerun my cake script", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -189,8 +189,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 17
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 18
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -241,8 +241,8 @@ this.FeatureBackground();
  testRunner.Given("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 24
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 25
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -287,8 +287,8 @@ this.FeatureBackground();
  testRunner.Given("I clean up the master debug folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 29
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoCreateOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoCrea" +
+                        "teOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 30
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -303,8 +303,8 @@ this.FeatureBackground();
     testRunner.And("I wait two seconds", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 34
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoCreateOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoCrea" +
+                        "teOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 35
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -355,8 +355,8 @@ this.FeatureBackground();
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 41
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 42
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -407,8 +407,8 @@ this.FeatureBackground();
  testRunner.And("I change a test case so that it will fail", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 48
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 49
  testRunner.Then("a failed \"Debug\" test case was reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -453,8 +453,8 @@ this.ScenarioInitialize(scenarioInfo);
 this.FeatureBackground();
 #line hidden
 #line 53
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 54
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -505,8 +505,8 @@ this.FeatureBackground();
  testRunner.Given("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 60
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 61
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -527,8 +527,8 @@ this.FeatureBackground();
     testRunner.And("I wait for a minute change on the clock", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 67
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 68
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -582,8 +582,8 @@ this.FeatureBackground();
  testRunner.And("I change a source file so that it cannot be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 75
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 76
  testRunner.Then("a compilation error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -639,8 +639,8 @@ this.FeatureBackground();
  testRunner.And("I change a test case so that it will fail in release", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 83
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoCreateOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoCrea" +
+                        "teOrPushPackage\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 84
  testRunner.Then("a failed \"Release\" test case was reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -691,8 +691,8 @@ this.FeatureBackground();
  testRunner.Given("I clean up the master release folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 90
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 91
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -715,8 +715,8 @@ this.FeatureBackground();
  testRunner.And("I remember the last write time of the newest file in the master \"Release\" folder", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 97
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 98
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -774,7 +774,7 @@ this.FeatureBackground();
  testRunner.Given("I change a source file so that it still can be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 106
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakeAndDoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakeAndDoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 107
  testRunner.Then("an uncommitted change error was reported for the changed source file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -822,8 +822,8 @@ this.FeatureBackground();
  testRunner.Given("I empty the nuspec file", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 112
- testRunner.When("I run the build.cake script with target \"IgnoreOutdatedBuildCakePendingChangesAnd" +
-                        "DoNotPush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"IgnoreOutdatedBuildCakePendingChangesAndDoNotP" +
+                        "ush\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 113
  testRunner.Then("a non-empty nuspec file is there again", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -868,7 +868,7 @@ this.FeatureBackground();
  testRunner.Given("I change a source file so that it still can be compiled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 117
- testRunner.When("I run the build.cake script with target \"ValidatePackageUpdate\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I run the cake script with target \"ValidatePackageUpdate\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 118
  testRunner.Then("no cake errors were reported", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");

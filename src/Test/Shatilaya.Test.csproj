@@ -1,52 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+
     <IsPackable>false</IsPackable>
+
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test</AssemblyName>
+
     <RootNamespace>Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test</RootNamespace>
-    <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <Deterministic>false</Deterministic>
-    <AssemblyTitle>Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test</AssemblyTitle>
-    <AssemblyProduct>Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test</AssemblyProduct>
-    <OutputType>Library</OutputType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
-  <ItemGroup>
-    <PackageReference Include="Fusion" Version="2.0.611.1015" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
-    <PackageReference Include="SpecFlow" Version="3.7.38" />
-    <PackageReference Include="SpecFlow.MsTest" Version="3.7.38" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.7.38" />
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="..\..\build.cake" Link="build.cake" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="TechTalk.SpecFlow">
-      <HintPath>lib\TechTalk.SpecFlow.dll</HintPath>
-    </Reference>
+    <PackageReference Include="FusionNet" Version="2.0.637.460" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+    <PackageReference Include="coverlet.collector" Version="3.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SpecFlow.MsTest" Version="3.7.38" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.7.38" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="CakeBuild.feature.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CakeBuild.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="CakeBuild.feature">
-      <Generator></Generator>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <SpecFlowFeatureFiles Update="CakeBuild.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>CakeBuild.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-  </ItemGroup>
+
 </Project>
