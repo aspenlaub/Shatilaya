@@ -40,14 +40,14 @@ var testResultsFolder = MakeAbsolute(Directory("./TestResults")).FullPath;
 var tempFolder = MakeAbsolute(Directory("./temp")).FullPath;
 var repositoryFolder = MakeAbsolute(DirectoryPath.FromString(".")).FullPath;
 
-var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/dotnetbuild.cake";
-var tempCakeBuildFileName = tempFolder + "/dotnetbuild.cake.new";
+var buildCakeFileName = MakeAbsolute(Directory(".")).FullPath + "/build.cake";
+var tempCakeBuildFileName = tempFolder + "/build.cake.new";
 
 var mainNugetFeedId = NugetFeed.AspenlaubLocalFeed;
 
 var container = FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty();
 var currentGitBranch = container.Resolve<IGitUtilities>().CheckedOutBranch(new Folder(repositoryFolder));
-var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/dotnetbuild.cake?g=" + System.Guid.NewGuid();
+var latestBuildCakeUrl = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/build.cake?g=" + System.Guid.NewGuid();
 
 var projectErrorsAndInfos = new ErrorsAndInfos();
 var projectLogic = container.Resolve<IProjectLogic>();
