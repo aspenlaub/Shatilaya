@@ -1,3 +1,3 @@
 rmdir /s /q tools\Addins
-dotnet cake dotnetbuild.cake
+dotnet cake build.cake
 pause
