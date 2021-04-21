@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Aspenlaub.Net.GitHub.CSharp.FusionNet;
-using Aspenlaub.Net.GitHub.CSharp.FusionNet.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.GittyNet;
-using Aspenlaub.Net.GitHub.CSharp.GittyNet.Extensions;
-using Aspenlaub.Net.GitHub.CSharp.GittyNet.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
+using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Gitty;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
