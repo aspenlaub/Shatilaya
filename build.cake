@@ -1,5 +1,4 @@
 #load "solution.cake"
-#addin nuget:?package=Autofac
 #addin nuget:?package=Cake.Git
 #addin nuget:?package=System.Runtime.Loader
 #addin nuget:?package=Microsoft.Bcl.AsyncInterfaces
