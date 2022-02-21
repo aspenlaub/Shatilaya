@@ -15,7 +15,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
     <EmbeddedResource Include="..\..\build.cake" Link="build.cake" />
-    <PackageReference Include="Fusion" Version="2.0.938.1167" />
+    <PackageReference Include="Fusion" Version="2.0.943.1315" />
     <PackageReference Include="coverlet.collector" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
