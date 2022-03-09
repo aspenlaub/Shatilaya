@@ -13,11 +13,11 @@ using Autofac;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
     [TestClass]
     public class NuclideVersionCheck {
-        private static IContainer vContainer;
+        private static IContainer Container;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
         }
 
         [TestMethod]
@@ -26,7 +26,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             Assert.IsNotNull(version);
             Assert.IsTrue(version.ToString().StartsWith("2.0."));
             var errorsAndInfos = new ErrorsAndInfos();
-            var buildCake = vContainer.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
+            var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion") & s.Contains($"version={version}")),
                 $"Build cake does not use Fusion version {version}");

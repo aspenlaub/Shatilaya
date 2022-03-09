@@ -88,10 +88,12 @@ Task("UpdateBuildCake")
     if (System.IO.File.Exists(tempCakeBuildFileName)) {
       System.IO.File.Delete(tempCakeBuildFileName);
     }
-    using (var webClient = new System.Net.WebClient()) {
-      webClient.DownloadFile(latestBuildCakeUrl, tempCakeBuildFileName);
+    string latestBuildCakeContent;
+    using var client = new HttpClient() {
+        latestBuildCakeContent = await client.GetStringAsync(latestBuildCakeUrl).Result;
     }
-    if (Regex.Replace(oldContents, @"\s", "") != Regex.Replace(System.IO.File.ReadAllText(tempCakeBuildFileName), @"\s", "")) {
+    File.WriteAllText(tempCakeBuildFileName, latestBuildCakeContent);
+    if (Regex.Replace(oldContents, @"\s", "") != Regex.Replace(latestBuildCakeContent, @"\s", "")) {
       Information("Updating cake");
       System.IO.File.Delete(buildCakeFileName);
       System.IO.File.Move(tempCakeBuildFileName, buildCakeFileName); 

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
-using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
@@ -29,7 +29,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot, MasterReleaseBinFolderWriteTimeSnapshot;
         protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot;
         protected static TestTargetFolder ChabTarget = new(nameof(CakeBuildSteps), "Chab");
-        private static IContainer vContainer;
+        private static IContainer Container;
         protected IDictionary<string, DateTime> LastWriteTimes;
 
         public CakeBuildSteps() {
@@ -38,7 +38,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [BeforeFeature("CakeBuild")]
         public static void RecreateCakeFolder() {
-            vContainer = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
+            Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
         }
 
         [AfterScenario("CakeBuild")]
@@ -54,15 +54,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
             }
             const string url = "https://github.com/aspenlaub/Chab.git";
             var errorsAndInfos = new ErrorsAndInfos();
-            vContainer.Resolve<IGitUtilities>().Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+            Container.Resolve<IGitUtilities>().Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-            vContainer.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
+            Container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
         }
 
         [Given(@"I copy the latest cake script from my Shatilaya solution with a comment added at the top")]
         public void GivenIHaveTheLatestBuildCakeScript() {
             var errorsAndInfos = new ErrorsAndInfos();
-            vContainer.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
+            Container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
             Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
             var buildCakeFileName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
             var buildCake = File.ReadAllText(buildCakeFileName);
@@ -108,7 +108,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Given(@"I run the cake script")]
         public void GivenIRunTheBuild_CakeScript() {
-            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+            Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
         }
 
         [Given(@"I save the master debug folder file names and timestamps")]
@@ -201,44 +201,39 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
         #region When
         [When(@"I run the cake script")]
         public void WhenIRunTheBuild_CakeScript() {
-            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+            Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
         }
 
         [When(@"I run the cake script with target ""(.*)""")]
         public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
-            vContainer.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, target, CakeErrorsAndInfos);
+            Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, target, CakeErrorsAndInfos);
         }
         #endregion
 
         #region Then
         [Then(@"the cake file is identical to the latest found on the GitHub Shatilaya master branch")]
-        public void ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranch() {
+        public async Task ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranchAsync() {
             string expectedContents;
             do {
-                expectedContents = LatestCakeFileOnTheGitHubShatilayaMasterBranch();
+                expectedContents = await LatestCakeFileOnTheGitHubShatilayaMasterBranchAsync();
                 if (expectedContents == "") {
                     Thread.Sleep(TimeSpan.FromSeconds(10));
                 }
             } while (expectedContents == "");
 
             var scriptFileFullName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
-            var actualContents = File.ReadAllText(scriptFileFullName).Replace("\r\n", "\n");
+            var actualContents = (await File.ReadAllTextAsync(scriptFileFullName)).Replace("\r\n", "\n");
 
             /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
             Assert.AreEqual(expectedContents, actualContents);
         }
 
-        private string LatestCakeFileOnTheGitHubShatilayaMasterBranch() {
+        private async Task<string> LatestCakeFileOnTheGitHubShatilayaMasterBranchAsync() {
             const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/" + BuildCake.Standard;
-            var request = WebRequest.Create(url) as HttpWebRequest;
-            Assert.IsNotNull(request);
             try {
-                using var response = (HttpWebResponse)request.GetResponse();
-                Assert.IsNotNull(response);
-                var stream = response.GetResponseStream();
-                Assert.IsNotNull(stream);
-                using var reader = new StreamReader(stream, Encoding.Default);
-                return reader.ReadToEnd().Replace("\r\n", "\n");
+                using var client = new HttpClient();
+                var content = await client.GetStringAsync(url);
+                return content.Replace("\r\n", "\n");
             } catch {
                 return "";
             }
@@ -399,7 +394,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test {
 
         [Then(@"the newest nuget package in the master ""(.*)"" folder is tagged with the head tip id sha")]
         public void ThenTheNewestNugetPackageInTheMasterFolderIsTaggedWithTheHeadTipIdSha(string p0) {
-            var headTipIdSha = vContainer.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
+            var headTipIdSha = Container.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
             var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
             var repository = new FindLocalPackagesResourceV2(packagesFolder);
             var logger = new NullLogger();
