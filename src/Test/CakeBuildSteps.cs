@@ -20,6 +20,7 @@ using LibGit2Sharp;
 using NuGet.Common;
 using NuGet.Protocol;
 using TechTalk.SpecFlow;
+using System.Diagnostics.Metrics;
 // ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
@@ -48,14 +49,14 @@ public class CakeBuildSteps {
     }
 
     #region Given
-    [Given(@"I have a green solution with unit tests in a temp folder")]
-    public void GivenIHaveAGreenSolutionWithUnitTestsInATempFolder() {
+    [Given(@"I have cloned the ""([^""]*)"" branch of a green solution with unit tests to a temp folder")]
+    public void GivenIHaveClonedTheBranchOfAGreenSolutionWithUnitTestsToATempFolder(string branchId) {
         if (ChabTarget.Exists()) {
             CleanUpScenario();
         }
         const string url = "https://github.com/aspenlaub/Chab.git";
         var errorsAndInfos = new ErrorsAndInfos();
-        Container.Resolve<IGitUtilities>().Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+        Container.Resolve<IGitUtilities>().Clone(url, branchId, ChabTarget.Folder(), new CloneOptions { BranchName = branchId }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
     }
@@ -251,6 +252,11 @@ public class CakeBuildSteps {
     public void ThenNoCakeErrorsWereReported() {
         Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(i => i.StartsWith("Could not load")), string.Join("\r\n", CakeErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
+    }
+
+    [Then(@"the branch is considered the master branch or a branch with packages")]
+    public void ThenTheBranchIsConsideredTheMasterBranchOrABranchWithPackages() {
+        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(i => i == "Is master branch or branch with packages: true"));
     }
 
     [Then(@"a compilation error was reported for the changed source file")]

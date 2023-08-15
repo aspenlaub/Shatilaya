@@ -4,7 +4,7 @@ Feature: CakeBuild
 	I want to move the compile and test part to cake
 
 Background: 
-    Given I have a green solution with unit tests in a temp folder
+    Given I have cloned the "master" branch of a green solution with unit tests to a temp folder
 	And Nuget packages are not restored yet
 	And I copy the latest cake script from my Shatilaya solution with a comment added at the top
 
@@ -28,6 +28,7 @@ Scenario: Debug artifacts are copied to the master debug folder, but only if cha
 	Given I clean up the master debug folder
 	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then no cake errors were reported
+	And the branch is considered the master branch or a branch with packages
 	And I find the artifacts in the master debug folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
@@ -117,3 +118,12 @@ Scenario: Uncommitted changes can be verified
 	When I run the cake script with target "ValidatePackageUpdate"
 	Then no cake errors were reported
     And 3 "Release" artifact/-s was/were produced
+
+Scenario: Debug artifacts are copied to the master debug folder for a branch with packages
+    Given I have cloned the "pkg-branch-test" branch of a green solution with unit tests to a temp folder
+	And I copy the latest cake script from my Shatilaya solution with a comment added at the top
+	And I clean up the master debug folder
+	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
+	Then no cake errors were reported
+	And the branch is considered the master branch or a branch with packages
+	And I find the artifacts in the master debug folder
