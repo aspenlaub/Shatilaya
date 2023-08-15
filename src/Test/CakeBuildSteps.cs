@@ -48,14 +48,14 @@ public class CakeBuildSteps {
     }
 
     #region Given
-    [Given(@"I have a green solution with unit tests in a temp folder")]
-    public void GivenIHaveAGreenSolutionWithUnitTestsInATempFolder() {
+    [Given(@"I have cloned the ""([^""]*)"" branch of a green solution with unit tests to a temp folder")]
+    public void GivenIHaveClonedTheBranchOfAGreenSolutionWithUnitTestsToATempFolder(string branchId) {
         if (ChabTarget.Exists()) {
             CleanUpScenario();
         }
         const string url = "https://github.com/aspenlaub/Chab.git";
         var errorsAndInfos = new ErrorsAndInfos();
-        Container.Resolve<IGitUtilities>().Clone(url, "master", ChabTarget.Folder(), new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
+        Container.Resolve<IGitUtilities>().Clone(url, branchId, ChabTarget.Folder(), new CloneOptions { BranchName = branchId }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
     }
