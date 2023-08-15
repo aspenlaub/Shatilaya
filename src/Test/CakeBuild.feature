@@ -28,6 +28,7 @@ Scenario: Debug artifacts are copied to the master debug folder, but only if cha
 	Given I clean up the master debug folder
 	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then no cake errors were reported
+	And the branch is considered the master branch or a branch with packages
 	And I find the artifacts in the master debug folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
@@ -124,4 +125,5 @@ Scenario: Debug artifacts are copied to the master debug folder for a branch wit
 	And I clean up the master debug folder
 	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoCreateOrPushPackage"
 	Then no cake errors were reported
+	And the branch is considered the master branch or a branch with packages
 	And I find the artifacts in the master debug folder

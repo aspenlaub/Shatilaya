@@ -20,6 +20,7 @@ using LibGit2Sharp;
 using NuGet.Common;
 using NuGet.Protocol;
 using TechTalk.SpecFlow;
+using System.Diagnostics.Metrics;
 // ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
@@ -251,6 +252,11 @@ public class CakeBuildSteps {
     public void ThenNoCakeErrorsWereReported() {
         Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(i => i.StartsWith("Could not load")), string.Join("\r\n", CakeErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
+    }
+
+    [Then(@"the branch is considered the master branch or a branch with packages")]
+    public void ThenTheBranchIsConsideredTheMasterBranchOrABranchWithPackages() {
+        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(i => i == "Is master branch or branch with packages: true"));
     }
 
     [Then(@"a compilation error was reported for the changed source file")]
