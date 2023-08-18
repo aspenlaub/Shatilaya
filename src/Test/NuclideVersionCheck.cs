@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
-using Aspenlaub.Net.GitHub.CSharp.Fusion50;
-using Aspenlaub.Net.GitHub.CSharp.Fusion50.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
+using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -18,7 +18,7 @@ public class NuclideVersionCheck {
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
+        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestMethod]
@@ -29,7 +29,7 @@ public class NuclideVersionCheck {
         var errorsAndInfos = new ErrorsAndInfos();
         var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion50") & s.Contains($"version={version}")),
-                      $"Build cake does not use Fusion50 version {version}");
+        Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-DotnetFive") & s.Contains($"version={version}")),
+                      $"Build cake does not use Fusion-DotnetFive version {version}");
     }
 }

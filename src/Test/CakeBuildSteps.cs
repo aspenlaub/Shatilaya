@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Aspenlaub.Net.GitHub.CSharp.Fusion50;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -40,7 +40,7 @@ public class CakeBuildSteps {
 
     [BeforeFeature("CakeBuild")]
     public static void RecreateCakeFolder() {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty(new DummyCsArgumentPrompter()).Build();
+        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
     }
 
     [AfterScenario("CakeBuild")]
