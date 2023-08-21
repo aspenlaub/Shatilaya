@@ -29,7 +29,7 @@ public class NuclideVersionCheck {
         var errorsAndInfos = new ErrorsAndInfos();
         var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-DotnetFive") & s.Contains($"version={version}")),
-                      $"Build cake does not use Fusion-DotnetFive version {version}");
+        Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-DotnetSix") & s.Contains($"version={version}")),
+                      $"Build cake does not use Fusion-DotnetSix version {version}");
     }
 }
