@@ -13,7 +13,7 @@ using Autofac;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [TestClass]
-public class NuclideVersionCheck {
+public class FusionVersionCheck {
     private static IContainer Container;
 
     [ClassInitialize]
