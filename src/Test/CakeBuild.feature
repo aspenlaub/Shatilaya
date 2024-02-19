@@ -70,6 +70,20 @@ Scenario: Release artifacts are copied to the master release folder, but only if
     And the contents of the master release json dependencies file has not changed
 	And the contents of the master release folder has not changed
 
+Scenario: Release artifacts are copied to the master release candidate folder
+	Given I clean up the master release candidate folder
+	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
+	Then no cake errors were reported
+	And I find the artifacts in the master release candidate folder
+	Given I save the master release candidate folder file names and timestamps
+    And I save the contents of the master release candidate json dependencies file
+    And I wait two seconds
+    And I wait for a minute change on the clock
+	When I run the cake script with target "IgnoreOutdatedBuildCakePendingChangesAndDoNotPush"
+	Then no cake errors were reported
+	And the contents of the master release candidate json dependencies file has changed
+	And the contents of the master release candidate folder has changed
+
 Scenario: Release artifacts are not copied to the master release folder when build fails
 	Given I clean up the master release folder
 	And I change a source file so that it cannot be compiled

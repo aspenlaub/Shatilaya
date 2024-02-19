@@ -14,13 +14,13 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Autofac;
 using LibGit2Sharp;
 using NuGet.Common;
 using NuGet.Protocol;
 using TechTalk.SpecFlow;
-using System.Diagnostics.Metrics;
 // ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
@@ -28,19 +28,26 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 [Binding]
 public class CakeBuildSteps {
     protected ErrorsAndInfos CakeErrorsAndInfos = new();
-    protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot, MasterReleaseBinFolderWriteTimeSnapshot;
-    protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot;
+    protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot,
+        MasterReleaseBinFolderWriteTimeSnapshot, MasterReleaseCandidateBinFolderWriteTimeSnapshot;
+    protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot,
+        MasterReleaseCandidateBinFolderContentsSnapshot;
     protected static TestTargetFolder ChabTarget = new(nameof(CakeBuildSteps), "Chab");
     private static IContainer Container;
-    protected IDictionary<string, DateTime> LastWriteTimes;
-
-    public CakeBuildSteps() {
-        LastWriteTimes = new Dictionary<string, DateTime>();
-    }
+    protected IDictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
     [BeforeFeature("CakeBuild")]
     public static void RecreateCakeFolder() {
         Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+    }
+
+    [BeforeScenario("CakeBuild")]
+    public void BeforeScenario() {
+        MasterDebugBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
+        MasterReleaseBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
+        MasterReleaseCandidateBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
+        MasterReleaseBinFolderContentsSnapshot = new Dictionary<string, string>();
+        MasterReleaseCandidateBinFolderContentsSnapshot = new Dictionary<string, string>();
     }
 
     [AfterScenario("CakeBuild")]
@@ -115,7 +122,6 @@ public class CakeBuildSteps {
 
     [Given(@"I save the master debug folder file names and timestamps")]
     public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
-        MasterDebugBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
         var folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsTrue(folder.Exists());
         foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
@@ -161,9 +167,17 @@ public class CakeBuildSteps {
         deleter.DeleteFolder(folder);
     }
 
+    [Given(@"I clean up the master release candidate folder")]
+    public void GivenICleanUpTheMasterReleaseCandidateFolder() {
+        var folder = ChabTargetMasterReleaseCandidateFolder();
+        if (!folder.Exists()) { return; }
+
+        var deleter = new FolderDeleter();
+        deleter.DeleteFolder(folder);
+    }
+
     [Given(@"I save the master release folder file names and timestamps")]
     public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
-        MasterReleaseBinFolderWriteTimeSnapshot = new Dictionary<string, DateTime>();
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
         foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
@@ -171,14 +185,31 @@ public class CakeBuildSteps {
         }
     }
 
+    [Given(@"I save the master release candidate folder file names and timestamps")]
+    public void GivenISaveTheMasterReleaseCandidateFolderFileNamesAndTimestamps() {
+        var folder = ChabTargetMasterReleaseCandidateFolder();
+        Assert.IsTrue(folder.Exists());
+        foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+            MasterReleaseCandidateBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
+        }
+    }
+
     [Given(@"I save the contents of the master release json dependencies file")]
     public void GivenISaveTheContentsOfTheMasterReleaseJsonDependenciesFile() {
-        MasterReleaseBinFolderContentsSnapshot = new Dictionary<string, string>();
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
         var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
         Assert.IsNotNull(fileName);
         MasterReleaseBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
+    }
+
+    [Given(@"I save the contents of the master release candidate json dependencies file")]
+    public void GivenISaveTheContentsOfTheMasterReleaseCandidateJsonDependenciesFile() {
+        var folder = ChabTargetMasterReleaseCandidateFolder();
+        Assert.IsTrue(folder.Exists());
+        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        Assert.IsNotNull(fileName);
+        MasterReleaseCandidateBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
     }
 
     [Given(@"I change a test case so that it will fail in release")]
@@ -332,11 +363,28 @@ public class CakeBuildSteps {
         Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
     }
 
+    [Then(@"I find the artifacts in the master release candidate folder")]
+    public void ThenIFindTheArtifactsInTheMasterReleaseCandidateFolder() {
+        var folder = ChabTargetMasterReleaseCandidateFolder();
+        Assert.IsTrue(folder.Exists());
+        Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
+        Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
+        Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.dll"));
+        Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
+    }
+
     [Then(@"the contents of the master release folder has not changed")]
     public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
         foreach (var snapShotFile in MasterReleaseBinFolderWriteTimeSnapshot) {
             VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
         }
+    }
+
+    [Then(@"the contents of the master release candidate folder has changed")]
+    public void ThenTheContentsOfTheMasterReleaseCandidateFolderHasChanged() {
+        Assert.IsTrue(MasterReleaseCandidateBinFolderWriteTimeSnapshot.Any(
+            snapShotFile => DifferentLastWriteTime(snapShotFile.Key, snapShotFile.Value)
+        ));
     }
 
     [Then(@"the contents of the master release json dependencies file has not changed")]
@@ -352,9 +400,26 @@ public class CakeBuildSteps {
         Assert.AreEqual(0, differences.Count);
     }
 
+    [Then(@"the contents of the master release candidate json dependencies file has changed")]
+    public void ThenTheContentsOfTheMasterReleaseCandidateJsonDependenciesFileHasChanged() {
+        var folder = ChabTargetMasterReleaseCandidateFolder();
+        Assert.IsTrue(folder.Exists());
+        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        Assert.IsNotNull(fileName);
+        var expectedContents = MasterReleaseCandidateBinFolderContentsSnapshot[fileName];
+        var actualContents = File.ReadAllText(fileName);
+        Assert.AreEqual(expectedContents.Length, actualContents.Length);
+        var differences = Enumerable.Range(0, expectedContents.Length).Where(i => expectedContents[i] != actualContents[i]).ToList();
+        Assert.AreEqual(2, differences.Count);
+    }
+
     protected void VerifyEqualLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
         Assert.AreEqual(lastKnownWriteTime, File.GetLastWriteTime(fileName),
-                        fileName + " updated " + File.GetLastWriteTime(fileName).ToLongTimeString() + " after " + lastKnownWriteTime.ToLongTimeString());
+            fileName + " updated " + File.GetLastWriteTime(fileName).ToLongTimeString() + " after " + lastKnownWriteTime.ToLongTimeString());
+    }
+
+    protected bool DifferentLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
+        return lastKnownWriteTime != File.GetLastWriteTime(fileName);
     }
 
     [Then(@"I do not find any artifacts in the master release folder")]
@@ -431,4 +496,8 @@ public class CakeBuildSteps {
     }
 
     #endregion
+
+    private IFolder ChabTargetMasterReleaseCandidateFolder() {
+        return new Folder(ChabTarget.MasterReleaseBinFolder().FullName.Replace("Release", "ReleaseCandidate"));
+    }
 }
