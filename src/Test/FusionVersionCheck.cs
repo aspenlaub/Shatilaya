@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
@@ -29,7 +30,12 @@ public class FusionVersionCheck {
         var errorsAndInfos = new ErrorsAndInfos();
         var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-UpToDate") & s.Contains($"version={version}")), 
-            $"Build cake does not use Fusion-UpToDate version {version}");
+        if (DateTime.Now.Year <= 2024) {
+            Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion") & s.Contains($"version={version}")),
+                $"Build cake does not use Fusion version {version}");
+        } else {
+            Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-UpToDate") & s.Contains($"version={version}")),
+                $"Build cake does not use Fusion-UpToDate version {version}");
+        }
     }
 }
