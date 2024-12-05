@@ -30,6 +30,6 @@ public class FusionVersionCheck {
         var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsTrue(buildCake.Any(s => s.Contains("Fusion-DotnetEight") & s.Contains($"version={version}")), 
-            $"Build cake does not use Fusion-DotnetSeven version {version}");
+            $"Build cake does not use Fusion-DotnetEight version {version}");
     }
 }
