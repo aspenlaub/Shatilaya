@@ -29,7 +29,7 @@ public class FusionVersionCheck {
         var errorsAndInfos = new ErrorsAndInfos();
         var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        const string packageId = "Fusion-DotnetNine";
+        const string packageId = "Fusion-DotnetEight";
         Assert.IsTrue(buildCake.Any(s => s.Contains(packageId) & s.Contains($"version={version}")), 
             $"Build cake does not use {packageId} version {version}");
     }
