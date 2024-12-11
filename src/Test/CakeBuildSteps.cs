@@ -33,12 +33,12 @@ public class CakeBuildSteps {
     protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot,
         MasterReleaseCandidateBinFolderContentsSnapshot;
     protected static TestTargetFolder ChabTarget = new(nameof(CakeBuildSteps), "Chab");
-    private static IContainer Container;
+    private static IContainer _container;
     protected IDictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
     [BeforeFeature("CakeBuild")]
     public static void RecreateCakeFolder() {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
     }
 
     [BeforeScenario("CakeBuild")]
@@ -63,50 +63,50 @@ public class CakeBuildSteps {
         }
         const string url = "https://github.com/aspenlaub/Chab.git";
         var errorsAndInfos = new ErrorsAndInfos();
-        Container.Resolve<IGitUtilities>().Clone(url, branchId, ChabTarget.Folder(), new CloneOptions { BranchName = branchId }, true, errorsAndInfos);
+        _container.Resolve<IGitUtilities>().Clone(url, branchId, ChabTarget.Folder(), new CloneOptions { BranchName = branchId }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        Container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
+        _container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
     }
 
-    [Given(@"I copy the latest cake script from my Shatilaya solution with a comment added at the top")]
+    [Given("I copy the latest cake script from my Shatilaya solution with a comment added at the top")]
     public void GivenIHaveTheLatestBuildCakeScript() {
         var errorsAndInfos = new ErrorsAndInfos();
-        Container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
+        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         var buildCakeFileName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
         var buildCake = File.ReadAllText(buildCakeFileName);
         File.WriteAllText(buildCakeFileName, "// This should make me different from the master cake\r\n" + buildCake);
     }
 
-    [Given(@"Nuget packages are not restored yet")]
+    [Given("Nuget packages are not restored yet")]
     public void GivenNugetPackagesAreNotRestoredYet() {
         var folder = ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
         Assert.IsFalse(folder.Exists());
     }
 
-    [Given(@"I change a source file so that it cannot be compiled")]
+    [Given("I change a source file so that it cannot be compiled")]
     public void GivenIChangeASourceFileSoThatItCannotBeCompiled() {
         var folder = ChabTarget.Folder().SubFolder("src");
         var fileName = folder.FullName + @"\Oven.cs";
         Assert.IsTrue(File.Exists(fileName));
         var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains(@"new()"));
-        contents = contents.Replace(@"new()", @"old()");
+        Assert.IsTrue(contents.Contains("new()"));
+        contents = contents.Replace("new()", "old()");
         File.WriteAllText(fileName, contents);
     }
 
-    [Given(@"I change a source file so that it still can be compiled")]
+    [Given("I change a source file so that it still can be compiled")]
     public void GivenIChangeASourceFileSoThatItStillCanBeCompiled() {
         var folder = ChabTarget.Folder().SubFolder("src");
         var fileName = folder.FullName + @"\Oven.cs";
         Assert.IsTrue(File.Exists(fileName));
         var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains(@"namespace Aspenlaub"));
-        contents = contents.Replace(@"namespace Aspenlaub", "/* Commented */\r\n" + @"namespace Aspenlaub");
+        Assert.IsTrue(contents.Contains("namespace Aspenlaub"));
+        contents = contents.Replace("namespace Aspenlaub", "/* Commented */\r\n" + "namespace Aspenlaub");
         File.WriteAllText(fileName, contents);
     }
 
-    [Given(@"I clean up the master debug folder")]
+    [Given("I clean up the master debug folder")]
     public void GivenICleanUpTheMasterDebugFolder() {
         var folder = ChabTarget.MasterDebugBinFolder();
         if (!folder.Exists()) { return; }
@@ -115,12 +115,12 @@ public class CakeBuildSteps {
         deleter.DeleteFolder(folder);
     }
 
-    [Given(@"I run the cake script")]
+    [Given("I run the cake script")]
     public void GivenIRunTheBuild_CakeScript() {
-        Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
     }
 
-    [Given(@"I save the master debug folder file names and timestamps")]
+    [Given("I save the master debug folder file names and timestamps")]
     public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
         var folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -129,12 +129,12 @@ public class CakeBuildSteps {
         }
     }
 
-    [Given(@"I wait two seconds")]
+    [Given("I wait two seconds")]
     public void GivenIWaitTwoSeconds() {
         Thread.Sleep(TimeSpan.FromSeconds(2));
     }
 
-    [Given(@"I wait for a minute change on the clock")]
+    [Given("I wait for a minute change on the clock")]
     public void GivenIWaitForAMinuteChangeOnTheClock() {
         var minute = DateTime.Now.Minute;
         do {
@@ -142,23 +142,23 @@ public class CakeBuildSteps {
         } while (minute == DateTime.Now.Minute);
     }
 
-    [Given(@"no cake errors were reported")]
+    [Given("no cake errors were reported")]
     public void GivenNoCakeErrorsWereReported() {
         Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsToString());
     }
 
-    [Given(@"I change a test case so that it will fail")]
+    [Given("I change a test case so that it will fail")]
     public void GivenIChangeATestCaseSoThatItWillFail() {
         var folder = ChabTarget.Folder().SubFolder(@"src\Test");
         var fileName = folder.FullName + @"\OvenTest.cs";
         Assert.IsTrue(File.Exists(fileName));
         var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains(@"Assert.IsNotNull"));
-        contents = contents.Replace(@"Assert.IsNotNull", @"Assert.IsNull");
+        Assert.IsTrue(contents.Contains("Assert.IsNotNull"));
+        contents = contents.Replace("Assert.IsNotNull", "Assert.IsNull");
         File.WriteAllText(fileName, contents);
     }
 
-    [Given(@"I clean up the master release folder")]
+    [Given("I clean up the master release folder")]
     public void GivenICleanUpTheMasterReleaseFolder() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         if (!folder.Exists()) { return; }
@@ -167,7 +167,7 @@ public class CakeBuildSteps {
         deleter.DeleteFolder(folder);
     }
 
-    [Given(@"I clean up the master release candidate folder")]
+    [Given("I clean up the master release candidate folder")]
     public void GivenICleanUpTheMasterReleaseCandidateFolder() {
         var folder = ChabTargetMasterReleaseCandidateFolder();
         if (!folder.Exists()) { return; }
@@ -176,7 +176,7 @@ public class CakeBuildSteps {
         deleter.DeleteFolder(folder);
     }
 
-    [Given(@"I save the master release folder file names and timestamps")]
+    [Given("I save the master release folder file names and timestamps")]
     public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -185,7 +185,7 @@ public class CakeBuildSteps {
         }
     }
 
-    [Given(@"I save the master release candidate folder file names and timestamps")]
+    [Given("I save the master release candidate folder file names and timestamps")]
     public void GivenISaveTheMasterReleaseCandidateFolderFileNamesAndTimestamps() {
         var folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
@@ -194,7 +194,7 @@ public class CakeBuildSteps {
         }
     }
 
-    [Given(@"I save the contents of the master release json dependencies file")]
+    [Given("I save the contents of the master release json dependencies file")]
     public void GivenISaveTheContentsOfTheMasterReleaseJsonDependenciesFile() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -203,7 +203,7 @@ public class CakeBuildSteps {
         MasterReleaseBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
     }
 
-    [Given(@"I save the contents of the master release candidate json dependencies file")]
+    [Given("I save the contents of the master release candidate json dependencies file")]
     public void GivenISaveTheContentsOfTheMasterReleaseCandidateJsonDependenciesFile() {
         var folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
@@ -212,18 +212,18 @@ public class CakeBuildSteps {
         MasterReleaseCandidateBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
     }
 
-    [Given(@"I change a test case so that it will fail in release")]
+    [Given("I change a test case so that it will fail in release")]
     public void GivenIChangeATestCaseSoThatItWillFailInRelease() {
         var folder = ChabTarget.Folder().SubFolder(@"src\Test");
         var fileName = folder.FullName + @"\OvenTest.cs";
         Assert.IsTrue(File.Exists(fileName));
         var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains(@"Assert.IsNotNull(cake);"));
+        Assert.IsTrue(contents.Contains("Assert.IsNotNull(cake);"));
         contents = contents.Replace("Assert.IsNotNull(cake);", "#if DEBUG\r\nAssert.IsNotNull(cake);\r\n#else\r\nAssert.IsNull(cake);\r\n#endif");
         File.WriteAllText(fileName, contents);
     }
 
-    [Given(@"I empty the nuspec file")]
+    [Given("I empty the nuspec file")]
     public void GivenIDeleteTheNuspecFile() {
         var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
         File.WriteAllText(nuSpecFileName, "");
@@ -232,19 +232,19 @@ public class CakeBuildSteps {
     #endregion
 
     #region When
-    [When(@"I run the cake script")]
+    [When("I run the cake script")]
     public void WhenIRunTheBuild_CakeScript() {
-        Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
     }
 
     [When(@"I run the cake script with target ""(.*)""")]
     public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
-        Container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, target, CakeErrorsAndInfos);
+        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, target, CakeErrorsAndInfos);
     }
     #endregion
 
     #region Then
-    [Then(@"the cake file is identical to the latest found on the GitHub Shatilaya master branch")]
+    [Then("the cake file is identical to the latest found on the GitHub Shatilaya master branch")]
     public async Task ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranchAsync() {
         string expectedContents;
         do {
@@ -262,7 +262,7 @@ public class CakeBuildSteps {
     }
 
     private async Task<string> LatestCakeFileOnTheGitHubShatilayaMasterBranchAsync() {
-        const string url = @"https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/" + BuildCake.Standard;
+        const string url = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/" + BuildCake.Standard;
         try {
             using var client = new HttpClient();
             var content = await client.GetStringAsync(url);
@@ -272,33 +272,33 @@ public class CakeBuildSteps {
         }
     }
 
-    [Then(@"no artifact exists")]
+    [Then("no artifact exists")]
     public void ThenNoArtifactExists() {
         var folder = ChabTarget.Folder().SubFolder("src");
         var files = Directory.GetFiles(folder.FullName, "*.*", SearchOption.AllDirectories).Where(f => f.Contains(@"\bin\"));
         Assert.IsFalse(files.Any());
     }
 
-    [Then(@"no cake errors were reported")]
+    [Then("no cake errors were reported")]
     public void ThenNoCakeErrorsWereReported() {
         Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsPlusRelevantInfos());
         Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(i => i.StartsWith("Could not load")), string.Join("\r\n", CakeErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
     }
 
-    [Then(@"the branch is considered the master branch or a branch with packages")]
+    [Then("the branch is considered the master branch or a branch with packages")]
     public void ThenTheBranchIsConsideredTheMasterBranchOrABranchWithPackages() {
         Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(i => i == "Is master branch or branch with packages: true"));
     }
 
-    [Then(@"a compilation error was reported for the changed source file")]
+    [Then("a compilation error was reported for the changed source file")]
     public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"MSBuild: Process returned an error")), CakeErrorsAndInfos.ErrorsToString());
-        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Oven.cs") && m.Contains(@"error CS0103") && m.Contains(@"'old' does not exist")));
+        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains("MSBuild: Process returned an error")), CakeErrorsAndInfos.ErrorsToString());
+        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains("Oven.cs") && m.Contains("error CS0103") && m.Contains("'old' does not exist")));
     }
 
-    [Then(@"an uncommitted change error was reported for the changed source file")]
+    [Then("an uncommitted change error was reported for the changed source file")]
     public void ThenAUncommittedChangeErrorWasReportedForTheChangedSourceFile() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains(@"Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
+        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains("Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
     }
 
     [Then(@"build step ""(.*)"" was not a target")]
@@ -306,12 +306,12 @@ public class CakeBuildSteps {
         Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(m => m.Contains(p0)));
     }
 
-    [Then(@"I get an error message saying that I need to rerun my cake script")]
+    [Then("I get an error message saying that I need to rerun my cake script")]
     public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains(@"Your cake file has been updated")), CakeErrorsAndInfos.ErrorsToString());
+        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains("Your cake file has been updated")), CakeErrorsAndInfos.ErrorsToString());
     }
 
-    [Then(@"I find the artifacts in the master debug folder")]
+    [Then("I find the artifacts in the master debug folder")]
     public void ThenIFindTheArtifactsInTheMasterDebugFolder() {
         var folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -321,14 +321,14 @@ public class CakeBuildSteps {
         Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
     }
 
-    [Then(@"the contents of the master debug folder has not changed")]
+    [Then("the contents of the master debug folder has not changed")]
     public void ThenTheContentsOfTheMasterDebugFolderHasNotChanged() {
         foreach (var snapShotFile in MasterDebugBinFolderWriteTimeSnapshot) {
             VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
         }
     }
 
-    [Then(@"I do not find any artifacts in the master debug folder")]
+    [Then("I do not find any artifacts in the master debug folder")]
     public void ThenIDoNotFindAnyArtifactsInTheMasterDebugFolder() {
         var folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
@@ -337,12 +337,12 @@ public class CakeBuildSteps {
     [Then(@"a failed ""(.*)"" test case was reported")]
     public void ThenAFailedTestCaseWasReported(string p0) {
         Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
-        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains(@"Failed CanBakeACake")));
+        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains("Failed CanBakeACake")));
     }
 
     [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
     public void ThenArtifactsWasWereProduced(int p0, string p1) {
-        var folder = ChabTarget.Folder().SubFolder(@"src");
+        var folder = ChabTarget.Folder().SubFolder("src");
         Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.AllDirectories)
                                      .Count(f => !f.Contains(@"\ref\") && f.Contains(@"\bin\" + p1 + @"\")));
     }
@@ -353,7 +353,7 @@ public class CakeBuildSteps {
         Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
     }
 
-    [Then(@"I find the artifacts in the master release folder")]
+    [Then("I find the artifacts in the master release folder")]
     public void ThenIFindTheArtifactsInTheMasterReleaseFolder() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -363,7 +363,7 @@ public class CakeBuildSteps {
         Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
     }
 
-    [Then(@"I find the artifacts in the master release candidate folder")]
+    [Then("I find the artifacts in the master release candidate folder")]
     public void ThenIFindTheArtifactsInTheMasterReleaseCandidateFolder() {
         var folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
@@ -373,21 +373,21 @@ public class CakeBuildSteps {
         Assert.IsFalse(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.Test.pdb"));
     }
 
-    [Then(@"the contents of the master release folder has not changed")]
+    [Then("the contents of the master release folder has not changed")]
     public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
         foreach (var snapShotFile in MasterReleaseBinFolderWriteTimeSnapshot) {
             VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
         }
     }
 
-    [Then(@"the contents of the master release candidate folder has changed")]
+    [Then("the contents of the master release candidate folder has changed")]
     public void ThenTheContentsOfTheMasterReleaseCandidateFolderHasChanged() {
         Assert.IsTrue(MasterReleaseCandidateBinFolderWriteTimeSnapshot.Any(
             snapShotFile => DifferentLastWriteTime(snapShotFile.Key, snapShotFile.Value)
         ));
     }
 
-    [Then(@"the contents of the master release json dependencies file has not changed")]
+    [Then("the contents of the master release json dependencies file has not changed")]
     public void ThenTheContentsOfTheMasterReleaseJsonDependenciesFileHasNotChanged() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
@@ -400,7 +400,7 @@ public class CakeBuildSteps {
         Assert.AreEqual(0, differences.Count);
     }
 
-    [Then(@"the contents of the master release candidate json dependencies file has changed")]
+    [Then("the contents of the master release candidate json dependencies file has changed")]
     public void ThenTheContentsOfTheMasterReleaseCandidateJsonDependenciesFileHasChanged() {
         var folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
@@ -422,7 +422,7 @@ public class CakeBuildSteps {
         return lastKnownWriteTime != File.GetLastWriteTime(fileName);
     }
 
-    [Then(@"I do not find any artifacts in the master release folder")]
+    [Then("I do not find any artifacts in the master release folder")]
     public void ThenIDoNotFindAnyArtifactsInTheMasterReleaseFolder() {
         var folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
@@ -457,7 +457,7 @@ public class CakeBuildSteps {
         Assert.AreEqual(LastWriteTimes[p0], File.GetLastWriteTime(newestFile));
     }
 
-    [Then(@"a non-empty nuspec file is there again")]
+    [Then("a non-empty nuspec file is there again")]
     public void ThenANon_EmptyNuspecFileIsThereAgain() {
         var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
         Assert.IsTrue(File.Exists(nuSpecFileName));
@@ -466,7 +466,7 @@ public class CakeBuildSteps {
 
     [Then(@"the newest nuget package in the master ""(.*)"" folder is tagged with the head tip id sha")]
     public void ThenTheNewestNugetPackageInTheMasterFolderIsTaggedWithTheHeadTipIdSha(string p0) {
-        var headTipIdSha = Container.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
+        var headTipIdSha = _container.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
         var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
         var repository = new FindLocalPackagesResourceV2(packagesFolder);
         var logger = new NullLogger();
