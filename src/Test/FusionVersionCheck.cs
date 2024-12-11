@@ -14,11 +14,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [TestClass]
 public class FusionVersionCheck {
-    private static IContainer Container;
+    private static IContainer _container;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context) {
-        Container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestMethod]
@@ -27,9 +27,9 @@ public class FusionVersionCheck {
         Assert.IsNotNull(version);
         Assert.IsTrue(version.ToString().StartsWith("2.0."));
         var errorsAndInfos = new ErrorsAndInfos();
-        var buildCake = Container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
+        var buildCake = _container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        const string packageId = "Fusion-DotnetEight";
+        const string packageId = "Fusion-DotnetNine";
         Assert.IsTrue(buildCake.Any(s => s.Contains(packageId) & s.Contains($"version={version}")), 
             $"Build cake does not use {packageId} version {version}");
     }
