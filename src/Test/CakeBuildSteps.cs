@@ -20,7 +20,8 @@ using Autofac;
 using LibGit2Sharp;
 using NuGet.Common;
 using NuGet.Protocol;
-using TechTalk.SpecFlow;
+using Reqnroll;
+
 // ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
