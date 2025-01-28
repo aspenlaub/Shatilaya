@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
@@ -17,17 +18,17 @@ public class FusionVersionCheck {
     private static IContainer _container;
 
     [ClassInitialize]
-    public static void ClassInitialize(TestContext context) {
+    public static void ClassInitialize(TestContext _) {
         _container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
     }
 
     [TestMethod]
     public void BuildCakeUsesRightPackageVersion() {
-        var version = typeof(INugetPackageUpdater).Assembly.GetName().Version;
+        Version version = typeof(INugetPackageUpdater).Assembly.GetName().Version;
         Assert.IsNotNull(version);
         Assert.IsTrue(version.ToString().StartsWith("2.0."));
         var errorsAndInfos = new ErrorsAndInfos();
-        var buildCake = _container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
+        string[] buildCake = _container.Resolve<IEmbeddedCakeScriptReader>().ReadCakeScriptFromAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, errorsAndInfos).Split("\n");
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         const string packageId = "Fusion-DotnetNine";
         Assert.IsTrue(buildCake.Any(s => s.Contains(packageId) & s.Contains($"version={version}")), 
