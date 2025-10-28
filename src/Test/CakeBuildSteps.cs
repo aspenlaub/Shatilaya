@@ -19,8 +19,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Autofac;
 using LibGit2Sharp;
 using NuGet.Common;
+using NuGet.Packaging;
 using NuGet.Protocol;
 using Reqnroll;
+using Version = System.Version;
 
 // ReSharper disable UnusedMember.Global
 
@@ -74,42 +76,42 @@ public class CakeBuildSteps {
         var errorsAndInfos = new ErrorsAndInfos();
         _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        var buildCakeFileName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
-        var buildCake = File.ReadAllText(buildCakeFileName);
+        string buildCakeFileName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
+        string buildCake = File.ReadAllText(buildCakeFileName);
         File.WriteAllText(buildCakeFileName, "// This should make me different from the master cake\r\n" + buildCake);
     }
 
     [Given("Nuget packages are not restored yet")]
     public void GivenNugetPackagesAreNotRestoredYet() {
-        var folder = ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
+        IFolder folder = ChabTarget.Folder().SubFolder(@"src\packages\OctoPack.3.6.3");
         Assert.IsFalse(folder.Exists());
     }
 
     [Given("I change a source file so that it cannot be compiled")]
     public void GivenIChangeASourceFileSoThatItCannotBeCompiled() {
-        var folder = ChabTarget.Folder().SubFolder("src");
-        var fileName = folder.FullName + @"\Oven.cs";
+        IFolder folder = ChabTarget.Folder().SubFolder("src");
+        string fileName = folder.FullName + @"\Oven.cs";
         Assert.IsTrue(File.Exists(fileName));
-        var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains("new()"));
+        string contents = File.ReadAllText(fileName);
+        Assert.Contains("new()", contents);
         contents = contents.Replace("new()", "old()");
         File.WriteAllText(fileName, contents);
     }
 
     [Given("I change a source file so that it still can be compiled")]
     public void GivenIChangeASourceFileSoThatItStillCanBeCompiled() {
-        var folder = ChabTarget.Folder().SubFolder("src");
-        var fileName = folder.FullName + @"\Oven.cs";
+        IFolder folder = ChabTarget.Folder().SubFolder("src");
+        string fileName = folder.FullName + @"\Oven.cs";
         Assert.IsTrue(File.Exists(fileName));
-        var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains("namespace Aspenlaub"));
+        string contents = File.ReadAllText(fileName);
+        Assert.Contains("namespace Aspenlaub", contents);
         contents = contents.Replace("namespace Aspenlaub", "/* Commented */\r\n" + "namespace Aspenlaub");
         File.WriteAllText(fileName, contents);
     }
 
     [Given("I clean up the master debug folder")]
     public void GivenICleanUpTheMasterDebugFolder() {
-        var folder = ChabTarget.MasterDebugBinFolder();
+        IFolder folder = ChabTarget.MasterDebugBinFolder();
         if (!folder.Exists()) { return; }
 
         var deleter = new FolderDeleter();
@@ -123,9 +125,9 @@ public class CakeBuildSteps {
 
     [Given("I save the master debug folder file names and timestamps")]
     public void GivenISaveTheMasterDebugFolderFileNamesAndTimestamps() {
-        var folder = ChabTarget.MasterDebugBinFolder();
+        IFolder folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsTrue(folder.Exists());
-        foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+        foreach (string fileName in Directory.GetFiles(folder.FullName, "*.*")) {
             MasterDebugBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
         }
     }
@@ -137,7 +139,7 @@ public class CakeBuildSteps {
 
     [Given("I wait for a minute change on the clock")]
     public void GivenIWaitForAMinuteChangeOnTheClock() {
-        var minute = DateTime.Now.Minute;
+        int minute = DateTime.Now.Minute;
         do {
             Thread.Sleep(TimeSpan.FromSeconds(2));
         } while (minute == DateTime.Now.Minute);
@@ -150,18 +152,18 @@ public class CakeBuildSteps {
 
     [Given("I change a test case so that it will fail")]
     public void GivenIChangeATestCaseSoThatItWillFail() {
-        var folder = ChabTarget.Folder().SubFolder(@"src\Test");
-        var fileName = folder.FullName + @"\OvenTest.cs";
+        IFolder folder = ChabTarget.Folder().SubFolder(@"src\Test");
+        string fileName = folder.FullName + @"\OvenTest.cs";
         Assert.IsTrue(File.Exists(fileName));
-        var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains("Assert.IsNotNull"));
+        string contents = File.ReadAllText(fileName);
+        Assert.Contains("Assert.IsNotNull", contents);
         contents = contents.Replace("Assert.IsNotNull", "Assert.IsNull");
         File.WriteAllText(fileName, contents);
     }
 
     [Given("I clean up the master release folder")]
     public void GivenICleanUpTheMasterReleaseFolder() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         if (!folder.Exists()) { return; }
 
         var deleter = new FolderDeleter();
@@ -170,7 +172,7 @@ public class CakeBuildSteps {
 
     [Given("I clean up the master release candidate folder")]
     public void GivenICleanUpTheMasterReleaseCandidateFolder() {
-        var folder = ChabTargetMasterReleaseCandidateFolder();
+        IFolder folder = ChabTargetMasterReleaseCandidateFolder();
         if (!folder.Exists()) { return; }
 
         var deleter = new FolderDeleter();
@@ -179,54 +181,54 @@ public class CakeBuildSteps {
 
     [Given("I save the master release folder file names and timestamps")]
     public void GivenISaveTheMasterReleaseFolderFileNamesAndTimestamps() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
-        foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+        foreach (string fileName in Directory.GetFiles(folder.FullName, "*.*")) {
             MasterReleaseBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
         }
     }
 
     [Given("I save the master release candidate folder file names and timestamps")]
     public void GivenISaveTheMasterReleaseCandidateFolderFileNamesAndTimestamps() {
-        var folder = ChabTargetMasterReleaseCandidateFolder();
+        IFolder folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
-        foreach (var fileName in Directory.GetFiles(folder.FullName, "*.*")) {
+        foreach (string fileName in Directory.GetFiles(folder.FullName, "*.*")) {
             MasterReleaseCandidateBinFolderWriteTimeSnapshot[fileName] = File.GetLastWriteTime(fileName);
         }
     }
 
     [Given("I save the contents of the master release json dependencies file")]
     public void GivenISaveTheContentsOfTheMasterReleaseJsonDependenciesFile() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
-        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        string fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
         Assert.IsNotNull(fileName);
         MasterReleaseBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
     }
 
     [Given("I save the contents of the master release candidate json dependencies file")]
     public void GivenISaveTheContentsOfTheMasterReleaseCandidateJsonDependenciesFile() {
-        var folder = ChabTargetMasterReleaseCandidateFolder();
+        IFolder folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
-        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        string fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
         Assert.IsNotNull(fileName);
         MasterReleaseCandidateBinFolderContentsSnapshot[fileName] = File.ReadAllText(fileName);
     }
 
     [Given("I change a test case so that it will fail in release")]
     public void GivenIChangeATestCaseSoThatItWillFailInRelease() {
-        var folder = ChabTarget.Folder().SubFolder(@"src\Test");
-        var fileName = folder.FullName + @"\OvenTest.cs";
+        IFolder folder = ChabTarget.Folder().SubFolder(@"src\Test");
+        string fileName = folder.FullName + @"\OvenTest.cs";
         Assert.IsTrue(File.Exists(fileName));
-        var contents = File.ReadAllText(fileName);
-        Assert.IsTrue(contents.Contains("Assert.IsNotNull(cake);"));
+        string contents = File.ReadAllText(fileName);
+        Assert.Contains("Assert.IsNotNull(cake);", contents);
         contents = contents.Replace("Assert.IsNotNull(cake);", "#if DEBUG\r\nAssert.IsNotNull(cake);\r\n#else\r\nAssert.IsNull(cake);\r\n#endif");
         File.WriteAllText(fileName, contents);
     }
 
     [Given("I empty the nuspec file")]
     public void GivenIDeleteTheNuspecFile() {
-        var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
+        string nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
         File.WriteAllText(nuSpecFileName, "");
     }
 
@@ -255,8 +257,8 @@ public class CakeBuildSteps {
             }
         } while (expectedContents == "");
 
-        var scriptFileFullName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
-        var actualContents = (await File.ReadAllTextAsync(scriptFileFullName)).Replace("\r\n", "\n");
+        string scriptFileFullName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
+        string actualContents = (await File.ReadAllTextAsync(scriptFileFullName)).Replace("\r\n", "\n");
 
         /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
         Assert.AreEqual(expectedContents, actualContents);
@@ -266,7 +268,7 @@ public class CakeBuildSteps {
         const string url = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/" + BuildCake.Standard;
         try {
             using var client = new HttpClient();
-            var content = await client.GetStringAsync(url);
+            string content = await client.GetStringAsync(url);
             return content.Replace("\r\n", "\n");
         } catch {
             return "";
@@ -275,8 +277,8 @@ public class CakeBuildSteps {
 
     [Then("no artifact exists")]
     public void ThenNoArtifactExists() {
-        var folder = ChabTarget.Folder().SubFolder("src");
-        var files = Directory.GetFiles(folder.FullName, "*.*", SearchOption.AllDirectories).Where(f => f.Contains(@"\bin\"));
+        IFolder folder = ChabTarget.Folder().SubFolder("src");
+        IEnumerable<string> files = Directory.GetFiles(folder.FullName, "*.*", SearchOption.AllDirectories).Where(f => f.Contains(@"\bin\"));
         Assert.IsFalse(files.Any());
     }
 
@@ -314,7 +316,7 @@ public class CakeBuildSteps {
 
     [Then("I find the artifacts in the master debug folder")]
     public void ThenIFindTheArtifactsInTheMasterDebugFolder() {
-        var folder = ChabTarget.MasterDebugBinFolder();
+        IFolder folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsTrue(folder.Exists());
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
@@ -324,14 +326,14 @@ public class CakeBuildSteps {
 
     [Then("the contents of the master debug folder has not changed")]
     public void ThenTheContentsOfTheMasterDebugFolderHasNotChanged() {
-        foreach (var snapShotFile in MasterDebugBinFolderWriteTimeSnapshot) {
+        foreach (KeyValuePair<string, DateTime> snapShotFile in MasterDebugBinFolderWriteTimeSnapshot) {
             VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
         }
     }
 
     [Then("I do not find any artifacts in the master debug folder")]
     public void ThenIDoNotFindAnyArtifactsInTheMasterDebugFolder() {
-        var folder = ChabTarget.MasterDebugBinFolder();
+        IFolder folder = ChabTarget.MasterDebugBinFolder();
         Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
     }
 
@@ -343,20 +345,20 @@ public class CakeBuildSteps {
 
     [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
     public void ThenArtifactsWasWereProduced(int p0, string p1) {
-        var folder = ChabTarget.Folder().SubFolder("src");
+        IFolder folder = ChabTarget.Folder().SubFolder("src");
         Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*Chab*.dll", SearchOption.AllDirectories)
                                      .Count(f => !f.Contains(@"\ref\") && f.Contains(@"\bin\" + p1 + @"\")));
     }
 
     [Then(@"(.*) ""(.*)"" nupkg file/-s was/were produced")]
     public void ThenNupkgFileWasWereProduced(int p0, string p1) {
-        var folder = ChabTarget.Folder().SubFolder(@"src\bin\" + p1);
-        Assert.AreEqual(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly).Length);
+        IFolder folder = ChabTarget.Folder().SubFolder(@"src\bin\" + p1);
+        Assert.HasCount(p0, Directory.GetFiles(folder.FullName, "*.nupkg", SearchOption.TopDirectoryOnly));
     }
 
     [Then("I find the artifacts in the master release folder")]
     public void ThenIFindTheArtifactsInTheMasterReleaseFolder() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
@@ -366,7 +368,7 @@ public class CakeBuildSteps {
 
     [Then("I find the artifacts in the master release candidate folder")]
     public void ThenIFindTheArtifactsInTheMasterReleaseCandidateFolder() {
-        var folder = ChabTargetMasterReleaseCandidateFolder();
+        IFolder folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.dll"));
         Assert.IsTrue(File.Exists(folder.FullName + @"\Aspenlaub.Net.GitHub.CSharp.Chab.pdb"));
@@ -376,7 +378,7 @@ public class CakeBuildSteps {
 
     [Then("the contents of the master release folder has not changed")]
     public void ThenTheContentsOfTheMasterReleaseFolderHasNotChanged() {
-        foreach (var snapShotFile in MasterReleaseBinFolderWriteTimeSnapshot) {
+        foreach (KeyValuePair<string, DateTime> snapShotFile in MasterReleaseBinFolderWriteTimeSnapshot) {
             VerifyEqualLastWriteTime(snapShotFile.Key, snapShotFile.Value);
         }
     }
@@ -390,28 +392,28 @@ public class CakeBuildSteps {
 
     [Then("the contents of the master release json dependencies file has not changed")]
     public void ThenTheContentsOfTheMasterReleaseJsonDependenciesFileHasNotChanged() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsTrue(folder.Exists());
-        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        string fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
         Assert.IsNotNull(fileName);
-        var expectedContents = MasterReleaseBinFolderContentsSnapshot[fileName];
-        var actualContents = File.ReadAllText(fileName);
+        string expectedContents = MasterReleaseBinFolderContentsSnapshot[fileName];
+        string actualContents = File.ReadAllText(fileName);
         Assert.AreEqual(expectedContents.Length, actualContents.Length);
         var differences = Enumerable.Range(0, expectedContents.Length).Where(i => expectedContents[i] != actualContents[i]).ToList();
-        Assert.AreEqual(0, differences.Count);
+        Assert.IsEmpty(differences);
     }
 
     [Then("the contents of the master release candidate json dependencies file has changed")]
     public void ThenTheContentsOfTheMasterReleaseCandidateJsonDependenciesFileHasChanged() {
-        var folder = ChabTargetMasterReleaseCandidateFolder();
+        IFolder folder = ChabTargetMasterReleaseCandidateFolder();
         Assert.IsTrue(folder.Exists());
-        var fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
+        string fileName = Directory.GetFiles(folder.FullName, "*.deps.json").SingleOrDefault();
         Assert.IsNotNull(fileName);
-        var expectedContents = MasterReleaseCandidateBinFolderContentsSnapshot[fileName];
-        var actualContents = File.ReadAllText(fileName);
+        string expectedContents = MasterReleaseCandidateBinFolderContentsSnapshot[fileName];
+        string actualContents = File.ReadAllText(fileName);
         Assert.AreEqual(expectedContents.Length, actualContents.Length);
         var differences = Enumerable.Range(0, expectedContents.Length).Where(i => expectedContents[i] != actualContents[i]).ToList();
-        Assert.AreEqual(2, differences.Count);
+        Assert.HasCount(2, differences);
     }
 
     protected void VerifyEqualLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
@@ -425,70 +427,70 @@ public class CakeBuildSteps {
 
     [Then("I do not find any artifacts in the master release folder")]
     public void ThenIDoNotFindAnyArtifactsInTheMasterReleaseFolder() {
-        var folder = ChabTarget.MasterReleaseBinFolder();
+        IFolder folder = ChabTarget.MasterReleaseBinFolder();
         Assert.IsFalse(folder.Exists() && Directory.GetFiles(folder.FullName, "*.*").Any());
     }
 
     [Then(@"the number of ""(.*)"" files in the master ""(.*)"" folder is (.*)")]
     public void ThenTheNumberOfFilesInTheMasterFolderIs(string p0, string p1, int p2) {
-        var folder = p1 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
-        var numberOfFiles = Directory.GetFiles(folder.FullName, "*." + p0).Length;
+        IFolder folder = p1 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+        int numberOfFiles = Directory.GetFiles(folder.FullName, "*." + p0).Length;
         Assert.AreEqual(p2, numberOfFiles);
     }
 
     [Then(@"the newest file in the master ""(.*)"" folder is of type ""(.*)""")]
     public void ThenTheNewestFileInTheMasterFolderIsOfType(string p0, string p1) {
-        var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
-        var newestFile = folder.LastWrittenFileFullName();
-        Assert.IsTrue(newestFile.EndsWith(p1));
+        IFolder folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+        string newestFile = folder.LastWrittenFileFullName();
+        Assert.EndsWith(p1, newestFile);
     }
 
     [Then(@"I remember the last write time of the newest file in the master ""(.*)"" folder")]
     public void ThenIRememberTheLastWriteTimeOfTheNewestFileInTheMasterFolder(string p0) {
-        var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
-        var newestFile = folder.LastWrittenFileFullName();
+        IFolder folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+        string newestFile = folder.LastWrittenFileFullName();
         LastWriteTimes[p0] = File.GetLastWriteTime(newestFile);
     }
 
     [Then(@"the last write time of the newest file in the master ""(.*)"" folder is as remembered")]
     public void ThenTheLastWriteTimeOfTheNewestFileInTheMasterFolderIsAsRemembered(string p0) {
         Assert.IsTrue(LastWriteTimes.ContainsKey(p0));
-        var folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
-        var newestFile = folder.LastWrittenFileFullName();
+        IFolder folder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder() : ChabTarget.MasterDebugBinFolder();
+        string newestFile = folder.LastWrittenFileFullName();
         Assert.AreEqual(LastWriteTimes[p0], File.GetLastWriteTime(newestFile));
     }
 
     [Then("a non-empty nuspec file is there again")]
     public void ThenANon_EmptyNuspecFileIsThereAgain() {
-        var nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
+        string nuSpecFileName = ChabTarget.Folder().SubFolder("src").FullName + @"\Chab.nuspec";
         Assert.IsTrue(File.Exists(nuSpecFileName));
-        Assert.IsTrue(File.ReadAllText(nuSpecFileName).Length > 1024);
+        Assert.IsGreaterThan(1024, File.ReadAllText(nuSpecFileName).Length);
     }
 
     [Then(@"the newest nuget package in the master ""(.*)"" folder is tagged with the head tip id sha")]
     public void ThenTheNewestNugetPackageInTheMasterFolderIsTaggedWithTheHeadTipIdSha(string p0) {
-        var headTipIdSha = _container.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
-        var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
+        string headTipIdSha = _container.Resolve<IGitUtilities>().HeadTipIdSha(ChabTarget.Folder());
+        string packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
         var repository = new FindLocalPackagesResourceV2(packagesFolder);
         var logger = new NullLogger();
         var packages = repository.GetPackages(logger, CancellationToken.None).ToList();
-        var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
-        var package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
+        Version latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
+        LocalPackageInfo package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
         Assert.IsNotNull(package);
         var tags = package.Nuspec.GetTags().Split(' ').Where(s => s != "").ToList();
-        Assert.IsTrue(tags.Contains(headTipIdSha));
+        Assert.Contains(headTipIdSha, tags);
     }
 
     [Then(@"the newest nuget package in the master ""(.*)"" folder does not contain a test assembly")]
     public void ThenTheNewestNugetPackageInTheMasterFolderDoesNotContainATestAssembly(string p0) {
-        var packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
+        string packagesFolder = p0 == "Release" ? ChabTarget.MasterReleaseBinFolder().FullName : ChabTarget.MasterDebugBinFolder().FullName;
         var repository = new FindLocalPackagesResourceV2(packagesFolder);
         var logger = new NullLogger();
         var packages = repository.GetPackages(logger, CancellationToken.None).ToList();
-        var latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
-        var package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
+        Version latestPackageVersion = packages.Max(p => p.Identity.Version.Version);
+        LocalPackageInfo package = packages.FirstOrDefault(p => p.Identity.Version.Version == latestPackageVersion);
         Assert.IsNotNull(package);
-        using var reader = package.GetReader();
+        using PackageReaderBase reader = package.GetReader();
         var filesInPackage = reader.GetFiles().ToList();
         var wantedFiles = filesInPackage.Where(f => f.EndsWith("Chab.dll") && !f.Contains("Test")).ToList();
         Assert.IsTrue(wantedFiles.Any());
