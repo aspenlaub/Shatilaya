@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Shatilaya.csproj" />
+  <Project Path="Test/Shatilaya.Test.csproj" />
+</Solution>
