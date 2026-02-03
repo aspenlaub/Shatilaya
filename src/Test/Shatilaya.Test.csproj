@@ -19,10 +19,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Fusion-DotnetNine" Version="2.0.2385.1102" />
+    <PackageReference Include="Fusion-DotnetNine" Version="2.0.2386.1143" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="4.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="4.0.2" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
     <PackageReference Include="Reqnroll.MSTest" Version="3.3.3" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="3.3.3" />
   </ItemGroup>
