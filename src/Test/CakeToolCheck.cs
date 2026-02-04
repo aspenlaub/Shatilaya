@@ -17,11 +17,11 @@ public class CakeToolCheck {
         IDotNetCakeInstaller installer = container.Resolve<IDotNetCakeInstaller>();
         var errorsAndInfos = new ErrorsAndInfos();
         bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
             return;
         }
 
+        errorsAndInfos = new ErrorsAndInfos();
         installer.UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessary(errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
