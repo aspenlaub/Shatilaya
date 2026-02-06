@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="CakeFrosting/Shatilaya.CakeFrosting.csproj" />
   <Project Path="Shatilaya.csproj" />
   <Project Path="Test/Shatilaya.Test.csproj" />
 </Solution>
