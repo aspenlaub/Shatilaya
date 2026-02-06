@@ -4,5 +4,4 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
 [TaskName("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests")]
 [TaskDescription("To be described")]
-[IsDependentOn(typeof(WorldTask))]
 public class VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequestsTask : FrostingTask;

@@ -2,7 +2,6 @@ using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
-[TaskName("UpdateBuildCake")]
+[TaskName("DoNotPush")]
 [TaskDescription("To be described")]
-[IsDependentOn(typeof(WorldTask))]
-public class UpdateBuildCakeTask : FrostingTask;
+public class DoNotPushTask : FrostingTask;

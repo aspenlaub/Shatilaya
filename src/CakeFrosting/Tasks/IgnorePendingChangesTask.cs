@@ -2,6 +2,6 @@ using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
-[TaskName("RunTestsOnDebugArtifacts")]
+[TaskName("IgnorePendingChanges")]
 [TaskDescription("To be described")]
-public class RunTestsOnDebugArtifactsTask : FrostingTask;
+public class IgnorePendingChangesTask : FrostingTask;
