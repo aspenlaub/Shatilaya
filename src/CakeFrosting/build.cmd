@@ -1,1 +1,0 @@
-dotnet run --project ./Shatilaya.CakeFrosting.csproj -- "$@"

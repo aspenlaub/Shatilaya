@@ -1,5 +1,6 @@
 <Solution>
-  <Project Path="CakeFrosting/Shatilaya.CakeFrosting.csproj" />
   <Project Path="Shatilaya.csproj" />
+  <Project Path="CakeFrosting/Shatilaya.CakeFrosting.csproj" />
+  <Project Path="CakeFrosting/Test/Shatilaya.CakeFrosting.Test.csproj" Id="77f6bc22-794b-48ae-bea2-6965e08477f2" />
   <Project Path="Test/Shatilaya.Test.csproj" />
 </Solution>

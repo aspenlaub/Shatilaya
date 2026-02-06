@@ -22,8 +22,14 @@
     <NuspecFile>Shatilaya.nuspec</NuspecFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="CakeFrosting\**" />
+    <Compile Remove="Shatilaya.CakeFrosting.Test\**" />
     <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="CakeFrosting\**" />
+    <EmbeddedResource Remove="Shatilaya.CakeFrosting.Test\**" />
     <EmbeddedResource Remove="Test\**" />
+    <None Remove="CakeFrosting\**" />
+    <None Remove="Shatilaya.CakeFrosting.Test\**" />
     <None Remove="Test\**" />
   </ItemGroup>
 </Project>
