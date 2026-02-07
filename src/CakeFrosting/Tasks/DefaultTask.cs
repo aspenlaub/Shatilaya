@@ -9,4 +9,4 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 [IsDependentOn(typeof(CreateNuGetPackageTask))]
 [IsDependentOn(typeof(PushNuGetPackageTask))]
 [IsDependentOn(typeof(CleanObjectFoldersTask))]
-public class DefaultTask : FrostingTask;
+public class DefaultTask : FrostingTask<ShatilayaContext>;

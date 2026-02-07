@@ -4,4 +4,4 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
 [TaskName("RunTestsOnReleaseArtifacts")]
 [TaskDescription("To be described")]
-public class RunTestsOnReleaseArtifactsTask : FrostingTask;
+public class RunTestsOnReleaseArtifactsTask : FrostingTask<ShatilayaContext>;

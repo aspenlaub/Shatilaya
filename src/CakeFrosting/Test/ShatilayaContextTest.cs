@@ -1,4 +1,6 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 

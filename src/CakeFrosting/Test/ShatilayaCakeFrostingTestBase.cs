@@ -25,7 +25,7 @@ public class ShatilayaCakeFrostingTestBase {
         var errorsAndInfos = new ErrorsAndInfos();
         Container.Resolve<IGitUtilities>().Clone(url, "master", PakledTarget.Folder(),
             new CloneOptions { BranchName = "master" }, true, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.IsEmpty(errorsAndInfos.Errors, errorsAndInfos.ErrorsPlusRelevantInfos());
         Container.Resolve<IGitUtilities>().Pull(PakledTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net");
     }
 

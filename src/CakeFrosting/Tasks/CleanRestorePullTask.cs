@@ -7,4 +7,4 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 [IsDependentOn(typeof(CleanTask))]
 [IsDependentOn(typeof(PullTask))]
 [IsDependentOn(typeof(RestoreTask))]
-public class CleanRestorePullTask : FrostingTask;
+public class CleanRestorePullTask : FrostingTask<ShatilayaContext>;
