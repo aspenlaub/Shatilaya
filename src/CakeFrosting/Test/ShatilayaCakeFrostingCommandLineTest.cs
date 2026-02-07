@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
@@ -14,14 +13,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
 public class ShatilayaCakeFrostingCommandLineTest : ShatilayaCakeFrostingTestBase {
     [TestMethod]
     public void CanCleanRestorePull() {
-        IFolder? folder = PakledTarget.Folder();
-        string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-        Assert.IsFalse(string.IsNullOrEmpty(assemblyLocation));
-        var workingFolder = new Folder(assemblyLocation.Substring(0, assemblyLocation.LastIndexOf('\\')));
-        string[] executableFullNames = Directory.GetFiles(workingFolder.FullName, "*Shatilaya*.exe");
-        Assert.HasCount(1, executableFullNames);
-        string executableFullName = executableFullNames[0];
-        string arguments = $"--repository {folder.FullName} --target CleanRestorePull";
+        PutTogetherRunnerArguments("CleanRestorePull", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
@@ -30,7 +22,34 @@ public class ShatilayaCakeFrostingCommandLineTest : ShatilayaCakeFrostingTestBas
           "Cleaning", "Restoring", "Pulling"
         ];
         foreach (string expectedInfo in expectedInfos) {
-            Assert.IsTrue(errorsAndInfos.Infos.Any(x => x.StartsWith(expectedInfo)), $"No info starts with {expectedInfo}");
+            Assert.Contains(x => x.StartsWith(expectedInfo), errorsAndInfos.Infos, $"No info starts with {expectedInfo}");
         }
+    }
+
+    [TestMethod]
+    public void CanDoLittleThings() {
+        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
+        var errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        List<string> expectedInfos = [
+            "Verifying that the master branch", "Verify that there are uncommitted",
+            "Verifying that there are no uncommitted"
+        ];
+        foreach (string expectedInfo in expectedInfos) {
+            Assert.Contains(x => x.StartsWith(expectedInfo), errorsAndInfos.Infos, $"No info starts with {expectedInfo}");
+        }
+    }
+
+    private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
+        IFolder? folder = PakledTarget.Folder();
+        string assemblyLocation = Assembly.GetExecutingAssembly().Location;
+        Assert.IsFalse(string.IsNullOrEmpty(assemblyLocation));
+        workingFolder = new Folder(assemblyLocation.Substring(0, assemblyLocation.LastIndexOf('\\')));
+        string[] executableFullNames = Directory.GetFiles(workingFolder.FullName, "*Shatilaya*.exe");
+        Assert.HasCount(1, executableFullNames);
+        executableFullName = executableFullNames[0];
+        arguments = $"--repository {folder.FullName} --target {target}";
     }
 }

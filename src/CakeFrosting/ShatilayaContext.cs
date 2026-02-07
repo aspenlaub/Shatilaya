@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
@@ -33,10 +34,22 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder MasterBinReleaseFolder => RepositoryFolder.ParentFolder().SubFolder(SolutionId + "Bin").SubFolder("Release");
     public IFolder MasterReleaseCandidateBinFolder => MasterBinReleaseFolder.ParentFolder().SubFolder("ReleaseCandidate");
 
+    private readonly DynamicContextProperty<string> _CurrentGitBranch = new(nameof(CurrentGitBranch));
+    public string CurrentGitBranch {
+        get { return _CurrentGitBranch.Get(); }
+        set { _CurrentGitBranch.Set(value); }
+    }
+
     private readonly DynamicContextProperty<bool> _IsMasterOrBranchWithPackages = new(nameof(IsMasterOrBranchWithPackages));
     public bool IsMasterOrBranchWithPackages {
         get { return _IsMasterOrBranchWithPackages.Get(); }
         set { _IsMasterOrBranchWithPackages.Set(value); }
+    }
+
+    private readonly DynamicContextProperty<Dictionary<string, string>> _SolutionSpecialSettingsDictionary = new(nameof(SolutionSpecialSettingsDictionary));
+    public Dictionary<string, string> SolutionSpecialSettingsDictionary {
+        get { return _SolutionSpecialSettingsDictionary.Get(); }
+        set { _SolutionSpecialSettingsDictionary.Set(value); }
     }
 
     private string GetFolderArgument(string argumentName, string defaultValue) {
