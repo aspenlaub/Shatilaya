@@ -1,3 +1,4 @@
+using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
@@ -9,4 +10,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 [IsDependentOn(typeof(CreateNuGetPackageTask))]
 [IsDependentOn(typeof(PushNuGetPackageTask))]
 [IsDependentOn(typeof(CleanObjectFoldersTask))]
-public class DefaultTask : FrostingTask<ShatilayaContext>;
+public class DefaultTask : FrostingTask<ShatilayaContext> {
+    public override void Run(ShatilayaContext context) {
+        context.Information("Processing solution from little things to nuget package");
+    }
+}

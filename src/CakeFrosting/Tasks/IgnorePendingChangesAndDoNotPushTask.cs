@@ -1,7 +1,14 @@
+using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
 [TaskName("IgnorePendingChangesAndDoNotPush")]
-[TaskDescription("To be described")]
-public class IgnorePendingChangesAndDoNotPushTask : FrostingTask<ShatilayaContext>;
+[TaskDescription("Default except check for pending changes and except nuget push")]
+[IsDependentOn(typeof(IgnorePendingChangesAndDoNotCreateOrPushPackageTask))]
+[IsDependentOn(typeof(CreateNuGetPackageTask))]
+public class IgnorePendingChangesAndDoNotPushTask : FrostingTask<ShatilayaContext> {
+    public override void Run(ShatilayaContext context) {
+        context.Information("Default except check for pending changes and except nuget push");
+    }
+}

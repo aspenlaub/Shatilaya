@@ -1,3 +1,4 @@
+using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
@@ -10,4 +11,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 [IsDependentOn(typeof(VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask))]
 [IsDependentOn(typeof(VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequestsTask))]
 [IsDependentOn(typeof(VerifyThatPullRequestExistsForDevelopmentBranchHeadTipTask))]
-public class LittleThingsTask : FrostingTask<ShatilayaContext>;
+public class LittleThingsTask : FrostingTask<ShatilayaContext> {
+    public override void Run(ShatilayaContext context) {
+        context.Information("Check the little things before building the solution");
+    }
+}
