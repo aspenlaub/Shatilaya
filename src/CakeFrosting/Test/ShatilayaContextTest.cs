@@ -10,7 +10,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
 public class ShatilayaContextTest : ShatilayaCakeFrostingTestBase {
     [TestMethod]
     public void CanCreateShatilayaContext() {
-        IFolder? folder = PakledTarget.Folder();
+        IFolder folder = PakledTarget.Folder();
         var cakeArguments = new Dictionary<string, string> {
             [ "repository" ] = folder.FullName,
             [ "target" ] = "LittleThings"
@@ -19,7 +19,7 @@ public class ShatilayaContextTest : ShatilayaCakeFrostingTestBase {
             configureLog: log => log.Verbosity = Verbosity.Diagnostic,
             configureArguments: args => args.SetArguments(cakeArguments.ToLookup(x => x.Key, x => x.Value)));
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
-        ICakeContext? context = serviceProvider.GetService<ICakeContext>();
+        ICakeContext context = serviceProvider.GetService<ICakeContext>();
         var shatilayaContext = new ShatilayaContext(context);
         Assert.IsNotNull(shatilayaContext);
         Assert.AreEqual(folder.FullName, shatilayaContext.RepositoryFolder.FullName);

@@ -2,10 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
+using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+using Autofac;
 using Cake.Common;
 using Cake.Common.IO;
 using Cake.Core;
@@ -18,7 +25,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting;
 public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder RepositoryFolder => new Folder(GetFolderArgument("repository", GetCurrentFolder().FullName));
 
-    public string Target => GetArgument("target", "Default");
+    public string Target => GetArgument("target", nameof(DefaultTask).Replace("Task", ""));
 
     public string SolutionFileFullName => GetSolutionFileFullName();
 
@@ -33,6 +40,14 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder MasterBinDebugFolder => RepositoryFolder.ParentFolder().SubFolder(SolutionId + "Bin").SubFolder("Debug");
     public IFolder MasterBinReleaseFolder => RepositoryFolder.ParentFolder().SubFolder(SolutionId + "Bin").SubFolder("Release");
     public IFolder MasterReleaseCandidateBinFolder => MasterBinReleaseFolder.ParentFolder().SubFolder("ReleaseCandidate");
+    public IFolder MasterBinReleaseParentFolder => MasterBinReleaseFolder.ParentFolder();
+    public string ReleaseBinHeadTipIdShaFile => MasterBinReleaseParentFolder.FullName + '\\' + "Release.HeadTipSha.txt";
+
+    private readonly DynamicContextProperty<IContainer> _Container = new(nameof(Container));
+    public IContainer Container {
+        get { return _Container.Get(); }
+        set { _Container.Set(value); }
+    }
 
     private readonly DynamicContextProperty<string> _CurrentGitBranch = new(nameof(CurrentGitBranch));
     public string CurrentGitBranch {
@@ -50,6 +65,12 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public Dictionary<string, string> SolutionSpecialSettingsDictionary {
         get { return _SolutionSpecialSettingsDictionary.Get(); }
         set { _SolutionSpecialSettingsDictionary.Set(value); }
+    }
+
+    private readonly DynamicContextProperty<bool> _CreateAndPushPackages = new(nameof(CreateAndPushPackages));
+    public bool CreateAndPushPackages {
+        get { return _CreateAndPushPackages.Get(); }
+        set { _CreateAndPushPackages.Set(value); }
     }
 
     private string GetFolderArgument(string argumentName, string defaultValue) {
@@ -73,4 +94,35 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
             : throw new ArgumentException($"Solution file missing or not unique in {folder.FullName}");
     }
 
+    public async Task InitializeAsync() {
+        Container = FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya");
+
+        CurrentGitBranch = Container.Resolve<IGitUtilities>().CheckedOutBranch(RepositoryFolder);
+
+        IBranchesWithPackagesRepository branchesWithPackagesRepository = Container.Resolve<IBranchesWithPackagesRepository>();
+        var bwpErrorsAndInfos = new ErrorsAndInfos();
+        IList<string> idsOfBranchesWithPackages = branchesWithPackagesRepository.GetBranchIdsAsync(bwpErrorsAndInfos).Result;
+        if (bwpErrorsAndInfos.Errors.Any()) {
+            throw new Exception(bwpErrorsAndInfos.ErrorsToString());
+        }
+        IsMasterOrBranchWithPackages = CurrentGitBranch == "master" || idsOfBranchesWithPackages.Contains(CurrentGitBranch);
+
+        string fileName = RepositoryFolder.FullName + @"\solution.json";
+        if (!File.Exists(fileName)) {
+            throw new FileNotFoundException(fileName);
+        }
+        string contents = await File.ReadAllTextAsync(fileName);
+        SolutionSpecialSettingsDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(contents);
+
+        bool createAndPushPackages = true;
+        if (SolutionSpecialSettingsDictionary.ContainsKey("CreateAndPushPackages")) {
+            string createAndPushPackagesText = SolutionSpecialSettingsDictionary["CreateAndPushPackages"].ToUpper();
+            if (createAndPushPackagesText != "TRUE" && createAndPushPackagesText != "FALSE") {
+                throw new Exception("Setting CreateAndPushPackages must be true or false");
+            }
+            createAndPushPackages = createAndPushPackagesText == "TRUE";
+        }
+
+        CreateAndPushPackages = createAndPushPackages;
+    }
 }

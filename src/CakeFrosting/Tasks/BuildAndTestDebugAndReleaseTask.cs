@@ -1,7 +1,19 @@
+using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
 [TaskName("BuildAndTestDebugAndRelease")]
-[TaskDescription("To be described")]
-public class BuildAndTestDebugAndReleaseTask : FrostingTask<ShatilayaContext>;
+[TaskDescription("Build and test debug and release configuration")]
+[IsDependentOn(typeof(InitializeContextTask))]
+[IsDependentOn(typeof(DebugBuildTask))]
+[IsDependentOn(typeof(RunTestsOnDebugArtifactsTask))]
+[IsDependentOn(typeof(CopyDebugArtifactsTask))]
+[IsDependentOn(typeof(ReleaseBuildTask))]
+[IsDependentOn(typeof(RunTestsOnReleaseArtifactsTask))]
+[IsDependentOn(typeof(CopyReleaseArtifactsTask))]
+public class BuildAndTestDebugAndReleaseTask : FrostingTask<ShatilayaContext> {
+    public override void Run(ShatilayaContext context) {
+        context.Information("Building and testing debug and release configuration");
+    }
+}

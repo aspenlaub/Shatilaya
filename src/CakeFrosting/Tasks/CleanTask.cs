@@ -6,6 +6,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
 
 [TaskName("Clean")]
 [TaskDescription("Clean up artifacts and intermediate output folder")]
+[IsDependentOn(typeof(InitializeContextTask))]
 public class CleanTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Log.Information($"Cleaning {context.DebugBinFolder.FullName}");

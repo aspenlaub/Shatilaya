@@ -5,7 +5,6 @@
     <AssemblyName>Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test</AssemblyName>
     <RootNamespace>Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
     <GenerateBuildInfoConfigFile>false</GenerateBuildInfoConfigFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Deterministic>false</Deterministic>

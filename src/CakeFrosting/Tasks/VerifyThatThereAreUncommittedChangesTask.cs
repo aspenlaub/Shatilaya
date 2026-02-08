@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Autofac;
@@ -15,8 +14,7 @@ public class VerifyThatThereAreUncommittedChangesTask : FrostingTask<ShatilayaCo
     public override void Run(ShatilayaContext context) {
         context.Information("Verifying that there are uncommitted changes");
         var uncommittedErrorsAndInfos = new ErrorsAndInfos();
-        IContainer container = FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya");
-        container.Resolve<IGitUtilities>().VerifyThatThereAreNoUncommittedChanges(context.RepositoryFolder, uncommittedErrorsAndInfos);
+        context.Container.Resolve<IGitUtilities>().VerifyThatThereAreNoUncommittedChanges(context.RepositoryFolder, uncommittedErrorsAndInfos);
         if (!uncommittedErrorsAndInfos.Errors.Any()) {
             throw new Exception("The check for uncommitted changes did not fail, this is unexpected");
         }

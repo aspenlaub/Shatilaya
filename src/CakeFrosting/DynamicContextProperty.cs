@@ -3,17 +3,17 @@
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting;
 
 public class DynamicContextProperty<T>(string propertyName) {
-    private bool _HasBeenSet;
+    public bool HasBeenSet { get; private set; }
     private T Value { get; set; }
 
     public T Get() {
-        return !_HasBeenSet
+        return !HasBeenSet
             ? throw new Exception($"Property {propertyName} has not been set")
             : Value;
     }
 
     public void Set(T value) {
-        _HasBeenSet = true;
+        HasBeenSet = true;
         Value = value;
     }
 }

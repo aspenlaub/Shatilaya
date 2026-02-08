@@ -1,5 +1,4 @@
 using System;
-using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Autofac;
 using Cake.Common.Diagnostics;
@@ -16,8 +15,7 @@ public class VerifyThatDevelopmentBranchIsAheadOfMasterTask : FrostingTask<Shati
 
     public override void Run(ShatilayaContext context) {
         context.Information("Verifying that the development branch is at least one commit after the master");
-        IContainer container = FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya");
-        if (!container.Resolve<IGitUtilities>().IsBranchAheadOfMaster(context.RepositoryFolder)) {
+        if (!context.Container.Resolve<IGitUtilities>().IsBranchAheadOfMaster(context.RepositoryFolder)) {
             throw new Exception("Branch must be at least one commit ahead of the origin/master");
         }
     }
