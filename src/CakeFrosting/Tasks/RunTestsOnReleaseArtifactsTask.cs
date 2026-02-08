@@ -21,7 +21,10 @@ public class RunTestsOnReleaseArtifactsTask : FrostingTask<ShatilayaContext> {
         context.Information("Running unit and integration tests on Release artifacts");
         IProjectFactory projectFactory = context.Container.Resolve<IProjectFactory>();
         IProjectLogic projectLogic = context.Container.Resolve<IProjectLogic>();
-        FilePathCollection projectFiles = context.GetFiles(@".\src\**\*Test.csproj");
+        FilePathCollection projectFiles = context.GetFiles(context.RepositoryFolder.FullName + @"\src\**\*Test.csproj");
+        if (projectFiles.Count == 0) {
+            throw new Exception("No test projects found");
+        }
         foreach (FilePath projectFile in projectFiles) {
             var projectErrorsAndInfos = new ErrorsAndInfos();
             IProject project = projectFactory.Load(context.SolutionFileFullName, projectFile.FullPath, projectErrorsAndInfos);
