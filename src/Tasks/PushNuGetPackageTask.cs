@@ -12,7 +12,7 @@ using Cake.Common.Tools.NuGet;
 using Cake.Common.Tools.NuGet.Push;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("PushNuGetPackage")]
 [TaskDescription("Push nuget package")]
