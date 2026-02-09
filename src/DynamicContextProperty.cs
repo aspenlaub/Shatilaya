@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya;
 
 public class DynamicContextProperty<T>(string propertyName) {
     public bool HasBeenSet { get; private set; }
