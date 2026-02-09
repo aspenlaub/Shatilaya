@@ -110,7 +110,7 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
         IBranchesWithPackagesRepository branchesWithPackagesRepository = Container.Resolve<IBranchesWithPackagesRepository>();
         var errorsAndInfos = new ErrorsAndInfos();
-        IList<string> idsOfBranchesWithPackages = branchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos).Result;
+        IList<string> idsOfBranchesWithPackages = await branchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
