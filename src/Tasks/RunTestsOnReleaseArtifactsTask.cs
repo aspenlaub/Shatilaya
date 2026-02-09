@@ -41,6 +41,8 @@ public class RunTestsOnReleaseArtifactsTask : FrostingTask<ShatilayaContext> {
                 Configuration = "Release",
                 NoRestore = true,
                 NoBuild = true,
+                DiagnosticOutput = true,
+                Verbosity = DotNetVerbosity.Diagnostic,
                 ArgumentCustomization = args => {
                     args.Append(textArgument);
                     return args;

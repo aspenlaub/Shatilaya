@@ -17,7 +17,7 @@ public class ShatilayaContextTest : ShatilayaTestBase {
             [ "target" ] = "LittleThings"
         };
         IServiceCollection serviceCollection = new ServiceCollection().AddCakeCoreFakes(
-            configureLog: log => log.Verbosity = Verbosity.Diagnostic,
+            configureLog: log => log.Verbosity = Verbosity.Verbose,
             configureArguments: args => args.SetArguments(cakeArguments.ToLookup(x => x.Key, x => x.Value)));
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
         ICakeContext context = serviceProvider.GetService<ICakeContext>();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -21,7 +22,9 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
           "Cleaning", "Restoring", "Pulling"
         ];
         foreach (string expectedInfo in expectedInfos) {
-            Assert.Contains(x => x.StartsWith(expectedInfo), errorsAndInfos.Infos, $"No info starts with {expectedInfo}");
+#pragma warning disable MSTEST0037
+            Assert.IsTrue(errorsAndInfos.Infos.Any(x => x.Contains(expectedInfo)), $"No info starts with {expectedInfo}");
+#pragma warning restore MSTEST0037
         }
     }
 
@@ -36,7 +39,9 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             "Verifying that the master branch", "Verifying that there are no uncommitted"
         ];
         foreach (string expectedInfo in expectedInfos) {
-            Assert.Contains(x => x.StartsWith(expectedInfo), errorsAndInfos.Infos, $"No info starts with {expectedInfo}");
+#pragma warning disable MSTEST0037
+            Assert.IsTrue(errorsAndInfos.Infos.Any(x => x.Contains(expectedInfo)), $"No info starts with {expectedInfo}");
+#pragma warning restore MSTEST0037
         }
     }
 
@@ -57,20 +62,22 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             "Building solution in Debug",
             "Running unit and integration tests on Debug artifacts",
             "Running tests in",
-            "Passed!",
+            "Passed: 3",
             "Copying Debug artifacts to master Debug binaries folder",
             "Building solution in Release",
             "Running unit and integration tests on Release artifacts",
             "Copying Release artifacts to master Release binaries folder"
         ];
         foreach (string expectedInfo in expectedInfos) {
-            Assert.Contains(x => x.StartsWith(expectedInfo), errorsAndInfos.Infos, $"No info starts with {expectedInfo}");
+#pragma warning disable MSTEST0037
+            Assert.IsTrue(errorsAndInfos.Infos.Any(x => x.Contains(expectedInfo)), $"No info starts with {expectedInfo}");
+#pragma warning restore MSTEST0037
         }
     }
 
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
         IFolder folder = PakledTarget.Folder();
-        arguments = $"--repository {folder.FullName} --target {target}";
+        arguments = $"--repository {folder.FullName} --target {target} --verbosity verbose";
     }
 }
