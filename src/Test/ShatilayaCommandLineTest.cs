@@ -5,12 +5,13 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IProcessRunner = Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces.IProcessRunner;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [TestClass]
-public class ShatilayaCakeFrostingCommandLineTest : ShatilayaCakeFrostingTestBase {
+public class ShatilayaCommandLineTest : ShatilayaTestBase {
     [TestMethod]
     public void CanCleanRestorePull() {
         PutTogetherRunnerArguments("CleanRestorePull", out string executableFullName, out string arguments, out Folder workingFolder);
