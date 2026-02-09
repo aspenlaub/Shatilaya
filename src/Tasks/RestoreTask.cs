@@ -3,7 +3,7 @@ using Cake.Common.Tools.NuGet;
 using Cake.Common.Tools.NuGet.Restore;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("Restore")]
 [TaskDescription("Restore nuget packages")]
