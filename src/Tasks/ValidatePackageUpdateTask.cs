@@ -1,6 +1,6 @@
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("ValidatePackageUpdate")]
 [TaskDescription("Build and test debug and release, update nuspec")]
