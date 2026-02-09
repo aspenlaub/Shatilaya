@@ -5,7 +5,7 @@ using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("CleanObjectFolders")]
 [TaskDescription("Clean object folders")]
