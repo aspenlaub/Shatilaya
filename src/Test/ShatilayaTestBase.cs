@@ -7,10 +7,11 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Autofac;
 using LibGit2Sharp;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
-public class ShatilayaCakeFrostingTestBase {
+public class ShatilayaTestBase {
     protected TestTargetFolder PakledTarget = new(nameof(ShatilayaContextTest), "");
     protected IContainer Container = new ContainerBuilder().Build();
 
