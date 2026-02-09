@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
@@ -29,13 +27,13 @@ using Version = System.Version;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [Binding]
-public class CakeBuildSteps {
+public class ShatilayaBuildSteps {
     protected ErrorsAndInfos ShatilayaErrorsAndInfos = new();
     protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot,
         MasterReleaseBinFolderWriteTimeSnapshot, MasterReleaseCandidateBinFolderWriteTimeSnapshot;
     protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot,
         MasterReleaseCandidateBinFolderContentsSnapshot;
-    protected static TestTargetFolder ChabTarget = new(nameof(CakeBuildSteps), "Chab");
+    protected static TestTargetFolder ChabTarget = new(nameof(ShatilayaBuildSteps), "Chab");
     private static IContainer _container;
     protected IDictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
