@@ -1,7 +1,7 @@
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("LittleThings")]
 [TaskDescription("Default but do not build or test in debug or release, and do not create or push nuget package")]
