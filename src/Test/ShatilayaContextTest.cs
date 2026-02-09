@@ -3,11 +3,15 @@ using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Cake.Core;
+using Cake.Core.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [TestClass]
-public class ShatilayaContextTest : ShatilayaCakeFrostingTestBase {
+public class ShatilayaContextTest : ShatilayaTestBase {
     [TestMethod]
     public void CanCreateShatilayaContext() {
         IFolder folder = PakledTarget.Folder();
