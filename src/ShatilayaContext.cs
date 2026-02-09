@@ -11,7 +11,7 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Autofac;
 using Cake.Common;
 using Cake.Common.IO;
@@ -20,7 +20,7 @@ using Cake.Frosting;
 
 #pragma warning disable CS9107
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya;
 
 public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder RepositoryFolder => new Folder(GetFolderArgument("repository", GetCurrentFolder().FullName));
