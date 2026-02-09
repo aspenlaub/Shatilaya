@@ -4,7 +4,7 @@ using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("VerifyThatDevelopmentBranchIsAheadOfMaster")]
 [TaskDescription("Verify that the development branch is at least one commit after the master")]
