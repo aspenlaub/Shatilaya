@@ -7,6 +7,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [TaskDescription("Default but do not build or test in debug or release, and do not create or push nuget package")]
 [IsDependentOn(typeof(CleanRestorePullTask))]
 [IsDependentOn(typeof(EnsureSolutionJsTask))]
+[IsDependentOn(typeof(EnsureShatilayaCmdTask))]
 [IsDependentOn(typeof(VerifyThatThereAreNoUncommittedChangesTask))]
 [IsDependentOn(typeof(VerifyThatDevelopmentBranchIsAheadOfMasterTask))]
 [IsDependentOn(typeof(VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask))]
