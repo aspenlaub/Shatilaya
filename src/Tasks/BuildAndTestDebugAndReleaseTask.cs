@@ -1,7 +1,7 @@
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("BuildAndTestDebugAndRelease")]
 [TaskDescription("Build and test debug and release configuration")]
