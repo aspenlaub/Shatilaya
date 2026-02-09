@@ -28,6 +28,7 @@ using Version = System.Version;
 // ReSharper disable UseRawString
 // ReSharper disable UnusedMember.Global
 
+[assembly: DoNotParallelize]
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [Binding]

@@ -15,7 +15,7 @@ public class CakeToolCheck {
         IContainer container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya").Build();
         IDotNetCakeInstaller installer = container.Resolve<IDotNetCakeInstaller>();
         var errorsAndInfos = new ErrorsAndInfos();
-        bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
+        bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
             return;
