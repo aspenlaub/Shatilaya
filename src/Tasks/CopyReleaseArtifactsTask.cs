@@ -31,11 +31,17 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         } else {
             await updater.UpdateFolderAsync(context.SolutionId, context.CurrentGitBranch, headTipIdSha,
                 context.ReleaseBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinReleaseFolder,
-                false, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
+                true, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
+        }
+        if (context.ProduceReleaseCandidate) {
+            updater.UpdateFolder(context.ReleaseBinFolder, context.MasterReleaseCandidateBinFolder,
+                FolderUpdateMethod.AssembliesEvenIfOnlySlightlyChanged,
+                "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, errorsAndInfos);
         }
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
+        await File.WriteAllTextAsync(context.ReleaseBinHeadTipIdShaFile, headTipIdSha);
     }
 }

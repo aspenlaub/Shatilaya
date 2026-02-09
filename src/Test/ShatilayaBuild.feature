@@ -112,7 +112,7 @@ Scenario: Nuget package is created in the master release folder
 
 Scenario: Uncommitted changes break the build
 	Given I change a source file so that it still can be compiled
-	When I run Shatilaya with target "IgnoreOutdatedDoNotPush"
+	When I run Shatilaya with target "DoNotPush"
 	Then an uncommitted change error was reported for the changed source file
 	And I do not find any artifacts in the master debug folder
 

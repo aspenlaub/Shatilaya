@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
@@ -12,8 +13,10 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Autofac;
+using Cake.Frosting;
 using LibGit2Sharp;
 using NuGet.Common;
 using NuGet.Packaging;
@@ -109,7 +112,7 @@ public class ShatilayaBuildSteps {
 
     [Given("I run Shatilaya")]
     public void GivenIRunTheBuild_CakeScript() {
-        RunShatilaya("");
+        RunShatilayaViaCommandLine("");
     }
 
     [Given("I save the master debug folder file names and timestamps")]
@@ -226,7 +229,7 @@ public class ShatilayaBuildSteps {
     #region When
     [When("I run Shatilaya")]
     public void WhenIRunTheBuild_CakeScript() {
-        RunShatilaya("");
+        RunShatilayaViaCommandLine("");
     }
 
     [When(@"I run Shatilaya with target ""(.*)""")]
@@ -458,7 +461,7 @@ public class ShatilayaBuildSteps {
         return new Folder(ChabTarget.MasterReleaseBinFolder().FullName.Replace("Release", "ReleaseCandidate"));
     }
 
-    private void RunShatilaya(string target) {
+    private void RunShatilayaViaCommandLine(string target) {
         ShatilayaFinder.FindShatilaya(out string executableFullName, out Folder workingFolder);
         IFolder folder = ChabTarget.Folder();
         string arguments = string.IsNullOrEmpty(target)
@@ -466,5 +469,23 @@ public class ShatilayaBuildSteps {
             : $"--repository {folder.FullName} --target {target}";
         IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, ShatilayaErrorsAndInfos);
+    }
+
+    private void RunShatilaya(string target) {
+        if (string.IsNullOrEmpty(target)) {
+            throw new ArgumentNullException(nameof(target));
+        }
+        IFolder folder = ChabTarget.Folder();
+        var host = new CakeHost();
+        var fakeConsole = new FakeConsole();
+        host.ConfigureServices(services => services.AddSingleton<IConsole>(fakeConsole));
+        host
+            .UseContext<ShatilayaContext>()
+            .AddAssembly(Assembly.GetAssembly(typeof(DefaultTask)))
+            .Run([
+            "--repository", folder.FullName, "--target", target, "--verbosity", "diagnostic"
+        ]);
+        ShatilayaErrorsAndInfos.Infos.AddRange(fakeConsole.Messages);
+        ShatilayaErrorsAndInfos.Errors.AddRange(fakeConsole.ErrorMessages);
     }
 }

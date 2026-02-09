@@ -75,6 +75,13 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         set { _CreateAndPushPackages.Set(value); }
     }
 
+
+    private readonly DynamicContextProperty<bool> _ProduceReleaseCandidate = new(nameof(ProduceReleaseCandidate));
+    public bool ProduceReleaseCandidate {
+        get { return _ProduceReleaseCandidate.Get(); }
+        set { _ProduceReleaseCandidate.Set(value); }
+    }
+
     private string GetFolderArgument(string argumentName, string defaultValue) {
         return GetArgument(argumentName, defaultValue);
     }
@@ -133,6 +140,17 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
         CreateAndPushPackages = createAndPushPackages;
 
+        bool produceReleaseCandidate = !createAndPushPackages;
+        if (SolutionSpecialSettingsDictionary.ContainsKey("ProduceReleaseCandidate")) {
+            string produceReleaseCandidateText = SolutionSpecialSettingsDictionary["ProduceReleaseCandidate"].ToUpper();
+            if (produceReleaseCandidateText != "TRUE" && produceReleaseCandidateText != "FALSE") {
+                throw new Exception("Setting ProduceReleaseCandidate must be true or false");
+            }
+            produceReleaseCandidate = produceReleaseCandidateText == "TRUE";
+        }
+
+        ProduceReleaseCandidate = produceReleaseCandidate;
+
         this.Information("Repository folder is: " + RepositoryFolder.FullName);
         this.Information("Solution is: " + SolutionFileFullName);
         this.Information("Solution ID is: " + SolutionId);
@@ -142,5 +160,7 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         this.Information("Current GIT branch is: " + CurrentGitBranch);
         this.Information("Is master branch or branch with packages: " + (IsMasterOrBranchWithPackages ? "true" : "false"));
         this.Information("ReleaseCandidate bin folder is: " + MasterReleaseCandidateBinFolder.FullName);
+        this.Information("Create and push packages: " + (CreateAndPushPackages ? "true" : "false"));
+        this.Information("Produce release candidate: " + (ProduceReleaseCandidate ? "true" : "false"));
     }
 }

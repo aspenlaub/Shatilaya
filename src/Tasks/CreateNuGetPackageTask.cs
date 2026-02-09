@@ -44,7 +44,7 @@ public class CreateNuGetPackageTask : FrostingTask<ShatilayaContext> {
                 IncludeSymbols = false,
                 OutputDirectory = context.MasterBinReleaseFolder.FullName
             };
-            context.DotNetPack("./src/" + context.SolutionId + ".csproj", settings);
+            context.DotNetPack(context.RepositoryFolder.FullName + @"\src\" + context.SolutionId + ".csproj", settings);
         }
     }
 }

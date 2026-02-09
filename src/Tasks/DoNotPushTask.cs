@@ -6,6 +6,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [TaskName("DoNotPush")]
 [TaskDescription("Default except check nuget push")]
 [IsDependentOn(typeof(CleanRestorePullTask))]
+[IsDependentOn(typeof(EnsureSolutionJsTask))]
 [IsDependentOn(typeof(VerifyThatThereAreNoUncommittedChangesTask))]
 [IsDependentOn(typeof(VerifyThatDevelopmentBranchIsAheadOfMasterTask))]
 [IsDependentOn(typeof(VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask))]
