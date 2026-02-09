@@ -9,8 +9,9 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Test;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [TestClass]
 public class SolutionCakeConverterTest {
