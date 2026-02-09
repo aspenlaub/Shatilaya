@@ -11,9 +11,11 @@ using Aspenlaub.Net.GitHub.CSharp.Nuclide.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Autofac;
 using Cake.Common;
+using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Core;
 using Cake.Frosting;
@@ -100,16 +102,22 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         CurrentGitBranch = Container.Resolve<IGitUtilities>().CheckedOutBranch(RepositoryFolder);
 
         IBranchesWithPackagesRepository branchesWithPackagesRepository = Container.Resolve<IBranchesWithPackagesRepository>();
-        var bwpErrorsAndInfos = new ErrorsAndInfos();
-        IList<string> idsOfBranchesWithPackages = branchesWithPackagesRepository.GetBranchIdsAsync(bwpErrorsAndInfos).Result;
-        if (bwpErrorsAndInfos.Errors.Any()) {
-            throw new Exception(bwpErrorsAndInfos.ErrorsToString());
+        var errorsAndInfos = new ErrorsAndInfos();
+        IList<string> idsOfBranchesWithPackages = branchesWithPackagesRepository.GetBranchIdsAsync(errorsAndInfos).Result;
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
         IsMasterOrBranchWithPackages = CurrentGitBranch == "master" || idsOfBranchesWithPackages.Contains(CurrentGitBranch);
 
         string fileName = RepositoryFolder.FullName + @"\solution.json";
         if (!File.Exists(fileName)) {
-            throw new FileNotFoundException(fileName);
+            await SolutionCakeConverter.ConvertSolutionCakeAsync(RepositoryFolder, errorsAndInfos);
+            if (errorsAndInfos.Errors.Any()) {
+                throw new Exception(errorsAndInfos.ErrorsToString());
+            }
+            if (!File.Exists(fileName)) {
+                throw new FileNotFoundException(fileName);
+            }
         }
         string contents = await File.ReadAllTextAsync(fileName);
         SolutionSpecialSettingsDictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(contents);
@@ -124,5 +132,15 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         }
 
         CreateAndPushPackages = createAndPushPackages;
+
+        this.Information("Repository folder is: " + RepositoryFolder.FullName);
+        this.Information("Solution is: " + SolutionFileFullName);
+        this.Information("Solution ID is: " + SolutionId);
+        this.Information("Target is: " + Target);
+        this.Information("Debug bin folder is: " + DebugBinFolder.FullName);
+        this.Information("Release bin folder is: " + ReleaseBinFolder.FullName);
+        this.Information("Current GIT branch is: " + CurrentGitBranch);
+        this.Information("Is master branch or branch with packages: " + (IsMasterOrBranchWithPackages ? "true" : "false"));
+        this.Information("ReleaseCandidate bin folder is: " + MasterReleaseCandidateBinFolder.FullName);
     }
 }

@@ -19,10 +19,10 @@ public class CreateNuGetPackageTask : FrostingTask<ShatilayaContext> {
     }
 
     public override void Run(ShatilayaContext context) {
-        var projectErrorsAndInfos = new ErrorsAndInfos();
+        var errorsAndInfos = new ErrorsAndInfos();
         IProjectFactory projectFactory = context.Container.Resolve<IProjectFactory>();
         IProjectLogic projectLogic = context.Container.Resolve<IProjectLogic>();
-        IProject project = projectFactory.Load(context.SolutionFileFullName, context.SolutionFileFullName.Replace(".slnx", ".csproj"), projectErrorsAndInfos);
+        IProject project = projectFactory.Load(context.SolutionFileFullName, context.SolutionFileFullName.Replace(".slnx", ".csproj"), errorsAndInfos);
         if (!projectLogic.DoAllConfigurationsHaveNuspecs(project)) {
             throw new Exception("The release configuration needs a NuspecFile entry" +
                 "\r\n" +
@@ -31,8 +31,8 @@ public class CreateNuGetPackageTask : FrostingTask<ShatilayaContext> {
                 context.SolutionFileFullName.Replace(".slnx", ".csproj"));
         }
 
-        if (projectErrorsAndInfos.Errors.Any()) {
-            throw new Exception(projectErrorsAndInfos.ErrorsToString());
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
 
         IFolder folder = context.MasterBinReleaseFolder;

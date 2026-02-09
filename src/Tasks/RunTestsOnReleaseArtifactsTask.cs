@@ -26,10 +26,10 @@ public class RunTestsOnReleaseArtifactsTask : FrostingTask<ShatilayaContext> {
             throw new Exception("No test projects found");
         }
         foreach (FilePath projectFile in projectFiles) {
-            var projectErrorsAndInfos = new ErrorsAndInfos();
-            IProject project = projectFactory.Load(context.SolutionFileFullName, projectFile.FullPath, projectErrorsAndInfos);
-            if (projectErrorsAndInfos.Errors.Any()) {
-                throw new Exception(projectErrorsAndInfos.ErrorsToString());
+            var errorsAndInfos = new ErrorsAndInfos();
+            IProject project = projectFactory.Load(context.SolutionFileFullName, projectFile.FullPath, errorsAndInfos);
+            if (errorsAndInfos.Errors.Any()) {
+                throw new Exception(errorsAndInfos.ErrorsToString());
             }
             if (projectLogic.TargetsOldFramework(project)) {
                 throw new Exception("Project targets a .net framework that is no longer supported");

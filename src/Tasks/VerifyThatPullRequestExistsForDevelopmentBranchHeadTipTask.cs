@@ -20,13 +20,13 @@ public class VerifyThatPullRequestExistsForDevelopmentBranchHeadTipTask : AsyncF
 
     public override async Task RunAsync(ShatilayaContext context) {
         context.Information("Verifying that the master branch does have a pull request for the checked out development branch head tip");
-        var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
-        bool thereArePullRequests = await context.Container.Resolve<IGitHubUtilities>().HasPullRequestForThisBranchAndItsHeadTipAsync(context.RepositoryFolder, noPullRequestsErrorsAndInfos);
+        var errorsAndInfos = new ErrorsAndInfos();
+        bool thereArePullRequests = await context.Container.Resolve<IGitHubUtilities>().HasPullRequestForThisBranchAndItsHeadTipAsync(context.RepositoryFolder, errorsAndInfos);
         if (!thereArePullRequests) {
             throw new Exception("There is no pull request for this development branch and its head tip");
         }
-        if (noPullRequestsErrorsAndInfos.Errors.Any()) {
-            throw new Exception(noPullRequestsErrorsAndInfos.ErrorsToString());
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }

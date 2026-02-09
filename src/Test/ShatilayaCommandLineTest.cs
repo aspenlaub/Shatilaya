@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -71,13 +69,8 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
+        ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
         IFolder folder = PakledTarget.Folder();
-        string assemblyLocation = Assembly.GetExecutingAssembly().Location;
-        Assert.IsFalse(string.IsNullOrEmpty(assemblyLocation));
-        workingFolder = new Folder(assemblyLocation.Substring(0, assemblyLocation.LastIndexOf('\\')));
-        string[] executableFullNames = Directory.GetFiles(workingFolder.FullName, "*Shatilaya*.exe");
-        Assert.HasCount(1, executableFullNames);
-        executableFullName = executableFullNames[0];
         arguments = $"--repository {folder.FullName} --target {target}";
     }
 }

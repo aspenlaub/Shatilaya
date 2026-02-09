@@ -19,6 +19,7 @@ using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.Protocol;
 using Reqnroll;
+using IProcessRunner = Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces.IProcessRunner;
 using Version = System.Version;
 
 // ReSharper disable UseRawString
@@ -108,7 +109,7 @@ public class ShatilayaBuildSteps {
 
     [Given("I run Shatilaya")]
     public void GivenIRunTheBuild_CakeScript() {
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", ShatilayaErrorsAndInfos);
+        RunShatilaya("");
     }
 
     [Given("I save the master debug folder file names and timestamps")]
@@ -225,12 +226,12 @@ public class ShatilayaBuildSteps {
     #region When
     [When("I run Shatilaya")]
     public void WhenIRunTheBuild_CakeScript() {
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", ShatilayaErrorsAndInfos);
+        RunShatilaya("");
     }
 
     [When(@"I run Shatilaya with target ""(.*)""")]
     public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
-        throw new NotImplementedException();
+        RunShatilaya(target);
     }
     #endregion
 
@@ -453,7 +454,17 @@ public class ShatilayaBuildSteps {
 
     #endregion
 
-    private IFolder ChabTargetMasterReleaseCandidateFolder() {
+    private static IFolder ChabTargetMasterReleaseCandidateFolder() {
         return new Folder(ChabTarget.MasterReleaseBinFolder().FullName.Replace("Release", "ReleaseCandidate"));
+    }
+
+    private void RunShatilaya(string target) {
+        ShatilayaFinder.FindShatilaya(out string executableFullName, out Folder workingFolder);
+        IFolder folder = ChabTarget.Folder();
+        string arguments = string.IsNullOrEmpty(target)
+            ? $"--repository {folder.FullName}"
+            : $"--repository {folder.FullName} --target {target}";
+        IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, ShatilayaErrorsAndInfos);
     }
 }

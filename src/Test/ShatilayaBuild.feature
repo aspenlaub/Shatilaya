@@ -20,13 +20,13 @@ Scenario: Debug build failure
 
 Scenario: Debug artifacts are copied to the master debug folder, but only if changed
 	Given I clean up the master debug folder
-	When I run Shatilaya with target "IgnorePendingChangesAndDoCreateOrPushPackage"
+	When I run Shatilaya with target "IgnorePendingChangesAndDoNotCreateOrPushPackage"
 	Then no Shatilaya errors were reported
 	And the branch is considered the master branch or a branch with packages
 	And I find the artifacts in the master debug folder
 	Given I save the master debug folder file names and timestamps
     And I wait two seconds
-	When I run Shatilaya with target "IgnorePendingChangesAndDoCreateOrPushPackage"
+	When I run Shatilaya with target "IgnorePendingChangesAndDoNotCreateOrPushPackage"
 	Then no Shatilaya errors were reported
 	And the contents of the master debug folder has not changed
 
@@ -89,7 +89,7 @@ Scenario: Release artifacts are not copied to the master release folder when a t
 	Given I clean up the master debug folder
 	And I clean up the master release folder
 	And I change a test case so that it will fail in release
-	When I run Shatilaya with target "IgnorePendingChangesAndDoCreateOrPushPackage"
+	When I run Shatilaya with target "IgnorePendingChangesAndDoNotCreateOrPushPackage"
 	Then a failed "Release" test case was reported
 	And I find the artifacts in the master debug folder
 	And I do not find any artifacts in the master release folder
@@ -130,7 +130,7 @@ Scenario: Uncommitted changes can be verified
 Scenario: Debug artifacts are copied to the master debug folder for a branch with packages
     Given I have cloned the "pkg-branch-test" branch of a green solution with unit tests to a temp folder
 	And I clean up the master debug folder
-	When I run Shatilaya with target "IgnorePendingChangesAndDoCreateOrPushPackage"
+	When I run Shatilaya with target "IgnorePendingChangesAndDoNotCreateOrPushPackage"
 	Then no Shatilaya errors were reported
 	And the branch is considered the master branch or a branch with packages
 	And I find the artifacts in the master debug folder

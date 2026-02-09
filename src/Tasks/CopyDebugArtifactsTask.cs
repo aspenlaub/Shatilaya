@@ -22,20 +22,20 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
     public override async Task RunAsync(ShatilayaContext context) {
         context.Information("Copying Debug artifacts to master Debug binaries folder");
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
-        var updaterErrorsAndInfos = new ErrorsAndInfos();
+        var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
         if (!File.Exists(context.ReleaseBinHeadTipIdShaFile)) {
             updater.UpdateFolder(context.DebugBinFolder, context.MasterBinDebugFolder,
                 FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged,
-                "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, updaterErrorsAndInfos);
+                "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, errorsAndInfos);
         } else {
             await updater.UpdateFolderAsync(context.SolutionId, context.CurrentGitBranch, headTipIdSha,
                 context.DebugBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinDebugFolder,
-                false, context.CreateAndPushPackages, context.MainNugetFeedId, updaterErrorsAndInfos);
+                false, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
         }
-        updaterErrorsAndInfos.Infos.ToList().ForEach(context.Information);
-        if (updaterErrorsAndInfos.Errors.Any()) {
-            throw new Exception(updaterErrorsAndInfos.ErrorsToString());
+        errorsAndInfos.Infos.ToList().ForEach(context.Information);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }

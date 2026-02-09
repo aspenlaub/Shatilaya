@@ -17,13 +17,13 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 public class UpdateNuspecTask : AsyncFrostingTask<ShatilayaContext> {
     public override async Task RunAsync(ShatilayaContext context) {
         context.Information("Updating nuspec if necessary");
-        var nuSpecErrorsAndInfos = new ErrorsAndInfos();
+        var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
         await context.Container.Resolve<INuSpecCreator>().CreateNuSpecFileIfRequiredOrPresentAsync(true,
             context.SolutionFileFullName, context.CurrentGitBranch,
-            new List<string> { headTipIdSha }, nuSpecErrorsAndInfos);
-        if (nuSpecErrorsAndInfos.Errors.Any()) {
-            throw new Exception(nuSpecErrorsAndInfos.ErrorsToString());
+            new List<string> { headTipIdSha }, errorsAndInfos);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }

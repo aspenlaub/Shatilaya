@@ -13,9 +13,9 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 public class VerifyThatThereAreUncommittedChangesTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Verifying that there are uncommitted changes");
-        var uncommittedErrorsAndInfos = new ErrorsAndInfos();
-        context.Container.Resolve<IGitUtilities>().VerifyThatThereAreNoUncommittedChanges(context.RepositoryFolder, uncommittedErrorsAndInfos);
-        if (!uncommittedErrorsAndInfos.Errors.Any()) {
+        var errorsAndInfos = new ErrorsAndInfos();
+        context.Container.Resolve<IGitUtilities>().VerifyThatThereAreNoUncommittedChanges(context.RepositoryFolder, errorsAndInfos);
+        if (!errorsAndInfos.Errors.Any()) {
             throw new Exception("The check for uncommitted changes did not fail, this is unexpected");
         }
     }

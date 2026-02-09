@@ -24,30 +24,30 @@ public class PushNuGetPackageTask : AsyncFrostingTask<ShatilayaContext> {
     public override async Task RunAsync(ShatilayaContext context) {
         context.Information("Pushing nuget package");
         INugetPackageToPushFinder nugetPackageToPushFinder = context.Container.Resolve<INugetPackageToPushFinder>();
-        var finderErrorsAndInfos = new ErrorsAndInfos();
+        var errorsAndInfos = new ErrorsAndInfos();
         IPackageToPush packageToPush = await nugetPackageToPushFinder.FindPackageToPushAsync(context.MainNugetFeedId,
              context.MasterBinReleaseFolder, context.RepositoryFolder, context.SolutionFileFullName,
-             context.CurrentGitBranch, finderErrorsAndInfos);
-        if (finderErrorsAndInfos.Errors.Any()) {
-            throw new Exception(finderErrorsAndInfos.ErrorsToString());
+             context.CurrentGitBranch, errorsAndInfos);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
         string headTipSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
         if (packageToPush != null && !string.IsNullOrEmpty(packageToPush.PackageFileFullName) && !string.IsNullOrEmpty(packageToPush.FeedUrl)) {
-            finderErrorsAndInfos.Infos.ToList().ForEach(context.Information);
+            errorsAndInfos.Infos.ToList().ForEach(context.Information);
             context.Information("Pushing " + packageToPush.PackageFileFullName + " to " + packageToPush.FeedUrl + "..");
             context.NuGetPush(packageToPush.PackageFileFullName, new NuGetPushSettings { Source = packageToPush.FeedUrl });
         } else {
             context.Information("Did not find any package to push, adding " + headTipSha + " to pushed headTipShas for " + context.MainNugetFeedId);
         }
         IPushedHeadTipShaRepository pushedHeadTipShaRepository = context.Container.Resolve<IPushedHeadTipShaRepository>();
-        var pushedErrorsAndInfos = new ErrorsAndInfos();
+        errorsAndInfos = new ErrorsAndInfos();
         if (packageToPush != null && !string.IsNullOrEmpty(packageToPush.Id) && !string.IsNullOrEmpty(packageToPush.Version)) {
-            await pushedHeadTipShaRepository.AddAsync(context.MainNugetFeedId, headTipSha, packageToPush.Id, packageToPush.Version, pushedErrorsAndInfos);
+            await pushedHeadTipShaRepository.AddAsync(context.MainNugetFeedId, headTipSha, packageToPush.Id, packageToPush.Version, errorsAndInfos);
         } else {
-            await pushedHeadTipShaRepository.AddAsync(context.MainNugetFeedId, headTipSha, pushedErrorsAndInfos);
+            await pushedHeadTipShaRepository.AddAsync(context.MainNugetFeedId, headTipSha, errorsAndInfos);
         }
-        if (pushedErrorsAndInfos.Errors.Any()) {
-            throw new Exception(pushedErrorsAndInfos.ErrorsToString());
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }

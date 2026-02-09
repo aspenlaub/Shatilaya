@@ -19,20 +19,20 @@ public class VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask : AsyncFrosti
 
     public override async Task RunAsync(ShatilayaContext context) {
         context.Information("Verify that the master branch does not have open pull requests");
-        var noPullRequestsErrorsAndInfos = new ErrorsAndInfos();
+        var errorsAndInfos = new ErrorsAndInfos();
         bool thereAreOpenPullRequests;
         if (context.SolutionSpecialSettingsDictionary.TryGetValue("PullRequestsToIgnore", out string pullRequestsToIgnore)) {
             thereAreOpenPullRequests = await context.Container.Resolve<IGitHubUtilities>().HasOpenPullRequestAsync(context.RepositoryFolder,
-                                                                                                                   pullRequestsToIgnore, noPullRequestsErrorsAndInfos);
+                                                                                                                   pullRequestsToIgnore, errorsAndInfos);
         } else {
             thereAreOpenPullRequests = await context.Container.Resolve<IGitHubUtilities>().HasOpenPullRequestAsync(context.RepositoryFolder,
-                                                                                                                   noPullRequestsErrorsAndInfos);
+                                                                                                                   errorsAndInfos);
         }
         if (thereAreOpenPullRequests) {
             throw new Exception("There are open pull requests");
         }
-        if (noPullRequestsErrorsAndInfos.Errors.Any()) {
-            throw new Exception(noPullRequestsErrorsAndInfos.ErrorsToString());
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }

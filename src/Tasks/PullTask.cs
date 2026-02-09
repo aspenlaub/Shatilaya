@@ -18,10 +18,10 @@ public class PullTask : AsyncFrostingTask<ShatilayaContext> {
     public override async Task RunAsync(ShatilayaContext context) {
         context.Log.Information($"Pulling {context.RepositoryFolder.FullName}");
         var developerSettingsSecret = new DeveloperSettingsSecret();
-        var pullErrorsAndInfos = new ErrorsAndInfos();
-        DeveloperSettings developerSettings = await context.Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, pullErrorsAndInfos);
-        if (pullErrorsAndInfos.Errors.Any()) {
-            throw new Exception(pullErrorsAndInfos.ErrorsToString());
+        var errorsAndInfos = new ErrorsAndInfos();
+        DeveloperSettings developerSettings = await context.Container.Resolve<ISecretRepository>().GetAsync(developerSettingsSecret, errorsAndInfos);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
         }
 
         context.Container.Resolve<IGitUtilities>().Pull(context.RepositoryFolder, developerSettings.Author, developerSettings.Email);
