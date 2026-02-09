@@ -34,7 +34,7 @@
     <None Remove="Test\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fusion-DotnetNine" Version="2.0.2386.1286" />
     <PackageReference Include="Cake.Frosting" Version="6.0.0" />
+    <PackageReference Include="Fusion" Version="2.0.2388.24" />
   </ItemGroup>
 </Project>

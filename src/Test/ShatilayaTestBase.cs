@@ -20,7 +20,7 @@ public class ShatilayaTestBase {
         PakledTarget = new TestTargetFolder(nameof(ShatilayaContextTest), "Pakled");
         Container = new ContainerBuilder()
             .UseGittyTestUtilities()
-            .UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+            .UseFusionNuclideProtchAndGitty("Shatilaya").Build();
         Cleanup();
         const string url = "https://github.com/aspenlaub/Pakled.git";
         var errorsAndInfos = new ErrorsAndInfos();

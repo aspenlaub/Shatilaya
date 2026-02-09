@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
@@ -24,13 +23,14 @@ using NuGet.Protocol;
 using Reqnroll;
 using Version = System.Version;
 
+// ReSharper disable UseRawString
 // ReSharper disable UnusedMember.Global
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 [Binding]
 public class CakeBuildSteps {
-    protected ErrorsAndInfos CakeErrorsAndInfos = new();
+    protected ErrorsAndInfos ShatilayaErrorsAndInfos = new();
     protected IDictionary<string, DateTime> MasterDebugBinFolderWriteTimeSnapshot,
         MasterReleaseBinFolderWriteTimeSnapshot, MasterReleaseCandidateBinFolderWriteTimeSnapshot;
     protected IDictionary<string, string> MasterReleaseBinFolderContentsSnapshot,
@@ -40,8 +40,8 @@ public class CakeBuildSteps {
     protected IDictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
     [BeforeFeature("CakeBuild")]
-    public static void RecreateCakeFolder() {
-        _container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+    public static void BuildContainer() {
+        _container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya").Build();
     }
 
     [BeforeScenario("CakeBuild")]
@@ -69,16 +69,6 @@ public class CakeBuildSteps {
         _container.Resolve<IGitUtilities>().Clone(url, branchId, ChabTarget.Folder(), new CloneOptions { BranchName = branchId }, true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
         _container.Resolve<IGitUtilities>().Pull(ChabTarget.Folder(), "Shatilaya tester", "shatilayatester@aspenlaub.net" );
-    }
-
-    [Given("I copy the latest cake script from my Shatilaya solution with a comment added at the top")]
-    public void GivenIHaveTheLatestBuildCakeScript() {
-        var errorsAndInfos = new ErrorsAndInfos();
-        _container.Resolve<IEmbeddedCakeScriptCopier>().CopyCakeScriptEmbeddedInAssembly(Assembly.GetExecutingAssembly(), BuildCake.Standard, ChabTarget, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.Errors.Any(), errorsAndInfos.ErrorsPlusRelevantInfos());
-        string buildCakeFileName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
-        string buildCake = File.ReadAllText(buildCakeFileName);
-        File.WriteAllText(buildCakeFileName, "// This should make me different from the master cake\r\n" + buildCake);
     }
 
     [Given("Nuget packages are not restored yet")]
@@ -118,9 +108,9 @@ public class CakeBuildSteps {
         deleter.DeleteFolder(folder);
     }
 
-    [Given("I run the cake script")]
+    [Given("I run Shatilaya")]
     public void GivenIRunTheBuild_CakeScript() {
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", ShatilayaErrorsAndInfos);
     }
 
     [Given("I save the master debug folder file names and timestamps")]
@@ -147,7 +137,7 @@ public class CakeBuildSteps {
 
     [Given("no cake errors were reported")]
     public void GivenNoCakeErrorsWereReported() {
-        Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsToString());
+        Assert.IsFalse(ShatilayaErrorsAndInfos.Errors.Any(), ShatilayaErrorsAndInfos.ErrorsToString());
     }
 
     [Given("I change a test case so that it will fail")]
@@ -235,46 +225,18 @@ public class CakeBuildSteps {
     #endregion
 
     #region When
-    [When("I run the cake script")]
+    [When("I run Shatilaya")]
     public void WhenIRunTheBuild_CakeScript() {
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", CakeErrorsAndInfos);
+        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, "", ShatilayaErrorsAndInfos);
     }
 
-    [When(@"I run the cake script with target ""(.*)""")]
+    [When(@"I run Shatilaya with target ""(.*)""")]
     public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
-        _container.Resolve<ITestTargetRunner>().RunBuildCakeScript(BuildCake.Standard, ChabTarget, target, CakeErrorsAndInfos);
+        throw new NotImplementedException();
     }
     #endregion
 
     #region Then
-    [Then("the cake file is identical to the latest found on the GitHub Shatilaya master branch")]
-    public async Task ThenTheBuild_CakeFileIsIdenticalToTheLatestFoundOnTheGitHubShatilayaMasterBranchAsync() {
-        string expectedContents;
-        do {
-            expectedContents = await LatestCakeFileOnTheGitHubShatilayaMasterBranchAsync();
-            if (expectedContents == "") {
-                Thread.Sleep(TimeSpan.FromSeconds(10));
-            }
-        } while (expectedContents == "");
-
-        string scriptFileFullName = ChabTarget.FullName() + @"\" + BuildCake.Standard;
-        string actualContents = (await File.ReadAllTextAsync(scriptFileFullName)).Replace("\r\n", "\n");
-
-        /* NB if there are differences then have in mind that it is the Chab repository that we are cloning! */
-        Assert.AreEqual(expectedContents, actualContents);
-    }
-
-    private async Task<string> LatestCakeFileOnTheGitHubShatilayaMasterBranchAsync() {
-        const string url = "https://raw.githubusercontent.com/aspenlaub/Shatilaya/master/" + BuildCake.Standard;
-        try {
-            using var client = new HttpClient();
-            string content = await client.GetStringAsync(url);
-            return content.Replace("\r\n", "\n");
-        } catch {
-            return "";
-        }
-    }
-
     [Then("no artifact exists")]
     public void ThenNoArtifactExists() {
         IFolder folder = ChabTarget.Folder().SubFolder("src");
@@ -282,36 +244,31 @@ public class CakeBuildSteps {
         Assert.IsFalse(files.Any());
     }
 
-    [Then("no cake errors were reported")]
+    [Then("no Shatilaya errors were reported")]
     public void ThenNoCakeErrorsWereReported() {
-        Assert.IsFalse(CakeErrorsAndInfos.Errors.Any(), CakeErrorsAndInfos.ErrorsPlusRelevantInfos());
-        Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(i => i.StartsWith("Could not load")), string.Join("\r\n", CakeErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
+        Assert.IsFalse(ShatilayaErrorsAndInfos.Errors.Any(), ShatilayaErrorsAndInfos.ErrorsPlusRelevantInfos());
+        Assert.DoesNotContain(i => i.StartsWith("Could not load"), ShatilayaErrorsAndInfos.Infos, string.Join("\r\n", ShatilayaErrorsAndInfos.Infos.Where(i => i.StartsWith("Could not load"))));
     }
 
     [Then("the branch is considered the master branch or a branch with packages")]
     public void ThenTheBranchIsConsideredTheMasterBranchOrABranchWithPackages() {
-        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(i => i == "Is master branch or branch with packages: true"));
+        Assert.Contains(i => i == "Is master branch or branch with packages: true", ShatilayaErrorsAndInfos.Infos);
     }
 
     [Then("a compilation error was reported for the changed source file")]
     public void ThenACompilationErrorWasReportedForTheChangedSourceFile() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains("MSBuild: Process returned an error")), CakeErrorsAndInfos.ErrorsToString());
-        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains("Oven.cs") && m.Contains("error CS0103") && m.Contains("'old' does not exist")));
+        Assert.Contains(e => e.Contains("MSBuild: Process returned an error"), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
+        Assert.Contains(m => m.Contains("Oven.cs") && m.Contains("error CS0103") && m.Contains("'old' does not exist"), ShatilayaErrorsAndInfos.Infos);
     }
 
     [Then("an uncommitted change error was reported for the changed source file")]
     public void ThenAUncommittedChangeErrorWasReportedForTheChangedSourceFile() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(m => m.Contains("Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
+        Assert.Contains(m => m.Contains("Oven.cs") && m.Contains("Uncommitted change", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
     }
 
     [Then(@"build step ""(.*)"" was not a target")]
     public void ThenBuildStepWasSkipped(string p0) {
-        Assert.IsFalse(CakeErrorsAndInfos.Infos.Any(m => m.Contains(p0)));
-    }
-
-    [Then("I get an error message saying that I need to rerun my cake script")]
-    public void ThenIGetAnErrorMessageSayingThatINeedToRerunMyCakeScript() {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains("Your cake file has been updated")), CakeErrorsAndInfos.ErrorsToString());
+        Assert.DoesNotContain(m => m.Contains(p0), ShatilayaErrorsAndInfos.Infos);
     }
 
     [Then("I find the artifacts in the master debug folder")]
@@ -339,8 +296,8 @@ public class CakeBuildSteps {
 
     [Then(@"a failed ""(.*)"" test case was reported")]
     public void ThenAFailedTestCaseWasReported(string p0) {
-        Assert.IsTrue(CakeErrorsAndInfos.Errors.Any(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase)), CakeErrorsAndInfos.ErrorsToString());
-        Assert.IsTrue(CakeErrorsAndInfos.Infos.Any(m => m.Contains("Failed CanBakeACake")));
+        Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
+        Assert.Contains(m => m.Contains("Failed CanBakeACake"), ShatilayaErrorsAndInfos.Infos);
     }
 
     [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
@@ -385,9 +342,7 @@ public class CakeBuildSteps {
 
     [Then("the contents of the master release candidate folder has changed")]
     public void ThenTheContentsOfTheMasterReleaseCandidateFolderHasChanged() {
-        Assert.IsTrue(MasterReleaseCandidateBinFolderWriteTimeSnapshot.Any(
-            snapShotFile => DifferentLastWriteTime(snapShotFile.Key, snapShotFile.Value)
-        ));
+        Assert.Contains(snapShotFile => DifferentLastWriteTime(snapShotFile.Key, snapShotFile.Value), MasterReleaseCandidateBinFolderWriteTimeSnapshot);
     }
 
     [Then("the contents of the master release json dependencies file has not changed")]

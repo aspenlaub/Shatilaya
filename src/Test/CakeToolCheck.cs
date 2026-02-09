@@ -13,10 +13,10 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 public class CakeToolCheck {
     [TestMethod]
     public void CakeToolMatchesTargetFramework() {
-        IContainer container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya", new DummyCsArgumentPrompter()).Build();
+        IContainer container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya").Build();
         IDotNetCakeInstaller installer = container.Resolve<IDotNetCakeInstaller>();
         var errorsAndInfos = new ErrorsAndInfos();
-        bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(errorsAndInfos);
+        bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
             return;
@@ -25,9 +25,10 @@ public class CakeToolCheck {
         installer.UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessary(errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
-        doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(errorsAndInfos);
+        doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
+            // ReSharper disable once RedundantJumpStatement
             return;
         }
     }
