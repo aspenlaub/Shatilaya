@@ -3,7 +3,7 @@ using Cake.Common.Tools.MSBuild;
 using Cake.Core.Diagnostics;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("ReleaseBuild")]
 [TaskDescription("Build solution in Release")]
