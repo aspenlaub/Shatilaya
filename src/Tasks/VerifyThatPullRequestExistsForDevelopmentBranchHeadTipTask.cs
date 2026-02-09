@@ -8,7 +8,7 @@ using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("VerifyThatPullRequestExistsForDevelopmentBranchHeadTip")]
 [TaskDescription("Verify that the master branch does have a pull request for the checked out development branch head tip")]
