@@ -9,7 +9,7 @@ using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Pack;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("CreateNuGetPackage")]
 [TaskDescription("Create nuget package in the master Release binaries folder")]
