@@ -12,7 +12,7 @@ using Cake.Core.IO;
 using Cake.Core.IO.Arguments;
 using Cake.Frosting;
 
-namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.CakeFrosting.Tasks;
+namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("RunTestsOnReleaseArtifacts")]
 [TaskDescription("Run unit and integration tests on Release artifacts")]
