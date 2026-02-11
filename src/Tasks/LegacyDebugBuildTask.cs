@@ -9,7 +9,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [TaskDescription("Build legacy solution in Debug")]
 public class LegacyDebugBuildTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
-        context.Information("Building solution in Debug");
+        context.Information("Building legacy solution in Debug");
         context.MSBuild(context.LegacySolutionFileFullName, settings
             => settings
                .SetConfiguration("Debug")
