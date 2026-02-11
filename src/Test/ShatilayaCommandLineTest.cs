@@ -6,6 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NuGet.ContentModel;
 using IProcessRunner = Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces.IProcessRunner;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
@@ -84,15 +85,19 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
-        PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
-        errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        VerifyOutputToTemporaryFolder("Debug", errorsAndInfos);
+        for (int i = 0; i < 2; i ++) {
+            PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
+            errorsAndInfos = new ErrorsAndInfos();
+            processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+            VerifyOutputToTemporaryFolder("Debug", errorsAndInfos);
 
-        PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
-        errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        VerifyOutputToTemporaryFolder("Release", errorsAndInfos);
+            PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
+            errorsAndInfos = new ErrorsAndInfos();
+            processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+            VerifyOutputToTemporaryFolder("Release", errorsAndInfos);
+        }
+
+        Assert.Contains("Output folder exists, cleaning up", errorsAndInfos.Infos);
     }
 
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {

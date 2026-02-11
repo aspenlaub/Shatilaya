@@ -1,5 +1,7 @@
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Common.Tools.MSBuild;
 using Cake.Core.Diagnostics;
@@ -14,6 +16,13 @@ public class ReleaseBuildToTempTask : FrostingTask<ShatilayaContext> {
         context.Information("Building solution in Release into a temporary folder");
         IFolder tempFolder = context.SolutionFolderWithinOrOutsideSrc.SubFolder("temp").SubFolder("bin").SubFolder("Release");
         context.Information($"Output folder is: {tempFolder.FullName}");
+        if (tempFolder.Exists()) {
+            context.Information("Output folder exists, cleaning up");
+            IContainer container = new ContainerBuilder().UsePegh("Shatilaya").Build();
+            IFolderDeleter deleter = container.Resolve<IFolderDeleter>();
+            deleter.DeleteFolder(tempFolder);
+        }
+        tempFolder.CreateIfNecessary();
         tempFolder.CreateIfNecessary();
         context.MSBuild(context.SolutionFileFullName, settings
             => settings
