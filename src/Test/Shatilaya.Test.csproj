@@ -15,6 +15,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
     <None Include="..\..\build.cake" Link="build.cake" />
+    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.2.11.478" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,7 +25,6 @@
     <PackageReference Include="MSTest.TestFramework" Version="4.1.0" />
     <PackageReference Include="Reqnroll.MSTest" Version="3.3.3" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="3.3.3" />
-    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.1.14.460" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shatilaya.csproj" />
