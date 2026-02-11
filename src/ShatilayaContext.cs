@@ -29,7 +29,8 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
     public string Target => GetArgument("target", nameof(DefaultTask).Replace("Task", ""));
 
-    public string SolutionFileFullName => GetSolutionFileFullName();
+    public string SolutionFileFullName => GetSolutionFileFullName("*.slnx", false);
+    public string LegacySolutionFileFullName => GetSolutionFileFullName("*.sln", true);
 
     public string SolutionId => SolutionFileFullName[(SolutionFileFullName.LastIndexOf('\\') + 1)..].Replace(".slnx", "");
     public IFolder DebugBinFolder => RepositoryFolder.SubFolder(@"src\bin\Debug");
@@ -95,9 +96,16 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         return new Folder(context.MakeAbsolute(context.Directory(".")).FullPath.Replace("/", "\\"));
     }
 
-    private string GetSolutionFileFullName() {
+    private string GetSolutionFileFullName(string wildcard, bool repositoryFolderIsAllowed) {
         IFolder folder = RepositoryFolder.SubFolder("src");
-        var solutionFiles = Directory.GetFiles(folder.FullName, "*.slnx").ToList();
+        var solutionFiles = Directory.GetFiles(folder.FullName, wildcard).ToList();
+        if (solutionFiles.Count == 1) {
+            return solutionFiles[0];
+        }
+        if (!repositoryFolderIsAllowed) {
+            throw new ArgumentException($"Solution file missing or not unique in {folder.FullName}");
+        }
+        solutionFiles = Directory.GetFiles(RepositoryFolder.FullName, wildcard).ToList();
         return solutionFiles.Count == 1
             ? solutionFiles[0]
             : throw new ArgumentException($"Solution file missing or not unique in {folder.FullName}");
