@@ -6,7 +6,6 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NuGet.ContentModel;
 using IProcessRunner = Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces.IProcessRunner;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
