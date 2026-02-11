@@ -30,9 +30,11 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public string Target => GetArgument("target", nameof(DefaultTask).Replace("Task", ""));
 
     public string SolutionFileFullName => GetSolutionFileFullName("*.slnx", false);
+    public string SolutionFileFullNameWithinOrOutsideSrc => GetSolutionFileFullName("*.slnx", true);
     public string LegacySolutionFileFullName => GetSolutionFileFullName("*.sln", true);
 
     public string SolutionId => SolutionFileFullName[(SolutionFileFullName.LastIndexOf('\\') + 1)..].Replace(".slnx", "");
+    public IFolder SolutionFolderWithinOrOutsideSrc => new Folder(SolutionFileFullNameWithinOrOutsideSrc.Substring(0, SolutionFileFullNameWithinOrOutsideSrc.LastIndexOf('\\')));
     public IFolder DebugBinFolder => RepositoryFolder.SubFolder(@"src\bin\Debug");
     public IFolder ReleaseBinFolder => RepositoryFolder.SubFolder(@"src\bin\Release");
     public IFolder TestResultsFolder => RepositoryFolder.SubFolder("TestResults");
