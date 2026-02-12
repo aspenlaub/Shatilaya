@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
@@ -10,6 +13,7 @@ using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Test;
 using Cake.Core.IO.Arguments;
 using Cake.Frosting;
+using IContainer = Autofac.IContainer;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
@@ -20,7 +24,10 @@ public class RunTestsOnDebugArtifactsToTempTask : FrostingTask<ShatilayaContext>
         IContainer container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Shatilaya").Build();
         IProjectFactory projectFactory = container.Resolve<IProjectFactory>();
         var errorsAndInfos = new ErrorsAndInfos();
-        string[] projectFileFullNames = Directory.GetFiles(context.SolutionFolderWithinOrOutsideSrc.FullName, "*Test.csproj");
+        var projectFileFullNames = Directory.GetFiles(context.SolutionFolderWithinOrOutsideSrc.FullName, "*Test.csproj", SearchOption.AllDirectories).ToList();
+        if (projectFileFullNames.Count == 0) {
+            throw new Exception($"No test projects found under \"{context.SolutionFolderWithinOrOutsideSrc.FullName}\"");
+        }
         IFolder resultsFolder = context.SolutionFolderWithinOrOutsideSrc.SubFolder("TestResults");
         if (resultsFolder.Exists()) {
             IFolderDeleter deleter = context.Container.Resolve<IFolderDeleter>();
@@ -28,7 +35,7 @@ public class RunTestsOnDebugArtifactsToTempTask : FrostingTask<ShatilayaContext>
         }
         foreach(string projectFileFullName in projectFileFullNames) {
             IProject project = projectFactory.Load(context.SolutionFileFullNameWithinOrOutsideSrc, projectFileFullName, errorsAndInfos);
-            string logFileName = @"\TestResults -" + project.ProjectName + ".trx";
+            string logFileName = resultsFolder.FullName + @"\TestResults-" + project.ProjectName + ".trx";
             context.Information($"Output file is: {logFileName}");
             string loggerArgValue = "trx;LogFileName=" + logFileName.Replace("\\", "\\\\");
             var loggerArg = new TextArgument($"--logger \"{loggerArgValue}\"");

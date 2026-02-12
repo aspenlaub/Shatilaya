@@ -111,7 +111,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
 
-        IFolder resultFolder = workingFolder.SubFolder("TestResults");
+        IFolder resultFolder = PakledTarget.Folder().SubFolder("src").SubFolder("TestResults");
         if (resultFolder.Exists()) {
             IFolderDeleter deleter = Container.Resolve<IFolderDeleter>();
             deleter.DeleteFolder(resultFolder);
@@ -120,7 +120,9 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
-        Assert.IsTrue(resultFolder.Exists());
+        Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
+        string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
+        Assert.IsTrue(File.Exists(resultFileName), $"The expected result file was not created: \"{resultFileName}\"");
     }
 
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
