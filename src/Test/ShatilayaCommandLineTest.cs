@@ -99,6 +99,30 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         Assert.Contains("Output folder exists, cleaning up", errorsAndInfos.Infos);
     }
 
+    [TestMethod]
+    public void CanBuildAndTest() {
+        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
+        var errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+
+        PutTogetherRunnerArguments("DebugBuild", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+
+        IFolder resultFolder = workingFolder.SubFolder("TestResults");
+        if (resultFolder.Exists()) {
+            IFolderDeleter deleter = Container.Resolve<IFolderDeleter>();
+            deleter.DeleteFolder(resultFolder);
+        }
+        PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.IsTrue(resultFolder.Exists());
+    }
+
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
         IFolder folder = PakledTarget.Folder();
@@ -120,5 +144,4 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         Assert.HasCount(2, outputFiles.Where(x => x.EndsWith(".pdb")));
         Assert.HasCount(3, outputFiles.Where(x => x.EndsWith(".json")));
     }
-
 }
