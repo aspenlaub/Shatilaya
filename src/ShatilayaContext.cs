@@ -100,9 +100,12 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
     private string GetSolutionFileFullName(string wildcard, bool repositoryFolderIsAllowed) {
         IFolder folder = RepositoryFolder.SubFolder("src");
-        var solutionFiles = Directory.GetFiles(folder.FullName, wildcard).ToList();
-        if (solutionFiles.Count == 1) {
-            return solutionFiles[0];
+        List<string> solutionFiles;
+        if (Directory.Exists(folder.FullName)) {
+            solutionFiles = Directory.GetFiles(folder.FullName, wildcard).ToList();
+            if (solutionFiles.Count == 1) {
+                return solutionFiles[0];
+            }
         }
         if (!repositoryFolderIsAllowed) {
             throw new ArgumentException($"Solution file missing or not unique in {folder.FullName}");
