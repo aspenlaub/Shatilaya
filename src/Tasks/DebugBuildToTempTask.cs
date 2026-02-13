@@ -23,7 +23,7 @@ public class DebugBuildToTempTask : FrostingTask<ShatilayaContext> {
             deleter.DeleteFolder(tempFolder);
         }
         tempFolder.CreateIfNecessary();
-        context.MSBuild(context.SolutionFileFullName, settings
+        context.MSBuild(context.SolutionFileFullNameWithinOrOutsideSrc, settings
             => settings
                .SetConfiguration("Debug")
                .SetVerbosity(Verbosity.Minimal)

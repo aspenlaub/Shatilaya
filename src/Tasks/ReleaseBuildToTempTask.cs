@@ -24,7 +24,7 @@ public class ReleaseBuildToTempTask : FrostingTask<ShatilayaContext> {
         }
         tempFolder.CreateIfNecessary();
         tempFolder.CreateIfNecessary();
-        context.MSBuild(context.SolutionFileFullName, settings
+        context.MSBuild(context.SolutionFileFullNameWithinOrOutsideSrc, settings
             => settings
                .SetConfiguration("Release")
                .SetVerbosity(Verbosity.Minimal)
