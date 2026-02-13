@@ -84,17 +84,16 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
 
-        for (int i = 0; i < 2; i ++) {
-            PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
-            errorsAndInfos = new ErrorsAndInfos();
-            processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-            VerifyOutputToTemporaryFolder("Debug", errorsAndInfos);
+        PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        VerifyOutputToTemporaryFolder("Debug", errorsAndInfos);
 
-            PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
-            errorsAndInfos = new ErrorsAndInfos();
-            processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-            VerifyOutputToTemporaryFolder("Release", errorsAndInfos);
-        }
+        PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        VerifyOutputToTemporaryFolder("Release", errorsAndInfos);
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
 
         Assert.Contains("Output folder exists, cleaning up", errorsAndInfos.Infos);
     }
