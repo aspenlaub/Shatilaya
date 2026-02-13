@@ -24,7 +24,7 @@ public class ReleaseBuildToTempTask : FrostingTask<ShatilayaContext> {
             context.Information("Output folder exists, cleaning up");
             IContainer container = new ContainerBuilder().UsePegh("Shatilaya").Build();
             IFolderDeleter deleter = container.Resolve<IFolderDeleter>();
-            deleter.DeleteFolder(tempFolder);
+            deleter.DeleteFolder(tempFolder.ParentFolder());
         }
         tempFolder.CreateIfNecessary();
         tempFolder.CreateIfNecessary();
