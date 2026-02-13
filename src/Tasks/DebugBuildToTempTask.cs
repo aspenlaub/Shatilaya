@@ -14,7 +14,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 public class DebugBuildToTempTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building solution in Debug into a temporary folder");
-        IFolder tempFolder = context.SolutionFolderWithinOrOutsideSrc.SubFolder("temp").SubFolder("bin").SubFolder("Debug");
+        IFolder solutionFolder = context.SolutionFolderWithinOrOutsideSrc;
+        context.Information("Solution folder is: " + solutionFolder.FullName);
+        string solutionFileFullName = context.SolutionFileFullNameWithinOrOutsideSrc;
+        context.Information("Solution is: " + solutionFileFullName);
+        IFolder tempFolder = solutionFolder.SubFolder("temp").SubFolder("bin").SubFolder("Debug");
         context.Information($"Output folder is: {tempFolder.FullName}");
         if (tempFolder.Exists()) {
             context.Information("Output folder exists, cleaning up");
@@ -23,7 +27,7 @@ public class DebugBuildToTempTask : FrostingTask<ShatilayaContext> {
             deleter.DeleteFolder(tempFolder);
         }
         tempFolder.CreateIfNecessary();
-        context.MSBuild(context.SolutionFileFullNameWithinOrOutsideSrc, settings
+        context.MSBuild(solutionFileFullName, settings
             => settings
                .SetConfiguration("Debug")
                .SetVerbosity(Verbosity.Minimal)

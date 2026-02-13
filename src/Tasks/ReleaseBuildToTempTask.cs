@@ -14,7 +14,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 public class ReleaseBuildToTempTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building solution in Release into a temporary folder");
-        IFolder tempFolder = context.SolutionFolderWithinOrOutsideSrc.SubFolder("temp").SubFolder("bin").SubFolder("Release");
+        IFolder solutionFolder = context.SolutionFolderWithinOrOutsideSrc;
+        context.Information("Solution folder is: " + solutionFolder.FullName);
+        string solutionFileFullName = context.SolutionFileFullNameWithinOrOutsideSrc;
+        context.Information("Solution is: " + solutionFileFullName);
+        IFolder tempFolder = solutionFolder.SubFolder("temp").SubFolder("bin").SubFolder("Release");
         context.Information($"Output folder is: {tempFolder.FullName}");
         if (tempFolder.Exists()) {
             context.Information("Output folder exists, cleaning up");
@@ -24,7 +28,7 @@ public class ReleaseBuildToTempTask : FrostingTask<ShatilayaContext> {
         }
         tempFolder.CreateIfNecessary();
         tempFolder.CreateIfNecessary();
-        context.MSBuild(context.SolutionFileFullNameWithinOrOutsideSrc, settings
+        context.MSBuild(solutionFileFullName, settings
             => settings
                .SetConfiguration("Release")
                .SetVerbosity(Verbosity.Minimal)
