@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide;
@@ -30,7 +29,7 @@ public class RunTestsOnDebugArtifactsToTempTask : FrostingTask<ShatilayaContext>
         }
         IFolder resultsFolder = context.SolutionFolderWithinOrOutsideSrc.SubFolder("TestResults");
         if (resultsFolder.Exists()) {
-            IFolderDeleter deleter = context.Container.Resolve<IFolderDeleter>();
+            IFolderDeleter deleter = container.Resolve<IFolderDeleter>();
             deleter.DeleteFolder(resultsFolder);
         }
         foreach(string projectFileFullName in projectFileFullNames) {
