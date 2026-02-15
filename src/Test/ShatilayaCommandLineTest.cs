@@ -87,12 +87,12 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        VerifyOutputToTemporaryFolder("Debug", errorsAndInfos);
+        VerifyOutputToTemporaryFolder("Debug", false, errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        VerifyOutputToTemporaryFolder("Release", errorsAndInfos);
+        VerifyOutputToTemporaryFolder("Release", false, errorsAndInfos);
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
 
         Assert.Contains("Output folder exists, cleaning up", errorsAndInfos.Infos);
@@ -124,13 +124,27 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         Assert.IsTrue(File.Exists(resultFileName), $"The expected result file was not created: \"{resultFileName}\"");
     }
 
+    [TestMethod]
+    public void CanBuildCsProjToTemp() {
+        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
+        var errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+
+        PutTogetherRunnerArguments("ReleaseBuildCsProjToTemp", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        VerifyOutputToTemporaryFolder("Release", true, errorsAndInfos);
+    }
+
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
         IFolder folder = PakledTarget.Folder();
         arguments = $"--repository {folder.FullName} --target {target} --verbosity verbose";
     }
 
-    private static void VerifyOutputToTemporaryFolder(string debugOrRelease, IErrorsAndInfos errorsAndInfos) {
+    private static void VerifyOutputToTemporaryFolder(string debugOrRelease, bool csProjOnly, IErrorsAndInfos errorsAndInfos) {
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
         const string outputFolderTag = "Output folder is: ";
         string line = errorsAndInfos.Infos.SingleOrDefault(s => s.StartsWith(outputFolderTag));
@@ -140,9 +154,9 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         string expectedSuffix = @$"\src\temp\bin\{debugOrRelease}";
         Assert.EndsWith(expectedSuffix, outputFolder.FullName, $"Output folder {outputFolder.FullName} does not end with {expectedSuffix}");
         var outputFiles = Directory.GetFiles(outputFolder.FullName, "Aspenlaub.Net.GitHub.CSharp.Pakled.*", SearchOption.AllDirectories).ToList();
-        Assert.HasCount(7, outputFiles);
-        Assert.HasCount(2, outputFiles.Where(x => x.EndsWith(".dll")));
-        Assert.HasCount(2, outputFiles.Where(x => x.EndsWith(".pdb")));
-        Assert.HasCount(3, outputFiles.Where(x => x.EndsWith(".json")));
+        Assert.HasCount(csProjOnly ? 3 : 7, outputFiles);
+        Assert.HasCount(csProjOnly ? 1 : 2, outputFiles.Where(x => x.EndsWith(".dll")));
+        Assert.HasCount(csProjOnly ? 1 : 2, outputFiles.Where(x => x.EndsWith(".pdb")));
+        Assert.HasCount(csProjOnly ? 1 : 3, outputFiles.Where(x => x.EndsWith(".json")));
     }
 }
