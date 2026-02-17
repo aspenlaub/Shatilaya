@@ -15,6 +15,6 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [IsDependentOn(typeof(VerifyThatPullRequestExistsForDevelopmentBranchHeadTipTask))]
 public class LittleThingsTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
-        context.Information("Check the little things before building the solution");
+        context.Information("Checking the little things before building the solution");
     }
 }

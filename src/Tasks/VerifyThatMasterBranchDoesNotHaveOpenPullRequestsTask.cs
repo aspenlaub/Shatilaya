@@ -18,7 +18,7 @@ public class VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask : AsyncFrosti
     }
 
     public override async Task RunAsync(ShatilayaContext context) {
-        context.Information("Verify that the master branch does not have open pull requests");
+        context.Information("Verifying that the master branch does not have open pull requests");
         var errorsAndInfos = new ErrorsAndInfos();
         bool thereAreOpenPullRequests;
         if (context.SolutionSpecialSettingsDictionary.TryGetValue("PullRequestsToIgnore", out string pullRequestsToIgnore)) {
