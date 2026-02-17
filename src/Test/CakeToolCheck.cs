@@ -1,8 +1,8 @@
 ﻿using Aspenlaub.Net.GitHub.CSharp.Fusion;
-using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
