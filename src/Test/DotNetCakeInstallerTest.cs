@@ -15,7 +15,7 @@ public class DotNetCakeInstallerTest {
     [TestInitialize]
     public void Initialize() {
         IContainer container = new ContainerBuilder().UseFusionNuclideProtchAndGitty("Gitty").Build();
-        Sut = container.Resolve<IDotNetCakeInstaller>();
+        Sut = new DotNetCakeInstaller(container.Resolve<Gitty.Interfaces.IProcessRunner>());
     }
 
     [TestMethod]
