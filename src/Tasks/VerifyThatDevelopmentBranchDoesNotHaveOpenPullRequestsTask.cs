@@ -11,14 +11,14 @@ using Cake.Frosting;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequests")]
-[TaskDescription("Verify that the master branch does not have open pull requests")]
+[TaskDescription("Verify that the development branch does not have open pull requests")]
 public class VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequestsTask : AsyncFrostingTask<ShatilayaContext> {
     public override bool ShouldRun(ShatilayaContext context) {
         return context.CurrentGitBranch == "master";
     }
 
     public  override async Task RunAsync(ShatilayaContext context) {
-        context.Information("Verifying that the master branch does not have open pull requests");
+        context.Information("Verifying that the development branch does not have open pull requests");
         var errorsAndInfos = new ErrorsAndInfos();
         bool thereAreOpenPullRequests;
         if (context.SolutionSpecialSettingsDictionary.TryGetValue("PullRequestsToIgnore", out string pullRequestsToIgnore)) {

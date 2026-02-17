@@ -99,7 +99,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanBuildAndTest() {
+    public void CanBuildAndTestDebug() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
@@ -116,6 +116,32 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             deleter.DeleteFolder(resultFolder);
         }
         PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
+        string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
+        Assert.IsTrue(File.Exists(resultFileName), $"The expected result file was not created: \"{resultFileName}\"");
+    }
+
+    [TestMethod]
+    public void CanBuildAndTestRelease() {
+        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
+        var errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+
+        PutTogetherRunnerArguments("ReleaseBuild", out executableFullName, out arguments, out workingFolder);
+        errorsAndInfos = new ErrorsAndInfos();
+        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+
+        IFolder resultFolder = PakledTarget.Folder().SubFolder("src").SubFolder("TestResults");
+        if (resultFolder.Exists()) {
+            IFolderDeleter deleter = Container.Resolve<IFolderDeleter>();
+            deleter.DeleteFolder(resultFolder);
+        }
+        PutTogetherRunnerArguments("RunTestsOnReleaseArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
