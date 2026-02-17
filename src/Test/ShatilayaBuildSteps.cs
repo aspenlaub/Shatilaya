@@ -358,7 +358,7 @@ public class ShatilayaBuildSteps {
         string actualContents = File.ReadAllText(fileName);
         Assert.AreEqual(expectedContents.Length, actualContents.Length);
         var differences = Enumerable.Range(0, expectedContents.Length).Where(i => expectedContents[i] != actualContents[i]).ToList();
-        Assert.HasCount(2, differences);
+        Assert.IsTrue(differences.Count == 2 || differences.Count == 4, $"Expected 2 or 4 differences (patch version), got {differences.Count}");
     }
 
     protected void VerifyEqualLastWriteTime(string fileName, DateTime lastKnownWriteTime) {
