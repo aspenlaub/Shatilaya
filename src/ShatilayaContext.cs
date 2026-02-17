@@ -48,11 +48,10 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder MasterBinReleaseParentFolder => MasterBinReleaseFolder.ParentFolder();
     public string ReleaseBinHeadTipIdShaFile => MasterBinReleaseParentFolder.FullName + '\\' + "Release.HeadTipSha.txt";
 
-    private readonly DynamicContextProperty<IContainer> _Container = new(nameof(Container));
-    public IContainer Container {
-        get { return _Container.Get(); }
-        set { _Container.Set(value); }
-    }
+    private readonly Lazy<IContainer> _Container
+        = new Lazy<IContainer>(() => FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya"));
+
+    public IContainer Container => _Container.Value;
 
     private readonly DynamicContextProperty<string> _CurrentGitBranch = new(nameof(CurrentGitBranch));
     public string CurrentGitBranch {
@@ -117,8 +116,6 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     }
 
     public async Task InitializeAsync() {
-        Container = FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya");
-
         CurrentGitBranch = Container.Resolve<IGitUtilities>().CheckedOutBranch(RepositoryFolder);
 
         IBranchesWithPackagesRepository branchesWithPackagesRepository = Container.Resolve<IBranchesWithPackagesRepository>();

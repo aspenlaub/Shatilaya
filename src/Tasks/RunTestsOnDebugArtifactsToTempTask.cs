@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Aspenlaub.Net.GitHub.CSharp.Nuclide;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -20,7 +19,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [TaskDescription("Run unit and integration tests on Debug artifacts, log in temporary folder")]
 public class RunTestsOnDebugArtifactsToTempTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
-        IContainer container = new ContainerBuilder().UseNuclideProtchGittyAndPegh("Shatilaya").Build();
+        IContainer container = context.Container;
         IProjectFactory projectFactory = container.Resolve<IProjectFactory>();
         var errorsAndInfos = new ErrorsAndInfos();
         var projectFileFullNames = Directory.GetFiles(context.SolutionFolderWithinOrOutsideSrc.FullName, "*Test.csproj", SearchOption.AllDirectories).ToList();

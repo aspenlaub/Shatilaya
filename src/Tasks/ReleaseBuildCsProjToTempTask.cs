@@ -1,5 +1,4 @@
 using System;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Components;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Autofac;
@@ -28,8 +27,7 @@ public class ReleaseBuildCsProjToTempTask : FrostingTask<ShatilayaContext> {
         context.Information($"Output folder is: {tempFolder.FullName}");
         if (tempFolder.Exists()) {
             context.Information("Output folder exists, cleaning up");
-            IContainer container = new ContainerBuilder().UsePegh("Shatilaya").Build();
-            IFolderDeleter deleter = container.Resolve<IFolderDeleter>();
+            IFolderDeleter deleter = context.Container.Resolve<IFolderDeleter>();
             deleter.DeleteFolder(tempFolder.ParentFolder());
         }
         tempFolder.CreateIfNecessary();
