@@ -1,4 +1,4 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+﻿using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 
 // ReSharper disable UnusedMember.Global
 

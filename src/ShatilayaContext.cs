@@ -13,6 +13,8 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
 using Autofac;
 using Cake.Common;
 using Cake.Common.Diagnostics;

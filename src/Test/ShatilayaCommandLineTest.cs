@@ -4,6 +4,9 @@ using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using IProcessRunner = Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces.IProcessRunner;
@@ -18,7 +21,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         List<string> expectedInfos = [
           "Cleaning", "Restoring", "Pulling"
         ];
@@ -35,7 +38,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         List<string> expectedInfos = [
             "Verifying that the master branch", "Verifying that there are no uncommitted"
         ];
@@ -52,12 +55,12 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("BuildAndTestDebugAndRelease", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         List<string> expectedInfos = [
             "Building solution in Debug",
@@ -82,7 +85,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
@@ -104,7 +107,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("DebugBuild", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
@@ -118,7 +121,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
         string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
         Assert.IsTrue(File.Exists(resultFileName), $"The expected result file was not created: \"{resultFileName}\"");
@@ -130,7 +133,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuild", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
@@ -144,7 +147,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         PutTogetherRunnerArguments("RunTestsOnReleaseArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
         string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
         Assert.IsTrue(File.Exists(resultFileName), $"The expected result file was not created: \"{resultFileName}\"");
@@ -156,7 +159,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuildCsProjToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
@@ -171,7 +174,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     private static void VerifyOutputToTemporaryFolder(string debugOrRelease, bool csProjOnly, IErrorsAndInfos errorsAndInfos) {
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         const string outputFolderTag = "Output folder is: ";
         string line = errorsAndInfos.Infos.SingleOrDefault(s => s.StartsWith(outputFolderTag));
         Assert.IsFalse(string.IsNullOrEmpty(line), "Output folder could not be found");

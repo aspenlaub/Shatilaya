@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Frosting;

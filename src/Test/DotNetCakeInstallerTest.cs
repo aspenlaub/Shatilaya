@@ -1,8 +1,8 @@
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
-using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,7 +25,7 @@ public class DotNetCakeInstallerTest {
         if (inconclusive) {
             Assert.Inconclusive();
         } else {
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+            Assert.That.ThereWereNoErrors(errorsAndInfos);
         }
     }
 
@@ -33,7 +33,7 @@ public class DotNetCakeInstallerTest {
     public void ProvenGlobalDotNetCakeIsInstalled() {
         var errorsAndInfos = new ErrorsAndInfos();
         bool isInstalled = Sut.IsProvenGlobalDotNetCakeInstalled(errorsAndInfos);
-        Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+        Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(isInstalled);
     }
 
@@ -42,7 +42,7 @@ public class DotNetCakeInstallerTest {
         var errorsAndInfos = new ErrorsAndInfos();
         bool matches = Sut.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
         if (matches) {
-            Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
+            Assert.That.ThereWereNoErrors(errorsAndInfos);
         }
         Assert.AreEqual(DotNetCakeInstaller.CakeToolVersionMatchingCompiledTargetFramework ==
             DotNetCakeInstaller.ProvenCakeToolVersion, matches);
