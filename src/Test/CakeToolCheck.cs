@@ -2,6 +2,7 @@
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +14,7 @@ public class CakeToolCheck {
     [TestMethod]
     public void CakeToolMatchesTargetFramework() {
         IContainer container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya").Build();
-        IDotNetCakeInstaller installer = container.Resolve<IDotNetCakeInstaller>();
+        IDotNetCakeInstaller installer = new DotNetCakeInstaller(container.Resolve<Gitty.Interfaces.IProcessRunner>());
         var errorsAndInfos = new ErrorsAndInfos();
         bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(true, errorsAndInfos);
         Assert.IsFalse(errorsAndInfos.AnyErrors(), errorsAndInfos.ErrorsToString());
