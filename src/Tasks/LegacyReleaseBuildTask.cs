@@ -7,7 +7,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("LegacyReleaseBuild")]
 [TaskDescription("Build legacy solution in Release")]
-[IsDependentOn(typeof(InitializeContextTask))]
+[IsDependentOn(typeof(InitializeContextForMsBuildTask))]
 public class LegacyReleaseBuildTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building legacy solution in Release");

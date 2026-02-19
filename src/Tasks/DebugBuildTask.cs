@@ -7,7 +7,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("DebugBuild")]
 [TaskDescription("Build solution in Debug")]
-[IsDependentOn(typeof(InitializeContextTask))]
+[IsDependentOn(typeof(InitializeContextForMsBuildTask))]
 public class DebugBuildTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building solution in Debug");

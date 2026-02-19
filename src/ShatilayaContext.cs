@@ -15,6 +15,7 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Autofac;
 using Cake.Common;
 using Cake.Common.Diagnostics;
@@ -169,13 +170,6 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
         ProduceReleaseCandidate = produceReleaseCandidate;
 
-        IFolder msBuildToolsFolder = await Container.Resolve<IFolderResolver>().ResolveAsync("$(MsBuildTools)", errorsAndInfos);
-        if (errorsAndInfos.AnyErrors()) {
-            throw new Exception(errorsAndInfos.ErrorsToString());
-        }
-
-        MsBuildExeFullFileName = msBuildToolsFolder.FullName + @"\MSBuild.exe";
-
         this.Information("Repository folder is: " + RepositoryFolder.FullName);
         this.Information("Solution is: " + SolutionFileFullName);
         this.Information("Solution ID is: " + SolutionId);
@@ -187,6 +181,19 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         this.Information("ReleaseCandidate bin folder is: " + MasterReleaseCandidateBinFolder.FullName);
         this.Information("Create and push packages: " + (CreateAndPushPackages ? "true" : "false"));
         this.Information("Produce release candidate: " + (ProduceReleaseCandidate ? "true" : "false"));
+
+        await InitializeForMsBuildAsync();
+    }
+
+    public async Task InitializeForMsBuildAsync() {
+        var errorsAndInfos = new ErrorsAndInfos();
+        IFolder msBuildToolsFolder = await Container.Resolve<IFolderResolver>().ResolveAsync("$(MsBuildTools)", errorsAndInfos);
+        if (errorsAndInfos.AnyErrors()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
+        }
+
+        MsBuildExeFullFileName = msBuildToolsFolder.FullName + @"\MSBuild.exe";
+
         this.Information("MSBuild.exe: " + MsBuildExeFullFileName);
     }
 }

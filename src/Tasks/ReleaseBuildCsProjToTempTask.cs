@@ -11,7 +11,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("ReleaseBuildCsProjToTemp")]
 [TaskDescription("Build solution's main project file in Release into a temporary folder")]
-[IsDependentOn(typeof(InitializeContextTask))]
+[IsDependentOn(typeof(InitializeContextForMsBuildTask))]
 public class ReleaseBuildCsProjToTempTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building solution in Release into a temporary folder");
