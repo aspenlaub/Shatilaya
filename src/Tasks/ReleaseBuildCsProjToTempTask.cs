@@ -1,16 +1,17 @@
 using System;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Extensions;
 using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Common.Tools.MSBuild;
-using Cake.Core.Diagnostics;
 using Cake.Frosting;
 
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 
 [TaskName("ReleaseBuildCsProjToTemp")]
 [TaskDescription("Build solution's main project file in Release into a temporary folder")]
+[IsDependentOn(typeof(InitializeContextTask))]
 public class ReleaseBuildCsProjToTempTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Building solution in Release into a temporary folder");
@@ -34,9 +35,8 @@ public class ReleaseBuildCsProjToTempTask : FrostingTask<ShatilayaContext> {
         tempFolder.CreateIfNecessary();
         context.MSBuild(csProjFileFullName, settings
             => settings
+               .WithShatilayaCommonBuildSettings(context)
                .SetConfiguration("Release")
-               .SetVerbosity(Verbosity.Minimal)
-               .WithProperty("Platform", "Any CPU")
                .WithProperty("OutDir", tempFolder.FullName)
         );
 

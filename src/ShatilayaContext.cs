@@ -86,6 +86,12 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         set { _ProduceReleaseCandidate.Set(value); }
     }
 
+    private readonly DynamicContextProperty<string> _MsBuildExeFullFileName = new(nameof(MsBuildExeFullFileName));
+    public string MsBuildExeFullFileName {
+        get { return _MsBuildExeFullFileName.Get(); }
+        set { _MsBuildExeFullFileName.Set(value); }
+    }
+
     private string GetFolderArgument(string argumentName, string defaultValue) {
         return GetArgument(argumentName, defaultValue);
     }
@@ -163,6 +169,13 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
 
         ProduceReleaseCandidate = produceReleaseCandidate;
 
+        IFolder msBuildToolsFolder = await Container.Resolve<IFolderResolver>().ResolveAsync("$(MsBuildTools)", errorsAndInfos);
+        if (errorsAndInfos.AnyErrors()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
+        }
+
+        MsBuildExeFullFileName = msBuildToolsFolder.FullName + @"\MSBuild.exe";
+
         this.Information("Repository folder is: " + RepositoryFolder.FullName);
         this.Information("Solution is: " + SolutionFileFullName);
         this.Information("Solution ID is: " + SolutionId);
@@ -174,5 +187,6 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
         this.Information("ReleaseCandidate bin folder is: " + MasterReleaseCandidateBinFolder.FullName);
         this.Information("Create and push packages: " + (CreateAndPushPackages ? "true" : "false"));
         this.Information("Produce release candidate: " + (ProduceReleaseCandidate ? "true" : "false"));
+        this.Information("MSBuild.exe: " + MsBuildExeFullFileName);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Nuclide.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -10,7 +12,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 [TestClass]
 public class ShatilayaContextTest : ShatilayaTestBase {
     [TestMethod]
-    public void CanCreateShatilayaContext() {
+    public async Task CanCreateShatilayaContext() {
         IFolder folder = PakledTarget.Folder();
         var cakeArguments = new Dictionary<string, string> {
             [ "repository" ] = folder.FullName,
@@ -41,5 +43,8 @@ public class ShatilayaContextTest : ShatilayaTestBase {
         Assert.AreEqual(expectedMasterReleaseBinFolder.FullName, shatilayaContext.MasterBinReleaseFolder.FullName);
         IFolder expectedMasterReleaseCandidateBinFolder = folder.ParentFolder().SubFolder(@"PakledBin\ReleaseCandidate");
         Assert.AreEqual(expectedMasterReleaseCandidateBinFolder.FullName, shatilayaContext.MasterReleaseCandidateBinFolder.FullName);
+        await shatilayaContext.InitializeAsync();
+        string msBuildExeFullFileName = shatilayaContext.MsBuildExeFullFileName;
+        Assert.IsTrue(File.Exists(msBuildExeFullFileName));
     }
 }
