@@ -15,7 +15,6 @@ using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
-using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Autofac;
 using Cake.Common;
 using Cake.Common.Diagnostics;
