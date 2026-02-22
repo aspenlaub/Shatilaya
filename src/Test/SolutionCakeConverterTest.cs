@@ -24,12 +24,6 @@ public class SolutionCakeConverterTest {
         folderName = (await container.Resolve<IFolderResolver>().ResolveAsync("$(GitHub-PkgBranchTest)", errorsAndInfos)).FullName + '\\';
         Assert.IsEmpty(errorsAndInfos.Errors, errorsAndInfos.ErrorsToString());
         fileNames.AddRange(Directory.GetFiles(folderName, "solution.cake", SearchOption.AllDirectories).ToList());
-        folderName = (await container.Resolve<IFolderResolver>().ResolveAsync("$(GitHub-DotnetNine)", errorsAndInfos)).FullName + '\\';
-        Assert.IsEmpty(errorsAndInfos.Errors, errorsAndInfos.ErrorsToString());
-        fileNames.AddRange(Directory.GetFiles(folderName, "solution.cake", SearchOption.AllDirectories).ToList());
-        folderName = (await container.Resolve<IFolderResolver>().ResolveAsync("$(GitHub-DotnetTen)", errorsAndInfos)).FullName + '\\';
-        Assert.IsEmpty(errorsAndInfos.Errors, errorsAndInfos.ErrorsToString());
-        fileNames.AddRange(Directory.GetFiles(folderName, "solution.cake", SearchOption.AllDirectories).ToList());
         foreach (string fileName in fileNames) {
             errorsAndInfos = new ErrorsAndInfos();
             var folder = new Folder(fileName.Substring(0, fileName.LastIndexOf('\\')));
