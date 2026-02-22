@@ -17,6 +17,7 @@
     <VersionDays>$([System.DateTime]::UtcNow.Subtract($([System.DateTime]::Parse("2019-07-24"))).Days.ToString())</VersionDays>
     <VersionMinutes>$([System.Math]::Floor($([System.DateTime]::UtcNow.Subtract($([System.DateTime]::UtcNow.Date)).TotalMinutes)).ToString())</VersionMinutes>
     <Version>2.0.$(VersionDays).$(VersionMinutes)</Version>
+    <ApplicationIcon>shatilaya.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
@@ -32,6 +33,14 @@
     <None Remove="CakeFrosting\**" />
     <None Remove="Shatilaya.CakeFrosting.Test\**" />
     <None Remove="Test\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="shatilaya.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="shatilaya.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Cake.Frosting" Version="6.0.0" />
