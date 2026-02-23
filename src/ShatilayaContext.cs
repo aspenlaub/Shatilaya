@@ -12,6 +12,7 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
+using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
@@ -49,6 +50,8 @@ public class ShatilayaContext(ICakeContext context) : FrostingContext(context) {
     public IFolder MasterReleaseCandidateBinFolder => MasterBinReleaseFolder.ParentFolder().SubFolder("ReleaseCandidate");
     public IFolder MasterBinReleaseParentFolder => MasterBinReleaseFolder.ParentFolder();
     public string ReleaseBinHeadTipIdShaFile => MasterBinReleaseParentFolder.FullName + '\\' + "Release.HeadTipSha.txt";
+
+    public IOnlineLogic OnlineLogic = new OnlineLogic(new OnlineChecker());
 
     private readonly Lazy<IContainer> _Container
         = new Lazy<IContainer>(() => FusionContainerBuilder.CreateContainerUsingFusionNuclideProtchAndGitty("Shatilaya"));

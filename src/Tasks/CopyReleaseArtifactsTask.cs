@@ -6,6 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
@@ -24,6 +25,17 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
         var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
+
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha),
+            "Updating Release binaries folder", errorsAndInfos);
+        errorsAndInfos.Infos.ToList().ForEach(context.Information);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
+        }
+        await File.WriteAllTextAsync(context.ReleaseBinHeadTipIdShaFile, headTipIdSha);
+    }
+
+    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos, string headTipIdSha) {
         if (!File.Exists(context.ReleaseBinHeadTipIdShaFile)) {
             updater.UpdateFolder(context.ReleaseBinFolder, context.MasterBinReleaseFolder,
                 FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged,
@@ -33,15 +45,11 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
                 context.ReleaseBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinReleaseFolder,
                 true, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
         }
+
         if (context.ProduceReleaseCandidate) {
             updater.UpdateFolder(context.ReleaseBinFolder, context.MasterReleaseCandidateBinFolder,
                 FolderUpdateMethod.AssembliesEvenIfOnlySlightlyChanged,
                 "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, errorsAndInfos);
         }
-        errorsAndInfos.Infos.ToList().ForEach(context.Information);
-        if (errorsAndInfos.Errors.Any()) {
-            throw new Exception(errorsAndInfos.ErrorsToString());
-        }
-        await File.WriteAllTextAsync(context.ReleaseBinHeadTipIdShaFile, headTipIdSha);
     }
 }

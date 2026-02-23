@@ -6,6 +6,7 @@ using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Skladasu.Interfaces;
 using Autofac;
 using Cake.Common.Diagnostics;
 using Cake.Frosting;
@@ -24,6 +25,15 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
         var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha),
+            "Updating Debug binaries folder", errorsAndInfos);
+        errorsAndInfos.Infos.ToList().ForEach(context.Information);
+        if (errorsAndInfos.Errors.Any()) {
+            throw new Exception(errorsAndInfos.ErrorsToString());
+        }
+    }
+
+    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos, string headTipIdSha) {
         if (!File.Exists(context.ReleaseBinHeadTipIdShaFile)) {
             updater.UpdateFolder(context.DebugBinFolder, context.MasterBinDebugFolder,
                 FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged,
@@ -32,10 +42,6 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
             await updater.UpdateFolderAsync(context.SolutionId, context.CurrentGitBranch, headTipIdSha,
                 context.DebugBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinDebugFolder,
                 false, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
-        }
-        errorsAndInfos.Infos.ToList().ForEach(context.Information);
-        if (errorsAndInfos.Errors.Any()) {
-            throw new Exception(errorsAndInfos.ErrorsToString());
         }
     }
 }
