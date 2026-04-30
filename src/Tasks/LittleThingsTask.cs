@@ -13,6 +13,7 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [IsDependentOn(typeof(VerifyThatMasterBranchDoesNotHaveOpenPullRequestsTask))]
 [IsDependentOn(typeof(VerifyThatDevelopmentBranchDoesNotHaveOpenPullRequestsTask))]
 [IsDependentOn(typeof(VerifyThatPullRequestExistsForDevelopmentBranchHeadTipTask))]
+[IsDependentOn(typeof(CheckForVulnerabilitiesTask))]
 public class LittleThingsTask : FrostingTask<ShatilayaContext> {
     public override void Run(ShatilayaContext context) {
         context.Information("Checking the little things before building the solution");
