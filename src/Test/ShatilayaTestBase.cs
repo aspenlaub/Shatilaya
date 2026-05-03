@@ -1,4 +1,6 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Fusion;
+﻿using System;
+using System.Threading;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -31,8 +33,21 @@ public class ShatilayaTestBase {
 
     [TestCleanup]
     public void Cleanup() {
-        if (PakledTarget.Exists()) {
-            PakledTarget.Delete();
+        if (!PakledTarget.Exists()) {
+            return;
         }
+
+        for (int i = 0; i < 4 ; i ++) {
+            try {
+                PakledTarget.Delete();
+                return;
+            } catch {
+                // ignored
+            }
+
+            Thread.Sleep(TimeSpan.FromSeconds(4));
+        }
+
+        PakledTarget.Delete();
     }
 }
