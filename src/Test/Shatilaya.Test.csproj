@@ -14,8 +14,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.5.18.616" />
-    <PackageReference Include="coverlet.collector" Version="8.0.0">
+    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.5.22.625" />
+    <PackageReference Include="coverlet.collector" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
