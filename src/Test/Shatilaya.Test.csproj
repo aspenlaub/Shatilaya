@@ -14,14 +14,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.5.22.625" />
+    <PackageReference Include="Cake.Bridge.DependencyInjection.Testing" Version="2026.6.10.661" />
     <PackageReference Include="coverlet.collector" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Reqnroll.MSTest" Version="3.3.4" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="3.3.4" />
-    <PackageReference Include="Seoa" Version="2.0.2489.1148" />
+    <PackageReference Include="Seoa" Version="2.0.2512.1119" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shatilaya.csproj" />
