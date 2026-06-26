@@ -45,6 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Cake.Frosting" Version="6.2.0" />
-    <PackageReference Include="Fusion" Version="2.0.2523.718" />
+    <PackageReference Include="Fusion" Version="2.0.2528.1060" />
   </ItemGroup>
 </Project>
