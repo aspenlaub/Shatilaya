@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Extensions;
@@ -12,15 +14,15 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Tasks;
 [TaskName("CheckForVulnerabilities")]
 [TaskDescription("Checking nuget package vulnerabilities")]
 [IsDependentOn(typeof(InitializeContextTask))]
-public class CheckForVulnerabilitiesTask : FrostingTask<ShatilayaContext> {
+public class CheckForVulnerabilitiesTask : AsyncFrostingTask<ShatilayaContext> {
     private const string _dotNetExecutableFileName = "dotnet";
 
-    public override void Run(ShatilayaContext context) {
+    public override async Task RunAsync(ShatilayaContext context) {
         context.Log.Information($"Checking {context.SolutionFolderWithinOrOutsideSrc} for vulnerabilities");
         IProcessRunner runner = context.Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         string arguments = $"list \"{context.SolutionFileFullNameWithinOrOutsideSrc}\" package --vulnerable --include-transitive";
-        runner.RunProcess(_dotNetExecutableFileName, arguments, context.SolutionFolderWithinOrOutsideSrc, errorsAndInfos);
+        await runner.RunProcessAsync(_dotNetExecutableFileName, arguments, context.SolutionFolderWithinOrOutsideSrc, errorsAndInfos, CancellationToken.None);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }

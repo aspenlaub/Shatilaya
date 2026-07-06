@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -25,7 +26,7 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
         var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
-        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha),
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None),
             "Updating Debug binaries folder", errorsAndInfos);
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
@@ -33,15 +34,17 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         }
     }
 
-    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos, string headTipIdSha) {
+    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos,
+            string headTipIdSha, CancellationToken cancellationToken) {
         if (!File.Exists(context.ReleaseBinHeadTipIdShaFile)) {
             updater.UpdateFolder(context.DebugBinFolder, context.MasterBinDebugFolder,
                 FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged,
                 "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, errorsAndInfos);
         } else {
             await updater.UpdateFolderAsync(context.SolutionId, context.CurrentGitBranch, headTipIdSha,
-                context.DebugBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinDebugFolder,
-                false, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
+                context.DebugBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile, cancellationToken),
+                context.MasterBinDebugFolder, false, context.CreateAndPushPackages, context.MainNugetFeedId,
+                errorsAndInfos, cancellationToken);
         }
     }
 }

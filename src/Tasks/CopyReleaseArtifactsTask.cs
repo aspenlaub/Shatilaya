@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -26,7 +27,7 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         var errorsAndInfos = new ErrorsAndInfos();
         string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
 
-        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha),
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None),
             "Updating Release binaries folder", errorsAndInfos);
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
@@ -35,15 +36,17 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         await File.WriteAllTextAsync(context.ReleaseBinHeadTipIdShaFile, headTipIdSha);
     }
 
-    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos, string headTipIdSha) {
+    private static async Task TryCopyAsync(ShatilayaContext context, IFolderUpdater updater, IErrorsAndInfos errorsAndInfos,
+            string headTipIdSha, CancellationToken cancellationToken) {
         if (!File.Exists(context.ReleaseBinHeadTipIdShaFile)) {
             updater.UpdateFolder(context.ReleaseBinFolder, context.MasterBinReleaseFolder,
                 FolderUpdateMethod.AssembliesButNotIfOnlySlightlyChanged,
                 "Aspenlaub.Net.GitHub.CSharp." + context.SolutionId, errorsAndInfos);
         } else {
             await updater.UpdateFolderAsync(context.SolutionId, context.CurrentGitBranch, headTipIdSha,
-                context.ReleaseBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile), context.MasterBinReleaseFolder,
-                true, context.CreateAndPushPackages, context.MainNugetFeedId, errorsAndInfos);
+                context.ReleaseBinFolder, await File.ReadAllTextAsync(context.ReleaseBinHeadTipIdShaFile, cancellationToken),
+                context.MasterBinReleaseFolder, true, context.CreateAndPushPackages, context.MainNugetFeedId,
+                errorsAndInfos, cancellationToken);
         }
 
         if (context.ProduceReleaseCandidate) {

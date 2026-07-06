@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
@@ -223,8 +224,8 @@ public class ShatilayaBuildSteps {
 
     #region When
     [When(@"I run Shatilaya with target ""(.*)""")]
-    public void WhenIRunTheBuild_CakeScriptWithTarget(string target) {
-        RunShatilaya(target);
+    public async Task WhenIRunTheBuild_CakeScriptWithTarget(string target) {
+        await RunShatilayaAsync(target, CancellationToken.None);
     }
     #endregion
 
@@ -452,21 +453,21 @@ public class ShatilayaBuildSteps {
         return new Folder(ChabTarget.MasterReleaseBinFolder().FullName.Replace("Release", "ReleaseCandidate"));
     }
 
-    private void RunShatilayaViaCommandLine(string target) {
+    private async Task RunShatilayaViaCommandLineAsync(string target, CancellationToken cancellationToken) {
         ShatilayaFinder.FindShatilaya(out string executableFullName, out Folder workingFolder);
         IFolder folder = ChabTarget.Folder();
         string arguments = string.IsNullOrEmpty(target)
             ? $"--repository {folder.FullName}"
             : $"--repository {folder.FullName} --target {target}";
         IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, ShatilayaErrorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, ShatilayaErrorsAndInfos, cancellationToken);
     }
 
-    private void RunShatilaya(string target) {
+    private async Task RunShatilayaAsync(string target, CancellationToken cancellationToken) {
         if (string.IsNullOrEmpty(target)) {
             throw new ArgumentNullException(nameof(target));
         }
-        RunShatilayaViaCommandLine(target);
+        await RunShatilayaViaCommandLineAsync(target, cancellationToken);
         /*
             This produces far less output, use command line for the moment:
                 IFolder folder = ChabTarget.Folder();

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
@@ -16,11 +18,11 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 [TestClass]
 public class ShatilayaCommandLineTest : ShatilayaTestBase {
     [TestMethod]
-    public void CanCleanRestorePull() {
+    public async Task CanCleanRestorePull() {
         PutTogetherRunnerArguments("CleanRestorePull", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         List<string> expectedInfos = [
           "Cleaning", "Restoring", "Pulling"
@@ -33,11 +35,11 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanDoLittleThings() {
+    public async Task CanDoLittleThings() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         List<string> expectedInfos = [
             "Verifying that the master branch", "Verifying that there are no uncommitted"
@@ -50,16 +52,16 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanBuildTestAndCopy() {
+    public async Task CanBuildTestAndCopy() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("BuildAndTestDebugAndRelease", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         List<string> expectedInfos = [
@@ -80,38 +82,38 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanBuildToTemp() {
+    public async Task CanBuildToTemp() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Debug", false, errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Release", false, errorsAndInfos);
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
 
         Assert.Contains("Output folder exists, cleaning up", errorsAndInfos.Infos);
     }
 
     [TestMethod]
-    public void CanBuildAndTestDebug() {
+    public async Task CanBuildAndTestDebug() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("DebugBuild", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
 
         IFolder resultFolder = PakledTarget.Folder().SubFolder("src").SubFolder("TestResults");
         if (resultFolder.Exists()) {
@@ -120,7 +122,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         }
         PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
         string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
@@ -128,16 +130,16 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanBuildAndTestRelease() {
+    public async Task CanBuildAndTestRelease() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuild", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
 
         IFolder resultFolder = PakledTarget.Folder().SubFolder("src").SubFolder("TestResults");
         if (resultFolder.Exists()) {
@@ -146,7 +148,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         }
         PutTogetherRunnerArguments("RunTestsOnReleaseArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(resultFolder.Exists(), $"The expected result folder does not exist: \"{resultFolder.FullName}\"");
         string resultFileName = resultFolder.FullName + @"\TestResults-Pakled.Test.trx";
@@ -154,16 +156,16 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
     }
 
     [TestMethod]
-    public void CanBuildCsProjToTemp() {
+    public async Task CanBuildCsProjToTemp() {
         PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
         PutTogetherRunnerArguments("ReleaseBuildCsProjToTemp", out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
-        processRunner.RunProcess(executableFullName, arguments, workingFolder, errorsAndInfos);
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Release", true, errorsAndInfos);
     }
 

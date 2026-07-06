@@ -1,4 +1,6 @@
-﻿using Aspenlaub.Net.GitHub.CSharp.Fusion;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
@@ -12,20 +14,22 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 [TestClass]
 public class CakeToolCheck {
     [TestMethod]
-    public void CakeToolMatchesTargetFramework() {
+    public async Task CakeToolMatchesTargetFramework() {
         IContainer container = new ContainerBuilder().UseGittyTestUtilities().UseFusionNuclideProtchAndGitty("Shatilaya").Build();
         IDotNetCakeInstaller installer = new DotNetCakeInstaller(container.Resolve<Gitty.Interfaces.IProcessRunner>());
         var errorsAndInfos = new ErrorsAndInfos();
-        bool doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(true, errorsAndInfos);
+        bool doesGlobalCakeToolVersionMatchTargetFramework =
+            await installer.DoesGlobalCakeToolVersionMatchTargetFrameworkAsync(true, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
             return;
         }
 
-        installer.UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessary(errorsAndInfos);
+        await installer.UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessaryAsync(errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        doesGlobalCakeToolVersionMatchTargetFramework = installer.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
+        doesGlobalCakeToolVersionMatchTargetFramework =
+            await installer.DoesGlobalCakeToolVersionMatchTargetFrameworkAsync(false, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         if (doesGlobalCakeToolVersionMatchTargetFramework) {
             // ReSharper disable once RedundantJumpStatement

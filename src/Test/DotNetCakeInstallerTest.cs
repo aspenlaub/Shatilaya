@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion;
 using Aspenlaub.Net.GitHub.CSharp.Seoa.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Shatilaya.Components;
@@ -19,10 +21,11 @@ public class DotNetCakeInstallerTest {
     }
 
     [TestMethod]
-    public void CanInstallGlobalDotNetCakeIfNecessary() {
+    public async Task CanInstallGlobalDotNetCakeIfNecessary() {
         var errorsAndInfos = new ErrorsAndInfos();
-        Sut.InstallOrUpdateGlobalDotNetCakeIfNecessary(errorsAndInfos, out bool inconclusive);
-        if (inconclusive) {
+        Inconclusive inconclusive = new();
+        await Sut.InstallOrUpdateGlobalDotNetCakeIfNecessaryAsync(errorsAndInfos, inconclusive, CancellationToken.None);
+        if (inconclusive.IsInconclusive) {
             Assert.Inconclusive();
         } else {
             Assert.That.ThereWereNoErrors(errorsAndInfos);
@@ -30,17 +33,17 @@ public class DotNetCakeInstallerTest {
     }
 
     [TestMethod]
-    public void ProvenGlobalDotNetCakeIsInstalled() {
+    public async Task ProvenGlobalDotNetCakeIsInstalled() {
         var errorsAndInfos = new ErrorsAndInfos();
-        bool isInstalled = Sut.IsProvenGlobalDotNetCakeInstalled(errorsAndInfos);
+        bool isInstalled = await Sut.IsProvenGlobalDotNetCakeInstalledAsync(errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
         Assert.IsTrue(isInstalled);
     }
 
     [TestMethod]
-    public void CanCheckIfGlobalCakeToolVersionMatchesTargetFramework() {
+    public async Task CanCheckIfGlobalCakeToolVersionMatchesTargetFramework() {
         var errorsAndInfos = new ErrorsAndInfos();
-        bool matches = Sut.DoesGlobalCakeToolVersionMatchTargetFramework(false, errorsAndInfos);
+        bool matches = await Sut.DoesGlobalCakeToolVersionMatchTargetFrameworkAsync(false, errorsAndInfos, CancellationToken.None);
         if (matches) {
             Assert.That.ThereWereNoErrors(errorsAndInfos);
         }

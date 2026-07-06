@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Fusion.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
@@ -27,7 +28,7 @@ public class PushNuGetPackageTask : AsyncFrostingTask<ShatilayaContext> {
         var errorsAndInfos = new ErrorsAndInfos();
         IPackageToPush packageToPush = await nugetPackageToPushFinder.FindPackageToPushAsync(context.MainNugetFeedId,
              context.MasterBinReleaseFolder, context.RepositoryFolder, context.SolutionFileFullName,
-             context.CurrentGitBranch, errorsAndInfos);
+             context.CurrentGitBranch, errorsAndInfos, CancellationToken.None);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }

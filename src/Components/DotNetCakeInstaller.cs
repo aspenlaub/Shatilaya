@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
 using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
@@ -41,12 +43,13 @@ public class DotNetCakeInstaller : IDotNetCakeInstaller {
         _WorkingFolder.CreateIfNecessary();
     }
 
-    public bool IsProvenGlobalDotNetCakeInstalled(IErrorsAndInfos errorsAndInfos) {
-        return IsGlobalDotNetCakeInstalled(ProvenCakeToolVersion, errorsAndInfos);
+    public async Task<bool> IsProvenGlobalDotNetCakeInstalledAsync(IErrorsAndInfos errorsAndInfos, CancellationToken cancellationToken) {
+        return await IsGlobalDotNetCakeInstalledAsync(ProvenCakeToolVersion, errorsAndInfos, cancellationToken);
     }
 
-    public bool DoesGlobalCakeToolVersionMatchTargetFramework(bool doNotLogErrorMessage, IErrorsAndInfos errorsAndInfos) {
-        if (IsGlobalDotNetCakeInstalled(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos)) {
+    public async Task<bool> DoesGlobalCakeToolVersionMatchTargetFrameworkAsync(bool doNotLogErrorMessage,
+            IErrorsAndInfos errorsAndInfos, CancellationToken cancellationToken) {
+        if (await IsGlobalDotNetCakeInstalledAsync(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos, cancellationToken)) {
             return true;
         }
         if (doNotLogErrorMessage) { return false; }
@@ -58,83 +61,83 @@ public class DotNetCakeInstaller : IDotNetCakeInstaller {
         return false;
     }
 
-    public bool IsGlobalDotNetCakeInstalled(string version, IErrorsAndInfos errorsAndInfos) {
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetToolListArguments, _WorkingFolder, errorsAndInfos);
+    public async Task<bool> IsGlobalDotNetCakeInstalledAsync(string version, IErrorsAndInfos errorsAndInfos, CancellationToken cancellationToken) {
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetToolListArguments, _WorkingFolder, errorsAndInfos, cancellationToken);
         if (errorsAndInfos.AnyErrors()) { return false; }
 
         string line = errorsAndInfos.Infos.LastOrDefault(l => l.StartsWith(_cakeToolId));
         return line?.Substring(_cakeToolId.Length).TrimStart().StartsWith(version) == true;
     }
 
-    public void InstallOrUpdateGlobalDotNetCakeIfNecessary(IErrorsAndInfos errorsAndInfos, out bool inconclusive) {
-        inconclusive = false;
-        if (IsGlobalDotNetCakeInstalled(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos)) {
-            RestoreProvenCakeToolVersion(errorsAndInfos);
+    public async Task InstallOrUpdateGlobalDotNetCakeIfNecessaryAsync(IErrorsAndInfos errorsAndInfos, Inconclusive inconclusive, CancellationToken cancellationToken) {
+        inconclusive.IsInconclusive = false;
+        if (await IsGlobalDotNetCakeInstalledAsync(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos, cancellationToken)) {
+            await RestoreProvenCakeToolVersionAsync(errorsAndInfos, cancellationToken);
             return;
         }
         if (errorsAndInfos.AnyErrors()) { return; }
 
         // ReSharper disable once RedundantAssignment
         bool isOldCakeToolVersionInstalled =
-            IsGlobalDotNetCakeInstalled(_veryOldCakeToolVersion, errorsAndInfos)
-            || IsGlobalDotNetCakeInstalled(_oldCakeToolVersion, errorsAndInfos);
+            await IsGlobalDotNetCakeInstalledAsync(_veryOldCakeToolVersion, errorsAndInfos, cancellationToken)
+            || await IsGlobalDotNetCakeInstalledAsync(_oldCakeToolVersion, errorsAndInfos, cancellationToken);
         if (errorsAndInfos.AnyErrors()) { return; }
 
-        if (IsGlobalDotNetCakeInstalled(_runnerUpCakeToolVersion, errorsAndInfos)
+        if (await IsGlobalDotNetCakeInstalledAsync(_runnerUpCakeToolVersion, errorsAndInfos, cancellationToken)
             || CakeToolVersionMatchingCompiledTargetFramework != ProvenCakeToolVersion) {
             if (errorsAndInfos.AnyErrors()) { return; }
 
             bool skipTest;
             try {
-                _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
-                    _WorkingFolder, errorsAndInfos);
+                await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
+                    _WorkingFolder, errorsAndInfos, cancellationToken);
                 skipTest = errorsAndInfos.AnyErrors();
             } catch {
                 skipTest = true;
             }
             if (skipTest) {
-                inconclusive = true;
+                inconclusive.IsInconclusive = true;
                 errorsAndInfos.Infos.Clear();
                 errorsAndInfos.Errors.Clear();
                 return;
             }
         }
 
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName,
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName,
               // ReSharper disable once ConditionIsAlwaysTrueOrFalse
               isOldCakeToolVersionInstalled
                   ? _dotNetUpdateCakeToolArguments
                   : _dotNetInstallCakeToolArguments,
-              _WorkingFolder, errorsAndInfos);
+              _WorkingFolder, errorsAndInfos, cancellationToken);
         if (errorsAndInfos.AnyErrors()) { return; }
 
-        if (!IsGlobalDotNetCakeInstalled(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos)) {
+        if (!await IsGlobalDotNetCakeInstalledAsync(CakeToolVersionMatchingCompiledTargetFramework, errorsAndInfos, cancellationToken)) {
             errorsAndInfos.Errors.Add("Could not install cake tool");
         }
 
-        RestoreProvenCakeToolVersion(errorsAndInfos);
+        await RestoreProvenCakeToolVersionAsync(errorsAndInfos, cancellationToken);
     }
 
-    public void UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessary(IErrorsAndInfos errorsAndInfos) {
-        if (DoesGlobalCakeToolVersionMatchTargetFramework(true, errorsAndInfos)) {
+    public async Task UpdateGlobalDotNetCakeToMatchTargetFrameworkIfNecessaryAsync(IErrorsAndInfos errorsAndInfos, CancellationToken cancellationToken) {
+        if (await DoesGlobalCakeToolVersionMatchTargetFrameworkAsync(true, errorsAndInfos, cancellationToken)) {
             return;
         }
         if (errorsAndInfos.AnyErrors()) { return; }
 
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
-            _WorkingFolder, errorsAndInfos);
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetInstallCakeToolMatchingTargetFrameworkArguments,
-            _WorkingFolder, errorsAndInfos);
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
+            _WorkingFolder, errorsAndInfos, cancellationToken);
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetInstallCakeToolMatchingTargetFrameworkArguments,
+            _WorkingFolder, errorsAndInfos, cancellationToken);
     }
 
-    private void RestoreProvenCakeToolVersion(IErrorsAndInfos errorsAndInfos) {
-        if (IsGlobalDotNetCakeInstalled(ProvenCakeToolVersion, errorsAndInfos)) {
+    private async Task RestoreProvenCakeToolVersionAsync(IErrorsAndInfos errorsAndInfos, CancellationToken cancellationToken) {
+        if (await IsGlobalDotNetCakeInstalledAsync(ProvenCakeToolVersion, errorsAndInfos, cancellationToken)) {
             return;
         }
 
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
-            _WorkingFolder, errorsAndInfos);
-        _ProcessRunner.RunProcess(_dotNetExecutableFileName, _dotNetInstallProvenCakeToolArguments,
-            _WorkingFolder, errorsAndInfos);
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetUninstallCakeToolArguments,
+                _WorkingFolder, errorsAndInfos, cancellationToken);
+        await _ProcessRunner.RunProcessAsync(_dotNetExecutableFileName, _dotNetInstallProvenCakeToolArguments,
+                _WorkingFolder, errorsAndInfos, cancellationToken);
     }
 }
