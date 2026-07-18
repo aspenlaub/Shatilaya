@@ -76,9 +76,17 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         ];
         foreach (string expectedInfo in expectedInfos) {
 #pragma warning disable MSTEST0037
-            Assert.IsTrue(errorsAndInfos.Infos.Any(x => x.Contains(expectedInfo)), $"No info starts with {expectedInfo}");
+            Assert.IsTrue(errorsAndInfos.Infos.Any(x => DeleteExtraBlanks(x).Contains(expectedInfo)), $"No info starts with {expectedInfo}");
 #pragma warning restore MSTEST0037
         }
+    }
+
+    private static string DeleteExtraBlanks(string s) {
+        while (s.Contains("  ")) {
+            s = s.Replace("  ", " ");
+        }
+
+        return s;
     }
 
     [TestMethod]
