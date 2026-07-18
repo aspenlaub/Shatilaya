@@ -7,14 +7,15 @@ using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 
 public class BugChaser {
-    public static void MakeChaseLogEntry(string s) {
+    public static void SaveChaseLog(string s) {
         IFolder logFolder = new Folder(Path.GetTempPath()).SubFolder("AspenlaubLogs").SubFolder("Bug Chase Log");
         logFolder.CreateIfNecessary();
-        string logFileName = logFolder.FullName + @"\ChaseLog.txt";
-        if (File.Exists(logFileName)) {
-            File.AppendAllText(logFileName, "\r\n" + s);
-        } else {
-            File.WriteAllText(logFileName, s);
-        }
+        string logFileName;
+        int n = 100;
+        do {
+            logFileName = logFolder.FullName + $"\\ChaseLog_{n}.txt";
+            n++;
+        } while (File.Exists(logFileName));
+        File.WriteAllText(logFileName, s);
     }
 }

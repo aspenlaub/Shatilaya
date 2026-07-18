@@ -289,7 +289,6 @@ public class ShatilayaBuildSteps {
 
     [Then(@"a failed ""(.*)"" test case was reported")]
     public void ThenAFailedTestCaseWasReported(string p0) {
-        BugChaser.MakeChaseLogEntry(string.Join("\r\n", ShatilayaErrorsAndInfos.Infos));
         Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
         string combinedInfos = string.Join("\r\n", ShatilayaErrorsAndInfos.Infos);
         bool found = false;
@@ -477,6 +476,7 @@ public class ShatilayaBuildSteps {
         IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, cancellationToken);
+        BugChaser.SaveChaseLog(string.Join("\r\n", errorsAndInfos.Infos));
         ShatilayaErrorsAndInfos.Infos.AddRange(errorsAndInfos.Infos);
         ShatilayaErrorsAndInfos.Errors.AddRange(errorsAndInfos.Errors);
     }
