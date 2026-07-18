@@ -461,7 +461,10 @@ public class ShatilayaBuildSteps {
             ? $"--repository {folder.FullName}"
             : $"--repository {folder.FullName} --target {target}";
         IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
-        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, ShatilayaErrorsAndInfos, cancellationToken);
+        var errorsAndInfos = new ErrorsAndInfos();
+        await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, cancellationToken);
+        ShatilayaErrorsAndInfos.Infos.AddRange(errorsAndInfos.Infos);
+        ShatilayaErrorsAndInfos.Errors.AddRange(errorsAndInfos.Errors);
     }
 
     private async Task RunShatilayaAsync(string target, CancellationToken cancellationToken) {
