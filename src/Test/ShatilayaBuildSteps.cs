@@ -293,7 +293,7 @@ public class ShatilayaBuildSteps {
         string combinedInfos = string.Join("\r\n", ShatilayaErrorsAndInfos.Infos);
         bool found = false;
         for (int pos = NextFailedIndex(combinedInfos, -1); pos >= 0; pos = NextFailedIndex(combinedInfos, pos)) {
-            string r = combinedInfos.Substring(pos, 200);
+            string r = (pos + 200 < combinedInfos.Length) ? combinedInfos.Substring(pos, 200) : combinedInfos.Substring(pos);
             if (!r.Contains("CanBakeACake")) {
                 continue;
             }
