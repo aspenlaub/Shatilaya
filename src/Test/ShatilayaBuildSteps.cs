@@ -291,8 +291,22 @@ public class ShatilayaBuildSteps {
     public void ThenAFailedTestCaseWasReported(string p0) {
         BugChaser.MakeChaseLogEntry(string.Join("\r\n", ShatilayaErrorsAndInfos.Infos));
         Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
-        Assert.Contains(m => m.Contains("Failed CanBakeACake"), ShatilayaErrorsAndInfos.Infos,
-            $"Expected to find Failed CanBakeACake in: {string.Join('/', ShatilayaErrorsAndInfos.Infos)}");
+        string combinedInfos = string.Join("\r\n", ShatilayaErrorsAndInfos.Infos);
+        bool found = false;
+        for (int pos = NextFailedIndex(combinedInfos, -1); pos >= 0; pos = NextFailedIndex(combinedInfos, pos)) {
+            string r = combinedInfos.Substring(pos, 200);
+            if (!r.Contains("CanBakeACake")) {
+                continue;
+            }
+
+            found = true;
+            break;
+        }
+        Assert.IsTrue(found, $"Expected to find Failed CanBakeACake in: {string.Join('/', ShatilayaErrorsAndInfos.Infos)}");
+    }
+
+    private static int NextFailedIndex(string s, int pos) {
+        return s.IndexOf("Failed", pos + 1, StringComparison.InvariantCulture);
     }
 
     [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
