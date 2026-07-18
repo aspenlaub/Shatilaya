@@ -292,8 +292,10 @@ public class ShatilayaBuildSteps {
         Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
         string combinedInfos = string.Join("\r\n", ShatilayaErrorsAndInfos.Infos);
         bool found = false;
+        var rs = new List<string>();
         for (int pos = NextFailedIndex(combinedInfos, -1); pos >= 0; pos = NextFailedIndex(combinedInfos, pos)) {
             string r = (pos + 200 < combinedInfos.Length) ? combinedInfos.Substring(pos, 200) : combinedInfos.Substring(pos);
+            rs.Add(r);
             if (!r.Contains("CanBakeACake")) {
                 continue;
             }
@@ -301,7 +303,7 @@ public class ShatilayaBuildSteps {
             found = true;
             break;
         }
-        Assert.IsTrue(found, $"Expected to find Failed CanBakeACake in: {string.Join('/', ShatilayaErrorsAndInfos.Infos)}");
+        Assert.IsTrue(found, $"Expected to find Failed CanBakeACake in: {string.Join('/', rs)}");
     }
 
     private static int NextFailedIndex(string s, int pos) {

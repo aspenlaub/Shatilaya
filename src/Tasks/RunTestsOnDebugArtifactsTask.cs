@@ -42,7 +42,7 @@ public class RunTestsOnDebugArtifactsTask : FrostingTask<ShatilayaContext> {
                 NoRestore = true,
                 NoBuild = true,
                 DiagnosticOutput = true,
-                Verbosity = DotNetVerbosity.Diagnostic,
+                Verbosity = DotNetVerbosity.Minimal,
                 ArgumentCustomization = args => {
                     args.Append(textArgument);
                     return args;
