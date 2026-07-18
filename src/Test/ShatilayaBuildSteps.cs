@@ -290,24 +290,7 @@ public class ShatilayaBuildSteps {
     [Then(@"a failed ""(.*)"" test case was reported")]
     public void ThenAFailedTestCaseWasReported(string p0) {
         Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
-        string combinedInfos = string.Join("\r\n", ShatilayaErrorsAndInfos.Infos);
-        bool found = false;
-        var rs = new List<string>();
-        for (int pos = NextFailedIndex(combinedInfos, -1); pos >= 0; pos = NextFailedIndex(combinedInfos, pos)) {
-            string r = (pos + 200 < combinedInfos.Length) ? combinedInfos.Substring(pos, 200) : combinedInfos.Substring(pos);
-            rs.Add(r);
-            if (!r.Contains("CanBakeACake")) {
-                continue;
-            }
-
-            found = true;
-            break;
-        }
-        Assert.IsTrue(found, $"Expected to find Failed CanBakeACake in: {string.Join('/', rs)}");
-    }
-
-    private static int NextFailedIndex(string s, int pos) {
-        return s.IndexOf("Failed", pos + 1, StringComparison.InvariantCulture);
+        Assert.Contains(m => m.Contains("Failed CanBakeACake", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Infos);
     }
 
     [Then(@"(.*) ""(.*)"" artifact/-s was/were produced")]
@@ -478,7 +461,6 @@ public class ShatilayaBuildSteps {
         IProcessRunner processRunner = _container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, cancellationToken);
-        BugChaser.SaveChaseLog(string.Join("\r\n", errorsAndInfos.Infos));
         ShatilayaErrorsAndInfos.Infos.AddRange(errorsAndInfos.Infos);
         ShatilayaErrorsAndInfos.Errors.AddRange(errorsAndInfos.Errors);
     }

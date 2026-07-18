@@ -42,7 +42,7 @@ public class RunTestsOnReleaseArtifactsTask : FrostingTask<ShatilayaContext> {
                 NoRestore = true,
                 NoBuild = true,
                 DiagnosticOutput = true,
-                Verbosity = DotNetVerbosity.Diagnostic,
+                Verbosity = DotNetVerbosity.Minimal, // Diagnostic compromises log files
                 ArgumentCustomization = args => {
                     args.Append(textArgument);
                     return args;
