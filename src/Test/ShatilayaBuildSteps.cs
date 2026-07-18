@@ -289,6 +289,7 @@ public class ShatilayaBuildSteps {
 
     [Then(@"a failed ""(.*)"" test case was reported")]
     public void ThenAFailedTestCaseWasReported(string p0) {
+        BugChaser.MakeChaseLogEntry(string.Join("\r\n", ShatilayaErrorsAndInfos.Infos));
         Assert.Contains(e => e.Contains($"An error occurred when executing task 'RunTestsOn{p0}Artifacts'", StringComparison.InvariantCultureIgnoreCase), ShatilayaErrorsAndInfos.Errors, ShatilayaErrorsAndInfos.ErrorsToString());
         Assert.Contains(m => m.Contains("Failed CanBakeACake"), ShatilayaErrorsAndInfos.Infos,
             $"Expected to find Failed CanBakeACake in: {string.Join('/', ShatilayaErrorsAndInfos.Infos)}");
