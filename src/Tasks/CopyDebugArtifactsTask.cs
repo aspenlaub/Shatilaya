@@ -25,9 +25,13 @@ public class CopyDebugArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         context.Information("Copying Debug artifacts to master Debug binaries folder");
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
         var errorsAndInfos = new ErrorsAndInfos();
-        string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
-        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None),
-            "Updating Debug binaries folder", errorsAndInfos);
+        string headTipIdSha = null;
+
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => {
+            headTipIdSha ??= context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
+            return TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None);
+        }, "Updating Debug binaries folder", errorsAndInfos);
+
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());

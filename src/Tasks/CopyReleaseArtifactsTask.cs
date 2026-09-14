@@ -25,14 +25,18 @@ public class CopyReleaseArtifactsTask : AsyncFrostingTask<ShatilayaContext> {
         context.Information("Copying Release artifacts to master Release binaries folder");
         IFolderUpdater updater = context.Container.Resolve<IFolderUpdater>();
         var errorsAndInfos = new ErrorsAndInfos();
-        string headTipIdSha = context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
+        string headTipIdSha = null;
 
-        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None),
-            "Updating Release binaries folder", errorsAndInfos);
+        await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(e => {
+            headTipIdSha ??= context.Container.Resolve<IGitUtilities>().HeadTipIdSha(context.RepositoryFolder);
+            return TryCopyAsync(context, updater, e, headTipIdSha, CancellationToken.None);
+        }, "Updating Release binaries folder", errorsAndInfos);
+
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
+
         await File.WriteAllTextAsync(context.ReleaseBinHeadTipIdShaFile, headTipIdSha);
     }
 

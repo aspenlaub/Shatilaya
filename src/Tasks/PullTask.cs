@@ -27,6 +27,7 @@ public class PullTask : AsyncFrostingTask<ShatilayaContext> {
 
         await context.OnlineLogic.ExecuteOnlineActionWithRetriesAsync(_ => TryPullAsync(context, developerSettings),
             "Pulling latest changes from remote", errorsAndInfos);
+
         errorsAndInfos.Infos.ToList().ForEach(context.Information);
         if (errorsAndInfos.Errors.Any()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
