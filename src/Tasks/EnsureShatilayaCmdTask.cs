@@ -20,7 +20,7 @@ public class EnsureShatilayaCmdTask : AsyncFrostingTask<ShatilayaContext> {
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
-        IFolder shatilayaWorkingFolder = await context.Container.Resolve<IFolderResolver>().ResolveAsync("$(ShatilayaWorker)", errorsAndInfos);
+        IFolder shatilayaWorkerFolder = await context.Container.Resolve<IFolderResolver>().ResolveAsync("$(ShatilayaWorker)", errorsAndInfos);
         if (errorsAndInfos.AnyErrors()) {
             throw new Exception(errorsAndInfos.ErrorsToString());
         }
@@ -32,7 +32,7 @@ public class EnsureShatilayaCmdTask : AsyncFrostingTask<ShatilayaContext> {
         string executableShortName = executableFullNames[0].Substring(executableFullNames[0].LastIndexOf("\\", StringComparison.Ordinal) + 1);
         List<string> lines = context.SolutionId == "Shatilaya" ? [
             $"set \"SOURCE={shatilayaReleaseFolder.FullName}\"",
-            $"set \"DEST={shatilayaWorkingFolder.FullName}\"",
+            $"set \"DEST={shatilayaWorkerFolder.FullName}\"",
             "robocopy \"%SOURCE%\" \"%DEST%\" /E /R:3 /W:5",
             "cd \"%DEST%\"",
             $"{executableShortName} --repository {context.RepositoryFolder.FullName} %*",
