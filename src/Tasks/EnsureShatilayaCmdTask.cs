@@ -29,7 +29,7 @@ public class EnsureShatilayaCmdTask : AsyncFrostingTask<ShatilayaContext> {
             throw new Exception("Shatilaya executable not found or not unique");
         }
 
-        string executableShortName = executableFullNames[0].Substring(executableFullNames[0].LastIndexOf("\\", StringComparison.Ordinal));
+        string executableShortName = executableFullNames[0].Substring(executableFullNames[0].LastIndexOf("\\", StringComparison.Ordinal) + 1);
         List<string> lines = context.SolutionId == "Shatilaya" ? [
             $"set \"SOURCE={shatilayaReleaseFolder.FullName}\"",
             $"set \"DEST={shatilayaWorkingFolder.FullName}\"",
