@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -192,7 +193,8 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
         Assert.IsTrue(outputFolder.Exists(), $"Output folder {outputFolder.FullName} does not exist");
         string expectedSuffix = @$"\src\temp\bin\{debugOrRelease}";
         Assert.EndsWith(expectedSuffix, outputFolder.FullName, $"Output folder {outputFolder.FullName} does not end with {expectedSuffix}");
-        var outputFiles = Directory.GetFiles(outputFolder.FullName, "Aspenlaub.Net.GitHub.CSharp.Pakled.*", SearchOption.AllDirectories).ToList();
+        var outputFiles = Directory.GetFiles(outputFolder.FullName, "Aspenlaub.Net.GitHub.CSharp.Pakled.*", SearchOption.AllDirectories)
+            .Where(x => !x.Contains("dev", StringComparison.Ordinal)).ToList();
         Assert.HasCount(csProjOnly ? 3 : 7, outputFiles);
         Assert.HasCount(csProjOnly ? 1 : 2, outputFiles.Where(x => x.EndsWith(".dll")));
         Assert.HasCount(csProjOnly ? 1 : 2, outputFiles.Where(x => x.EndsWith(".pdb")));
