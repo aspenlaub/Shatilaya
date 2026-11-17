@@ -180,6 +180,23 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
+        IFolder workingFolderCopy = new Folder(System.IO.Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(ShatilayaCommandLineTest));
+        IFolderDeleter folderDeleter = Container.Resolve<IFolderDeleter>();
+        if (workingFolderCopy.Exists()) {
+            Assert.IsTrue(folderDeleter.CanDeleteFolder(workingFolderCopy));
+            folderDeleter.DeleteFolder(workingFolderCopy);
+        }
+
+        foreach (string sourceFileName in Directory.GetFiles(workingFolder.FullName, "*.*", SearchOption.AllDirectories)) {
+            string destFileName = sourceFileName.Replace(workingFolder.FullName, workingFolderCopy.FullName);
+            var destPath = new Folder(destFileName.Substring(0, destFileName.LastIndexOf("\\", StringComparison.Ordinal)));
+            destPath.CreateIfNecessary();
+            File.Copy(sourceFileName, destFileName);
+        }
+
+        executableFullName = executableFullName.Replace(workingFolder.FullName, workingFolderCopy.FullName);
+        workingFolder = new Folder(workingFolderCopy.FullName);
+
         IFolder folder = PakledTarget.Folder();
         arguments = $"--repository {folder.FullName} --target {target} --verbosity verbose";
     }
