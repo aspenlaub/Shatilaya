@@ -20,7 +20,8 @@ namespace Aspenlaub.Net.GitHub.CSharp.Shatilaya.Test;
 public class ShatilayaCommandLineTest : ShatilayaTestBase {
     [TestMethod]
     public async Task CanCleanRestorePull() {
-        PutTogetherRunnerArguments("CleanRestorePull", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("CleanRestorePull", nameof(CanCleanRestorePull),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
@@ -37,7 +38,8 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanDoLittleThings() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanDoLittleThings),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
@@ -54,13 +56,15 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanBuildTestAndCopy() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanBuildTestAndCopy),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        PutTogetherRunnerArguments("BuildAndTestDebugAndRelease", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("BuildAndTestDebugAndRelease", nameof(CanBuildTestAndCopy),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
@@ -92,18 +96,21 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanBuildToTemp() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanBuildToTemp),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        PutTogetherRunnerArguments("DebugBuildToTemp", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("DebugBuildToTemp", nameof(CanBuildToTemp),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Debug", false, errorsAndInfos);
 
-        PutTogetherRunnerArguments("ReleaseBuildToTemp", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("ReleaseBuildToTemp", nameof(CanBuildToTemp),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Release", false, errorsAndInfos);
@@ -114,13 +121,15 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanBuildAndTestDebug() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanBuildAndTestDebug),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        PutTogetherRunnerArguments("DebugBuild", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("DebugBuild", nameof(CanBuildAndTestDebug),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
 
@@ -129,7 +138,8 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             IFolderDeleter deleter = Container.Resolve<IFolderDeleter>();
             deleter.DeleteFolder(resultFolder);
         }
-        PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("RunTestsOnDebugArtifactsToTemp", nameof(CanBuildAndTestDebug),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
@@ -140,13 +150,15 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanBuildAndTestRelease() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanBuildAndTestRelease),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        PutTogetherRunnerArguments("ReleaseBuild", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("ReleaseBuild", nameof(CanBuildAndTestRelease),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
 
@@ -155,7 +167,8 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             IFolderDeleter deleter = Container.Resolve<IFolderDeleter>();
             deleter.DeleteFolder(resultFolder);
         }
-        PutTogetherRunnerArguments("RunTestsOnReleaseArtifactsToTemp", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("RunTestsOnReleaseArtifactsToTemp", nameof(CanBuildAndTestRelease),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
@@ -166,21 +179,25 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
 
     [TestMethod]
     public async Task CanBuildCsProjToTemp() {
-        PutTogetherRunnerArguments("LittleThings", out string executableFullName, out string arguments, out Folder workingFolder);
+        PutTogetherRunnerArguments("LittleThings", nameof(CanBuildCsProjToTemp),
+            out string executableFullName, out string arguments, out Folder workingFolder);
         IProcessRunner processRunner = Container.Resolve<IProcessRunner>();
         var errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         Assert.That.ThereWereNoErrors(errorsAndInfos);
 
-        PutTogetherRunnerArguments("ReleaseBuildCsProjToTemp", out executableFullName, out arguments, out workingFolder);
+        PutTogetherRunnerArguments("ReleaseBuildCsProjToTemp", nameof(CanBuildCsProjToTemp),
+            out executableFullName, out arguments, out workingFolder);
         errorsAndInfos = new ErrorsAndInfos();
         await processRunner.RunProcessAsync(executableFullName, arguments, workingFolder, errorsAndInfos, CancellationToken.None);
         VerifyOutputToTemporaryFolder("Release", true, errorsAndInfos);
     }
 
-    private void PutTogetherRunnerArguments(string target, out string executableFullName, out string arguments, out Folder workingFolder) {
+    private void PutTogetherRunnerArguments(string target, string testCase,
+            out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
-        IFolder workingFolderCopy = new Folder(System.IO.Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(nameof(ShatilayaCommandLineTest));
+        IFolder workingFolderCopy = new Folder(System.IO.Path.GetTempPath()).SubFolder("AspenlaubTemp")
+            .SubFolder(nameof(ShatilayaCommandLineTest)).SubFolder(testCase);
         IFolderDeleter folderDeleter = Container.Resolve<IFolderDeleter>();
         if (workingFolderCopy.Exists()) {
             Assert.IsTrue(folderDeleter.CanDeleteFolder(workingFolderCopy));
