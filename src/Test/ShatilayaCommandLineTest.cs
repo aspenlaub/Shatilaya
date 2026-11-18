@@ -197,7 +197,7 @@ public class ShatilayaCommandLineTest : ShatilayaTestBase {
             out string executableFullName, out string arguments, out Folder workingFolder) {
         ShatilayaFinder.FindShatilaya(out executableFullName, out workingFolder);
         IFolder workingFolderCopy = new Folder(System.IO.Path.GetTempPath()).SubFolder("AspenlaubTemp")
-            .SubFolder(nameof(ShatilayaCommandLineTest)).SubFolder(testCase);
+            .SubFolder(nameof(ShatilayaCommandLineTest)).SubFolder(GetType().Name).SubFolder(testCase);
         IFolderDeleter folderDeleter = Container.Resolve<IFolderDeleter>();
         if (workingFolderCopy.Exists()) {
             Assert.IsTrue(folderDeleter.CanDeleteFolder(workingFolderCopy));

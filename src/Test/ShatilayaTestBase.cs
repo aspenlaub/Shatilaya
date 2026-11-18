@@ -5,6 +5,9 @@ using Aspenlaub.Net.GitHub.CSharp.Gitty;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Extensions;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Gitty.TestUtilities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Entities;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Extensions;
+using Aspenlaub.Net.GitHub.CSharp.Pegh.Interfaces;
 using Aspenlaub.Net.GitHub.CSharp.Skladasu.Entities;
 using Autofac;
 using LibGit2Sharp;
@@ -33,6 +36,12 @@ public class ShatilayaTestBase {
 
     [TestCleanup]
     public void Cleanup() {
+        IFolder folder = new Folder(System.IO.Path.GetTempPath()).SubFolder("AspenlaubTemp").SubFolder(GetType().Name);
+        if (folder.Exists()) {
+            IFolderDeleter folderDeleter = Container.Resolve<IFolderDeleter>();
+            folderDeleter.DeleteFolder(folder);
+        }
+
         if (!PakledTarget.Exists()) {
             return;
         }
